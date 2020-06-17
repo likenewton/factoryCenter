@@ -1,0 +1,11 @@
+新后台系统(前后端分离-前端部分)开发约束
+1.新系统采用vue框架，集成axios、vue-router、vuex、element-ui、jQuery等常用插件
+2.样式一律采用scss编写
+3.插件(如element-ui、jQuery)体积较大的一律外链引入，然后在webpack.base.conf.js 中配置以减少打包后verdor文件体积，减少页面首次加载时间
+3.element-variable.scss为皮肤统一风格配置文件不得修改，初始化主题 ->et init  编译主题 ->et(记得一定要进行一次主题编译，不然使用的是element-ui默认风格)
+4.所有表单元素size统一为small
+5.所有table列表size统一为mini，列表上方的按钮size统一为mini
+6.分页器layout结构一律包含六部分内容 layout="total, sizes, prev, pager, next, jumper"
+7.按钮type属性, 列表中一律为text，重置/导入/导出/验证为warning, 删除为danger, 返回为默认，编辑为editor 新增/文件上传为primary，其他一般为primary
+8.加载动画一律使用指令 v-loading
+9.公共组件 components/common中， 组件命名 v字开头驼峰命名  如 vHead.vue， common文件夹中.vue文件自动全部注册为全局组件

@@ -61,6 +61,7 @@ class StatisticsAreaController {
 	 * 条件查询访问方式：GET http://ip:port/statistics/areas?descs/ascs=age(按年龄倒叙)
 	 * 指定返回记录的数量：GET http://ip:port/statistics/areas?limit=20
 	*/
+	@SuppressWarnings("unchecked")
 	@ApiOperation(notes="根据条件获取[推送通道]信息",value = "根据条件获取[推送通道]信息", extensions = @Extension(name = "auditLog", properties = @ExtensionProperty(name = "ignore", value = "true")))
 	@RequestMapping(method = RequestMethod.GET)
 	public ResultEntity<Object> statisticsAreas(HttpServletRequest request, StatisticsAreaQuery statisticsAreaQuery, Pages pages,
@@ -72,7 +73,40 @@ class StatisticsAreaController {
 		conditionMap.put(Condition.ORDER, order);
 		conditionMap.put(Condition.OFFSET, offset);
 		conditionMap.put(Condition.GROUP, group);
-		result.setData(statisticsAreaService.selectStatisticsArea(statisticsAreaQuery, conditionMap));
+		//result.setData(statisticsAreaService.selectStatisticsArea(statisticsAreaQuery, conditionMap));
+		Object obj = statisticsAreaService.selectStatisticsArea(statisticsAreaQuery, conditionMap);
+		result.setData(obj);
+		
+		
+		if (null != obj) {
+			List<StatisticsAreaVO> list = (List<StatisticsAreaVO>) obj;
+			Map<String, StatisticsAreaVO> areMap = new HashMap<String, StatisticsAreaVO>();
+			List<StatisticsAreaVO> resultList = new ArrayList<StatisticsAreaVO>();
+
+			for (StatisticsAreaVO vo : list) {
+				String key = "";
+				// 按省份统计
+				if (null == statisticsAreaQuery.getBrandName()) {
+					key = vo.getArea();
+				} else {
+					// 按品牌+省份统计
+					key = vo.getArea() + vo.getBrandName();
+				}
+				
+				if (!areMap.containsKey(key)) {
+
+					areMap.put(key, vo);
+					resultList.add(vo);
+
+				} else {
+					StatisticsAreaVO statisticsAreaVO = areMap.get(key);
+					int deviceNumber = statisticsAreaVO.getDeviceNumber() + vo.getDeviceNumber();
+					statisticsAreaVO.setDeviceNumber(deviceNumber);
+				}
+			}
+			result.setData(resultList);
+		}
+		
 		return result;
 	}
 	

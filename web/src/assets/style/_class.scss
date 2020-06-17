@@ -1,0 +1,128 @@
+.pointer {
+  cursor: pointer;
+}
+
+.hide {
+  display: none !important;
+}
+
+.center {
+  text-align: center;
+}
+
+.fbs-left {
+  float: left;
+}
+
+.fbs-right {
+  display: block;
+  overflow: hidden;
+}
+
+.block {
+  display: block;
+  width: 100%;
+}
+
+.fr {
+  float: right;
+}
+
+.fl {
+  float: left;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.color-white {
+  color: #fff;
+}
+
+.annotation {
+  color: #adadad;
+  font-size: 12px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.clearfix::before,
+.clearfix::after {
+  line-height: 0;
+
+  display: block;
+  visibility: hidden;
+  clear: both;
+
+  height: 0;
+
+  content: '';
+}
+
+.ellipsis {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ellipsis_2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.ellipsis_3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.modal-open {
+  overflow: auto;
+}
+
+// ============== 版心 ================
+.module-core {
+  position: relative;
+  width: 1000px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+/*滚动条样式*/
+.small-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.small-scroll::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 3px;
+  background-color: rgba(144, 147, 153, .3);
+
+  &:hover {
+    background: rgba(144, 147, 153, .5);
+  }
+}
+
+
+// 默认滚动条
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(144, 147, 153, .3);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(144, 147, 153, .5);
+  }
+}
