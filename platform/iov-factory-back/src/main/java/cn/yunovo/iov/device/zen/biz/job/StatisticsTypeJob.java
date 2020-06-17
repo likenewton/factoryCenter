@@ -287,6 +287,7 @@ public class StatisticsTypeJob {
 		StatisticsPasterQuery statisticsPasterQuery = new StatisticsPasterQuery();
 		statisticsPasterQuery.setFactoryName(statisticsTypeVO.getFactoryName());
 		statisticsPasterQuery.setReportTime(reportTimeString);
+		statisticsPasterQuery.setBrandName(statisticsTypeVO.getOrgCode());
 		List<StatisticsPasterVO> plist = (List<StatisticsPasterVO>) statisticsPasterService.selectStatisticsPaster(statisticsPasterQuery, null, false);
 		StatisticsPasterDO statisticsPasterDO = new StatisticsPasterDO();
 		statisticsPasterDO.setBrandName(statisticsTypeVO.getOrgCode());
