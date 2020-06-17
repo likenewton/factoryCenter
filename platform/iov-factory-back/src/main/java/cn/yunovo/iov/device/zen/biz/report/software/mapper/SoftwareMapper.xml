@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.device.zen.biz.report.software.mapper.SoftwareMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.device.zen.biz.report.software.model.SoftwareDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="swCode" column="sw_code" jdbcType="VARCHAR"/>
+			<result property="romVersion" column="rom_version" jdbcType="VARCHAR"/>
+			<result property="projectModel" column="project_model" jdbcType="VARCHAR"/>
+			<result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+			<result property="reporter" column="reporter" jdbcType="VARCHAR"/>
+			<result property="addDatetime" column="add_datetime" jdbcType="TIMESTAMP"/>
+			<result property="updateDatetime" column="update_datetime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,sw_code,rom_version,project_model,org_code,reporter,add_datetime,update_datetime
+	</sql>
+	
+	<select id="getSoftwareById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_software_report
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectSoftware"
+		parameterType="cn.yunovo.iov.device.zen.biz.report.software.model.SoftwareQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_software_report
+		<where>
+			<if test="query.swCode != null and query.swCode != ''">
+			  and sw_code = #{ query.swCode, jdbcType=VARCHAR }
+			</if>
+			<if test="query.romVersion != null and query.romVersion != ''">
+			  and rom_version = #{ query.romVersion, jdbcType=VARCHAR }
+			</if>
+			<if test="query.projectModel != null and query.projectModel != ''">
+			  and project_model = #{ query.projectModel, jdbcType=VARCHAR }
+			</if>
+			<if test="query.orgCode != null and query.orgCode != ''">
+			  and org_code = #{ query.orgCode, jdbcType=VARCHAR }
+			</if>
+			<if test="query.reporter != null and query.reporter != ''">
+			  and reporter = #{ query.reporter, jdbcType=VARCHAR }
+			</if>
+			<if test="query.addDatetime != null and query.addDatetime != ''">
+			  and add_datetime = #{ query.addDatetime, jdbcType=TIMESTAMP }
+			</if>
+			<if test="query.updateDatetime != null and query.updateDatetime != ''">
+			  and update_datetime = #{ query.updateDatetime, jdbcType=TIMESTAMP }
+			</if>
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertSoftware" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.report.software.model.SoftwareDO">
+		insert into t_software_report
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="swCode != null">
+				sw_code,
+			</if>
+			<if test="romVersion != null">
+				rom_version,
+			</if>
+			<if test="projectModel != null">
+				project_model,
+			</if>
+			<if test="orgCode != null">
+				org_code,
+			</if>
+			<if test="reporter != null">
+				reporter,
+			</if>
+			<if test="addDatetime != null">
+				add_datetime,
+			</if>
+			<if test="updateDatetime != null">
+				update_datetime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="swCode != null">
+				#{swCode, jdbcType=VARCHAR},
+			</if>
+			<if test="romVersion != null">
+				#{romVersion, jdbcType=VARCHAR},
+			</if>
+			<if test="projectModel != null">
+				#{projectModel, jdbcType=VARCHAR},
+			</if>
+			<if test="orgCode != null">
+				#{orgCode, jdbcType=VARCHAR},
+			</if>
+			<if test="reporter != null">
+				#{reporter, jdbcType=VARCHAR},
+			</if>
+			<if test="addDatetime != null">
+				#{addDatetime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDatetime != null">
+				#{updateDatetime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateSoftware"
+		parameterType="cn.yunovo.iov.device.zen.biz.report.software.model.SoftwareDO">
+		update t_software_report
+		<set>
+			<if test="swCode != null">
+				sw_code = #{swCode,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="romVersion != null">
+				rom_version = #{romVersion,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="projectModel != null">
+				project_model = #{projectModel,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="orgCode != null">
+				org_code = #{orgCode,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="reporter != null">
+				reporter = #{reporter,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="addDatetime != null">
+				add_datetime = #{addDatetime,
+				jdbcType=TIMESTAMP },
+			</if>
+			<if test="updateDatetime != null">
+				update_datetime = #{updateDatetime,
+				jdbcType=TIMESTAMP },
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteSoftwareById" parameterType="integer">
+		delete from
+		t_software_report
+		where
+		id = #{id}
+	</delete>
+</mapper>

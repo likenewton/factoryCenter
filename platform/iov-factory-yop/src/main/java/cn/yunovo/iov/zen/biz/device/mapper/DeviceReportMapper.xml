@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.yunovo.iov.zen.biz.device.mapper.DeviceReportMapper">
+
+	<select id="listDeviceReport"
+		parameterType="cn.yunovo.iov.zen.biz.device.model.DeviceReportQuery"
+		resultType="cn.yunovo.iov.zen.biz.device.model.DeviceReportDO">
+		select sn,imei,iccid,bt_addr btAddr,wifi_addr wifiAddr,custom_sn
+		customSn,attached attached,reporter reporter,create_datetime
+		createDatetime from t_device_report
+		<where>
+			<if test="sn != null and sn != ''">
+				sn = #{sn}
+			</if>
+			<if test="imei != null and imei != ''">
+				imei = #{imei}
+			</if>
+			<if test="iccid != null and iccid != ''">
+				iccid = #{iccid}
+			</if>
+			<if test="btAddr != null and btAddr != ''">
+				bt_addr = #{btAddr}
+			</if>
+			<if test="wifiAddr != null and wifiAddr != ''">
+				wifi_addr = #{wifiAddr}
+			</if>
+		</where>
+	</select>
+
+	<select id="listDevice"
+		parameterType="cn.yunovo.iov.zen.biz.device.model.DeviceReportQuery"
+		resultType="cn.yunovo.iov.zen.biz.device.model.DeviceReportDO">
+		select sn,imei,iccid,add_datetime createDatetime from t_device_card
+		<where>
+			<if test="sn != null and sn != ''">
+				sn = #{sn}
+			</if>
+			<if test="imei != null and imei != ''">
+				imei = #{imei}
+			</if>
+			<if test="iccid != null and iccid != ''">
+				iccid = #{iccid}
+			</if>
+		</where>
+	</select>
+
+	<update id="saveOrInsertDeviceReport"
+		parameterType="cn.yunovo.iov.zen.biz.device.model.DeviceReportDO">
+		insert into
+		t_device_report(sn,imei,iccid,custom_sn,attached,reporter,create_datetime,bt_addr,wifi_addr)
+		value(#{sn},#{imei},#{iccid},#{customSN},#{attached},#{reporter},#{createDatetime},#{btAddr},#{wifiAddr})
+	</update>
+
+	<update id="saveServiceLog">
+		insert into
+		t_service_log(iccid,opt_type,opt_desc,reporter,add_datetime)
+		value(#{iccid},#{optType},#{desc},#{reporter},now())
+	</update>
+
+	<update id="saveDeviceCard"
+		parameterType="cn.yunovo.iov.zen.biz.device.model.DeviceCard">
+		insert into
+		t_device_card
+		set iccid =
+		#{iccid},imei=#{imei},sn=#{sn},add_datetime=
+		now(),update_datetime=now()
+		ON DUPLICATE KEY UPDATE
+		update_datetime=now()
+		<if test="imei != null and imei != ''">
+			,imei = #{imei}
+		</if>
+		<if test="sn != null and sn != ''">
+			,sn = #{sn}
+		</if>
+	</update>
+
+	<update id="updateDeviceCard"
+		parameterType="cn.yunovo.iov.zen.biz.device.model.DeviceCard">
+		update t_device_card set update_datetime=now()
+		<if test="imei != null and imei != ''">
+			,imei = null
+		</if>
+		<if test="sn != null and sn != ''">
+			,sn = null
+		</if>
+		<where>
+			<if test="imei != null and imei != ''">
+				and imei = #{imei}
+			</if>
+			<if test="sn != null and sn != ''">
+				and sn = #{sn}
+			</if>
+		</where>
+	</update>
+
+	<select id="getDeviceCard"
+		parameterType="cn.yunovo.iov.zen.biz.device.model.DeviceCard"
+		resultType="cn.yunovo.iov.zen.biz.device.model.DeviceCard">
+		select iccid,imei,sn from t_device_card
+		<where>
+			<if test="iccid != null and iccid != ''">
+				and iccid = #{iccid}
+			</if>
+			<if test="imei != null and imei != ''">
+				and imei = #{imei}
+			</if>
+			<if test="sn != null and sn != ''">
+				and sn = #{sn}
+			</if>
+		</where>
+	</select>
+
+	<insert id="saveSNChange">
+		insert into
+		t_sn_rewrite(sn,latest_sn,iccid,create_time)
+		values(#{sn},#{latestSn},#{iccid},now())
+	</insert>
+
+</mapper>

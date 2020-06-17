@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.device.zen.biz.statistics.report.mapper.ScanReportMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.device.zen.biz.statistics.report.model.ScanReportDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="stateDatetime" column="state_datetime" jdbcType="DATE"/>
+			<result property="reportTimes" column="report_times" jdbcType="INTEGER"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,state_datetime,report_times,create_time,update_time
+	</sql>
+	
+	<select id="getScanReportById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_statistics_scanreport
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectScanReport"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.report.model.ScanReportQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_scanreport
+		<where>
+			<if test="query.stateDatetime != null and query.stateDatetime != ''">
+			  and state_datetime = #{ query.stateDatetime, jdbcType=DATE }
+			</if>
+			<if test="query.reportTimes != null">
+			  and report_times = #{ query.reportTimes, jdbcType=INTEGER }
+			</if>
+			<if test="query.dateTime != null and query.dateTime != ''">
+                 <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d') >=  DATE_FORMAT(#{query.dateTime}, '%Y-%m-%d') ]]>
+	        </if>
+	        <if test="query.dateTime != null and query.dateTime != ''">
+	             <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d') <= DATE_FORMAT(#{query.dateTime}, '%Y-%m-%d') ]]>
+	        </if>
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertScanReport" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.report.model.ScanReportDO">
+		insert into t_statistics_scanreport
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="stateDatetime != null">
+				state_datetime,
+			</if>
+			<if test="reportTimes != null">
+				report_times,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="stateDatetime != null">
+				#{stateDatetime, jdbcType=DATE},
+			</if>
+			<if test="reportTimes != null">
+				#{reportTimes, jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateScanReport"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.report.model.ScanReportDO">
+		update t_statistics_scanreport
+		<set>
+			<if test="stateDatetime != null">
+				state_datetime = #{stateDatetime,
+				jdbcType=DATE },
+			</if>
+			<if test="reportTimes != null">
+				report_times = #{reportTimes,
+				jdbcType=INTEGER },
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,
+				jdbcType=TIMESTAMP },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,
+				jdbcType=TIMESTAMP },
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteScanReportById" parameterType="integer">
+		delete from
+		t_statistics_scanreport
+		where
+		id = #{id}
+	</delete>
+</mapper>

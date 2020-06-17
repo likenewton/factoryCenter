@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.yunovo.iov.device</groupId>
+	<version>0.0.1.RELEASE</version>
+	<artifactId>iov-factory-back</artifactId>
+	<name>iov-factory-back</name>
+	<description>Iov App Device Product Factory Tool</description>
+	<packaging>jar</packaging>
+	<properties>
+		<!-- Third Party versions -->
+		<cn.yunovo.iov.boot.version>1.3.15.RELEASE</cn.yunovo.iov.boot.version>
+
+		<!-- Plugin versions -->
+		<maven.version>3.1.1</maven.version>
+		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+
+		<!-- System properties -->
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from Iov Boot -->
+				<groupId>cn.yunovo.iov.boot</groupId>
+				<artifactId>iov-boot-dependencies</artifactId>
+				<version>${cn.yunovo.iov.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.github.jsonzou</groupId>
+			<artifactId>jmockdata</artifactId>
+			<scope>test</scope>
+			<version>4.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.boot</groupId>
+			<artifactId>iov-boot-starter-nacos</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.alibaba.cloud</groupId>
+					<artifactId>
+						spring-cloud-starter-alibaba-nacos-discovery
+					</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.boot</groupId>
+			<artifactId>iov-boot-starter-auditlog</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.boot</groupId>
+			<artifactId>iov-boot-starter-cas</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.framework.commons</groupId>
+			<artifactId>iov-framework-common-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.framework.commons</groupId>
+			<artifactId>iov-framework-common-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.boot</groupId>
+			<artifactId>iov-boot-starter-mybatis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.boot</groupId>
+			<artifactId>iov-boot-starter-log</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cn.yunovo.iov.boot</groupId>
+			<artifactId>iov-boot-starter-swagger</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework</groupId>
+						<artifactId>springloaded</artifactId>
+						<version>1.2.5.RELEASE</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<fork>true</fork>
+					<layout>ZIP</layout>
+					<mainClass>com.github.ore.boot.bootstrap.BootApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

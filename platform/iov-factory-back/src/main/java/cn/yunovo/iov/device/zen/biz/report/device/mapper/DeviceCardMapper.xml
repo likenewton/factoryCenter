@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.device.zen.biz.report.device.mapper.DeviceCardMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.device.zen.biz.report.device.model.DeviceCardDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="iccid" column="iccid" jdbcType="VARCHAR"/>
+			<result property="imei" column="imei" jdbcType="VARCHAR"/>
+			<result property="sn" column="sn" jdbcType="VARCHAR"/>
+			<result property="addDatetime" column="add_datetime" jdbcType="TIMESTAMP"/>
+			<result property="updateDatetime" column="update_datetime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,iccid,imei,sn,add_datetime,update_datetime
+	</sql>
+	
+	<select id="getDeviceCardById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_device_card
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectDeviceCard"
+		parameterType="cn.yunovo.iov.device.zen.biz.report.device.model.DeviceCardQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_device_card
+		<where>
+			<if test="query.iccid != null and query.iccid != ''">
+			  and iccid = #{ query.iccid, jdbcType=VARCHAR }
+			</if>
+			<if test="query.imei != null and query.imei != ''">
+			  and imei = #{ query.imei, jdbcType=VARCHAR }
+			</if>
+			<if test="query.sn != null and query.sn != ''">
+			  and sn = #{ query.sn, jdbcType=VARCHAR }
+			</if>
+			<if test="query.addDatetime != null and query.addDatetime != ''">
+			  and add_datetime = #{ query.addDatetime, jdbcType=TIMESTAMP }
+			</if>
+			<if test="query.updateDatetime != null and query.updateDatetime != ''">
+			  and update_datetime = #{ query.updateDatetime, jdbcType=TIMESTAMP }
+			</if>
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertDeviceCard" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.report.device.model.DeviceCardDO">
+		insert into t_device_card
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="iccid != null">
+				iccid,
+			</if>
+			<if test="imei != null">
+				imei,
+			</if>
+			<if test="sn != null">
+				sn,
+			</if>
+			<if test="addDatetime != null">
+				add_datetime,
+			</if>
+			<if test="updateDatetime != null">
+				update_datetime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="iccid != null">
+				#{iccid, jdbcType=VARCHAR},
+			</if>
+			<if test="imei != null">
+				#{imei, jdbcType=VARCHAR},
+			</if>
+			<if test="sn != null">
+				#{sn, jdbcType=VARCHAR},
+			</if>
+			<if test="addDatetime != null">
+				#{addDatetime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDatetime != null">
+				#{updateDatetime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateDeviceCard"
+		parameterType="cn.yunovo.iov.device.zen.biz.report.device.model.DeviceCardDO">
+		update t_device_card
+		<set>
+			<if test="iccid != null">
+				iccid = #{iccid,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="imei != null">
+				imei = #{imei,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="sn != null">
+				sn = #{sn,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="addDatetime != null">
+				add_datetime = #{addDatetime,
+				jdbcType=TIMESTAMP },
+			</if>
+			<if test="updateDatetime != null">
+				update_datetime = #{updateDatetime,
+				jdbcType=TIMESTAMP },
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteDeviceCardById" parameterType="integer">
+		delete from
+		t_device_card
+		where
+		id = #{id}
+	</delete>
+</mapper>

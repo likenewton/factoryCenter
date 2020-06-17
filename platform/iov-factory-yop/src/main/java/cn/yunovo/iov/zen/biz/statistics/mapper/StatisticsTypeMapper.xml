@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.zen.biz.statistics.mapper.StatisticsTypeMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.zen.biz.statistics.model.StatisticsTypeDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="statisticsType" column="statistics_type" jdbcType="TINYINT"/>
+			<result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+			<result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,statistics_type,factory_name,org_code,create_time
+	</sql>
+	
+	<select id="getStatisticsTypeById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_statistics_type
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectStatisticsType"
+		parameterType="cn.yunovo.iov.zen.biz.statistics.model.StatisticsTypeQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_type
+		<where>
+			<if test="query.statisticsType != null">
+			  and statistics_type = #{ query.statisticsType, jdbcType=TINYINT }
+			</if>
+			<if test="query.factoryName != null and query.factoryName != ''">
+			  and factory_name = #{ query.factoryName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.orgCode != null and query.orgCode != ''">
+			  and org_code = #{ query.orgCode, jdbcType=VARCHAR }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   DATE_FORMAT( create_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertStatisticsType" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.zen.biz.statistics.model.StatisticsTypeDO">
+		insert into t_statistics_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="statisticsType != null">
+				statistics_type,
+			</if>
+			<if test="factoryName != null">
+				factory_name,
+			</if>
+			<if test="orgCode != null">
+				org_code,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="statisticsType != null">
+				#{statisticsType, jdbcType=TINYINT},
+			</if>
+			<if test="factoryName != null">
+				#{factoryName, jdbcType=VARCHAR},
+			</if>
+			<if test="orgCode != null">
+				#{orgCode, jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateStatisticsType"
+		parameterType="cn.yunovo.iov.zen.biz.statistics.model.StatisticsTypeDO">
+		update t_statistics_type set 
+				     statistics_type = #{statisticsType,jdbcType=TINYINT }
+				     ,factory_name = #{factoryName,jdbcType=VARCHAR }
+				     ,org_code = #{orgCode,jdbcType=VARCHAR }
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteStatisticsTypeById" parameterType="integer">
+		delete from
+		t_statistics_type
+		where
+		id = #{id}
+	</delete>
+</mapper>

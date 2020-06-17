@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.device.zen.biz.shipping.channel.mapper.ChannelMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.device.zen.biz.shipping.channel.model.ChannelDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="parentId" column="parent_id" jdbcType="INTEGER"/>
+			<result property="channelName" column="channel_name" jdbcType="VARCHAR"/>
+			<result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
+			<result property="area" column="area" jdbcType="VARCHAR"/>
+			<result property="areaIds" column="area_ids" jdbcType="VARCHAR"/>
+			<result property="paths" column="paths" jdbcType="VARCHAR"/>
+			<result property="level" column="level" jdbcType="TINYINT"/>
+			<result property="contacts" column="contacts" jdbcType="VARCHAR"/>
+			<result property="phone" column="phone" jdbcType="VARCHAR"/>
+			<result property="address" column="address" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,parent_id,channel_name,brand_name,area,address,area_ids,paths,level,contacts,phone,create_time,update_time
+	</sql>
+	
+	<select id="getChannelById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_channel_info
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectChannel"
+		parameterType="cn.yunovo.iov.device.zen.biz.shipping.channel.model.ChannelQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_channel_info
+		<where>
+			<if test="query.parentId != null">
+			  and parent_id = #{ query.parentId, jdbcType=INTEGER }
+			</if>
+			<if test="query.channelName != null and query.channelName != ''">
+			  and channel_name like '%${ query.channelName}%'
+			</if>
+			<if test="query.brandName != null and query.brandName != ''">
+			  and brand_name = #{ query.brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.area != null and query.area != ''">
+			  and area like '%${ query.area}%'
+			</if>
+			<if test="query.areaIds != null and query.areaIds != ''">
+			  and area_ids = #{ query.areaIds, jdbcType=VARCHAR }
+			</if>
+			<if test="query.paths != null and query.paths != ''">
+			  and paths = #{ query.paths, jdbcType=VARCHAR }
+			</if>
+			<if test="query.level != null">
+			  and level = #{ query.level, jdbcType=TINYINT }
+			</if>
+			<if test="query.contacts != null and query.contacts != ''">
+			  and contacts = #{ query.contacts, jdbcType=VARCHAR }
+			</if>
+			<if test="query.phone != null and query.phone != ''">
+			  and phone like '%${ query.phone}%'
+			</if>
+			<if test="query.address != null and query.address != ''">
+			  and address = #{ query.address, jdbcType=VARCHAR }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   DATE_FORMAT( create_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertChannel" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.shipping.channel.model.ChannelDO">
+		insert into t_channel_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="channelName != null">
+				channel_name,
+			</if>
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="area != null">
+				area,
+			</if>
+			<if test="areaIds != null">
+				area_ids,
+			</if>
+			<if test="paths != null">
+				paths,
+			</if>
+			<if test="level != null">
+				level,
+			</if>
+			<if test="contacts != null">
+				contacts,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">
+				#{parentId, jdbcType=INTEGER},
+			</if>
+			<if test="channelName != null">
+				#{channelName, jdbcType=VARCHAR},
+			</if>
+			<if test="brandName != null">
+				#{brandName, jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area, jdbcType=VARCHAR},
+			</if>
+			<if test="areaIds != null">
+				#{areaIds, jdbcType=VARCHAR},
+			</if>
+			<if test="paths != null">
+				#{paths, jdbcType=VARCHAR},
+			</if>
+			<if test="level != null">
+				#{level, jdbcType=TINYINT},
+			</if>
+			<if test="contacts != null">
+				#{contacts, jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone, jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address, jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateChannel"
+		parameterType="cn.yunovo.iov.device.zen.biz.shipping.channel.model.ChannelDO">
+		update t_channel_info 
+		<set>  
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER },
+			</if>
+			<if test="channelName != null">
+				channel_name = #{channelName,jdbcType=VARCHAR },
+			</if>
+			<if test="brandName != null">
+				brand_name = #{brandName,jdbcType=VARCHAR },
+			</if>
+			<if test="area != null">
+				area = #{area,jdbcType=VARCHAR },
+			</if>
+			<if test="areaIds != null">
+				area_ids = #{areaIds,jdbcType=VARCHAR },
+			</if>
+			<if test="paths != null">
+				paths = #{paths,jdbcType=VARCHAR },
+			</if>
+			<if test="level != null">
+				level = #{level,jdbcType=TINYINT },
+			</if>
+			<if test="contacts != null">
+				contacts = #{contacts,jdbcType=VARCHAR },
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR },
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteChannelById" parameterType="integer">
+		delete from
+		t_channel_info
+		where
+		id = #{id}
+	</delete>
+</mapper>

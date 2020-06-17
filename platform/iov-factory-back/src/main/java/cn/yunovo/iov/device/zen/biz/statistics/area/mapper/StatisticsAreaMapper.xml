@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.device.zen.biz.statistics.area.mapper.StatisticsAreaMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.device.zen.biz.statistics.area.model.StatisticsAreaDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="deviceNumber" column="device_number" jdbcType="INTEGER"/>
+			<result property="channelId" column="channel_id" jdbcType="INTEGER"/>
+			<result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+			<result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
+			<result property="area" column="area" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,device_number,channel_id,factory_name,brand_name,area,create_time,update_time
+	</sql>
+	
+	<sql id="Base_Where">
+		<where>
+			<if test="query.deviceNumber != null">
+			  and device_number = #{ query.deviceNumber, jdbcType=INTEGER }
+			</if>
+			<if test="query.channelId != null">
+			  and channel_id = #{ query.channelId, jdbcType=INTEGER }
+			</if>
+			<if test="query.factoryName != null and query.factoryName != ''">
+			  and factory_name = #{ query.factoryName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.brandName != null and query.brandName != ''">
+			  and brand_name = #{ query.brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.area != null and query.area != ''">
+			  and area = #{ query.area, jdbcType=VARCHAR }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+	</sql>
+	
+	<select id="getStatisticsAreaById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_statistics_area
+		where
+			id = #{id}
+	</select>
+	
+	<select id="selectStatisticsArea"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.area.model.StatisticsAreaQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_area
+		    <include refid="Base_Where" />
+			<if test="condition != null">
+				<if test="condition.order.asc != null and condition.order.desc == null">
+					  order by ${condition.order.asc } asc
+				</if>
+				<if test="condition.order.desc != null and condition.order.asc == null">
+					  order by ${condition.order.desc } desc
+				</if>
+				<if test="condition.order.asc != null and condition.order.desc != null">
+					  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+				</if>
+				<if test="condition.limit.limit != null">
+					  limit ${condition.limit.limit }
+				</if>
+			</if>
+	</select>
+	
+	<select id="queryStatisticsArea"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.area.model.StatisticsAreaQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_area
+		    <include refid="Base_Where" />
+	</select>
+		    
+	<insert id="insertStatisticsArea" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.area.model.StatisticsAreaDO">
+		insert into t_statistics_area
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="deviceNumber != null">
+				device_number,
+			</if>
+			<if test="channelId != null">
+				channel_id,
+			</if>
+			<if test="factoryName != null">
+				factory_name,
+			</if>
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="area != null">
+				area,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="deviceNumber != null">
+				#{deviceNumber, jdbcType=INTEGER},
+			</if>
+			<if test="channelId != null">
+				#{channelId, jdbcType=INTEGER},
+			</if>
+			<if test="factoryName != null">
+				#{factoryName, jdbcType=VARCHAR},
+			</if>
+			<if test="brandName != null">
+				#{brandName, jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area, jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateStatisticsArea"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.area.model.StatisticsAreaDO">
+		update t_statistics_area 
+		<set>  
+			<if test="deviceNumber != null">
+				device_number = #{deviceNumber,jdbcType=INTEGER },
+			</if>
+			<if test="channelId != null">
+				channel_id = #{channelId,jdbcType=INTEGER },
+			</if>
+			<if test="factoryName != null">
+				factory_name = #{factoryName,jdbcType=VARCHAR },
+			</if>
+			<if test="brandName != null">
+				brand_name = #{brandName,jdbcType=VARCHAR },
+			</if>
+			<if test="area != null">
+				area = #{area,jdbcType=VARCHAR },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteStatisticsAreaById" parameterType="integer">
+		delete from
+		t_statistics_area
+		where
+			id = #{id}
+	</delete>
+	
+	<delete id="deleteStatisticsArea" parameterType="cn.yunovo.iov.device.zen.biz.statistics.area.model.StatisticsAreaDO">
+	    <if test="item != null">
+		delete from
+		t_statistics_area
+		<where>
+			<if test="item.deviceNumber != null">
+				and device_number = #{item.deviceNumber,jdbcType=INTEGER }
+			</if>
+			<if test="item.channelId != null">
+				and channel_id = #{item.channelId,jdbcType=INTEGER }
+			</if>
+			<if test="item.factoryName != null">
+				and factory_name = #{item.factoryName,jdbcType=VARCHAR }
+			</if>
+			<if test="item.brandName != null">
+				and brand_name = #{item.brandName,jdbcType=VARCHAR }
+			</if>
+			<if test="item.area != null">
+				and area = #{item.area,jdbcType=VARCHAR }
+			</if>
+			<if test="item.createTime != null">
+				and create_time = #{item.createTime,jdbcType=TIMESTAMP }
+			</if>
+			<if test="item.updateTime != null">
+				and update_time = #{item.updateTime,jdbcType=TIMESTAMP }
+			</if>
+		</where>
+		</if>
+	</delete>
+	
+</mapper>

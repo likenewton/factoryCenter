@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.device.zen.biz.other.sn.mapper.SnRewriteMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.device.zen.biz.other.sn.model.SnRewriteDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="sn" column="sn" jdbcType="VARCHAR"/>
+			<result property="latestSn" column="latest_sn" jdbcType="VARCHAR"/>
+			<result property="iccid" column="iccid" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,sn,latest_sn,iccid,create_time
+	</sql>
+	
+	<select id="getSnRewriteById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_sn_rewrite
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectSnRewrite"
+		parameterType="cn.yunovo.iov.device.zen.biz.other.sn.model.SnRewriteQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_sn_rewrite
+		<where>
+			<if test="query.sn != null and query.sn != ''">
+			  and sn = #{ query.sn, jdbcType=VARCHAR }
+			</if>
+			<if test="query.latestSn != null and query.latestSn != ''">
+			  and latest_sn = #{ query.latestSn, jdbcType=VARCHAR }
+			</if>
+			<if test="query.iccid != null and query.iccid != ''">
+			  and iccid = #{ query.iccid, jdbcType=VARCHAR }
+			</if>
+			<if test="query.dateTime != null and query.dateTime != ''">
+                 <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d') >=  DATE_FORMAT(#{query.dateTime}, '%Y-%m-%d') ]]>
+	        </if>
+	        <if test="query.dateTime != null and query.dateTime != ''">
+	             <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d') <= DATE_FORMAT(#{query.dateTime}, '%Y-%m-%d') ]]>
+	        </if>
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertSnRewrite" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.other.sn.model.SnRewriteDO">
+		insert into t_sn_rewrite
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sn != null">
+				sn,
+			</if>
+			<if test="latestSn != null">
+				latest_sn,
+			</if>
+			<if test="iccid != null">
+				iccid,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="sn != null">
+				#{sn, jdbcType=VARCHAR},
+			</if>
+			<if test="latestSn != null">
+				#{latestSn, jdbcType=VARCHAR},
+			</if>
+			<if test="iccid != null">
+				#{iccid, jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateSnRewrite"
+		parameterType="cn.yunovo.iov.device.zen.biz.other.sn.model.SnRewriteDO">
+		update t_sn_rewrite
+		<set>
+			<if test="sn != null">
+				sn = #{sn,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="latestSn != null">
+				latest_sn = #{latestSn,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="iccid != null">
+				iccid = #{iccid,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,
+				jdbcType=TIMESTAMP },
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteSnRewriteById" parameterType="integer">
+		delete from
+		t_sn_rewrite
+		where
+		id = #{id}
+	</delete>
+</mapper>

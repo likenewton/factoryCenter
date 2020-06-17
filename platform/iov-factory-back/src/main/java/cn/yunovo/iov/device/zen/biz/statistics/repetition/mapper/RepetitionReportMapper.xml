@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.yunovo.iov.device.zen.biz.statistics.repetition.mapper.RepetitionReportMapper">
+
+	<resultMap id="BaseResultMap"
+		type="cn.yunovo.iov.device.zen.biz.statistics.repetition.model.RepetitionReportDO">
+		<id property="id" column="id" jdbcType="INTEGER" />
+		<result property="fieldName" column="field_name"
+			jdbcType="VARCHAR" />
+		<result property="fieldValue" column="field_value"
+			jdbcType="VARCHAR" />
+		<result property="reportTimes" column="report_times"
+			jdbcType="INTEGER" />
+		<result property="lastDatetime" column="last_datetime"
+			jdbcType="TIMESTAMP" />
+		<result property="createTime" column="create_time"
+			jdbcType="TIMESTAMP" />
+		<result property="updateTime" column="update_time"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,field_name,field_value,report_times,last_datetime,create_time,update_time
+	</sql>
+
+	<select id="getRepetitionReportById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_statistics_repetitionreport
+		where
+		id = #{id}
+	</select>
+
+	<select id="selectRepetitionReport"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.repetition.model.RepetitionReportQuery"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_statistics_repetitionreport
+		<where>
+			<if test="query.fieldName != null and query.fieldName != ''">
+				and field_name = #{ query.fieldName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.fieldValue != null and query.fieldValue != ''">
+				and field_value = #{ query.fieldValue, jdbcType=VARCHAR }
+			</if>
+			<if test="query.reportTimes != null">
+				and report_times = #{ query.reportTimes, jdbcType=INTEGER
+				}
+			</if>
+			<if test="query.lastDatetime != null and query.lastDatetime != ''">
+				and last_datetime = #{ query.lastDatetime,
+				jdbcType=TIMESTAMP }
+			</if>
+			<if test="query.dateTime != null and query.dateTime != ''">
+                 <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d') >=  DATE_FORMAT(#{query.dateTime}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="query.dateTime != null and query.dateTime != ''">
+	             <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d') <= DATE_FORMAT(#{query.dateTime}, '%Y-%m-%d') ]]>
+			</if>
+		</where>
+		<if test="condition != null">
+			<if
+				test="condition.order.asc != null and condition.order.desc == null">
+				order by ${condition.order.asc } asc
+			</if>
+			<if
+				test="condition.order.desc != null and condition.order.asc == null">
+				order by ${condition.order.desc } desc
+			</if>
+			<if
+				test="condition.order.asc != null and condition.order.desc != null">
+				order by ${condition.order.asc } asc, ${condition.order.desc }
+				desc
+			</if>
+			<if test="condition.limit.limit != null">
+				limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertRepetitionReport" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.repetition.model.RepetitionReportDO">
+		insert into t_statistics_repetitionreport
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="fieldName != null">
+				field_name,
+			</if>
+			<if test="fieldValue != null">
+				field_value,
+			</if>
+			<if test="reportTimes != null">
+				report_times,
+			</if>
+			<if test="lastDatetime != null">
+				last_datetime,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="fieldName != null">
+				#{fieldName, jdbcType=VARCHAR},
+			</if>
+			<if test="fieldValue != null">
+				#{fieldValue, jdbcType=VARCHAR},
+			</if>
+			<if test="reportTimes != null">
+				#{reportTimes, jdbcType=INTEGER},
+			</if>
+			<if test="lastDatetime != null">
+				#{lastDatetime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateRepetitionReport"
+		parameterType="cn.yunovo.iov.device.zen.biz.statistics.repetition.model.RepetitionReportDO">
+		update t_statistics_repetitionreport
+		<set>
+			<if test="fieldName != null">
+				field_name = #{fieldName,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="fieldValue != null">
+				field_value = #{fieldValue,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="reportTimes != null">
+				report_times = #{reportTimes,
+				jdbcType=INTEGER },
+			</if>
+			<if test="lastDatetime != null">
+				last_datetime = #{lastDatetime,
+				jdbcType=TIMESTAMP },
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,
+				jdbcType=TIMESTAMP },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,
+				jdbcType=TIMESTAMP },
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteRepetitionReportById" parameterType="integer">
+		delete
+		from
+		t_statistics_repetitionreport
+		where
+		id = #{id}
+	</delete>
+
+	<update id="stateRepetitionReport" parameterType="list">
+		<foreach collection="list" item="item" index="index" open=""
+			close="" separator=";">
+			INSERT INTO t_statistics_repetitionreport
+			SET
+			field_name =#{item.fieldName},
+			field_value =#{item.fieldValue},
+			report_times =#{item.reportTimes},
+			last_datetime
+			=#{item.lastDatetime},
+			create_time =now(),
+			update_time =now()
+			ON
+			DUPLICATE KEY UPDATE
+			report_times =#{item.reportTimes},
+			last_datetime
+			=#{item.lastDatetime},
+			update_time =now()
+		</foreach>
+	</update>
+</mapper>
