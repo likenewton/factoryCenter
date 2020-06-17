@@ -50,18 +50,23 @@ public class DacHelper {
 			}
 
 			if (1 == user.getUserType()) {
+				// 机构用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_BRAND).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (2 == user.getUserType()) {
+				//工厂用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FACTORY).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (3 == user.getUserType()) {
+				//渠道用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_CHANNEL).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (4 == user.getUserType()) {
+				//物流和工厂一样
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FACTORY).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else {
+				//平台用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_RESOURCE).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			}
