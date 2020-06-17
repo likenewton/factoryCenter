@@ -1,0 +1,114 @@
+{
+  "id": "1850997",
+  "name": "factory",
+  "font_family": "iconfont",
+  "css_prefix_text": "iconfont-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2104684",
+      "name": "SMT贴片",
+      "font_class": "huaqiangxincheng-icon-",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "14821020",
+      "name": "组装服务",
+      "font_class": "zuzhuangfuwu",
+      "unicode": "ea3d",
+      "unicode_decimal": 59965
+    },
+    {
+      "icon_id": "9680564",
+      "name": "发货",
+      "font_class": "fahuo",
+      "unicode": "e681",
+      "unicode_decimal": 59009
+    },
+    {
+      "icon_id": "10726176",
+      "name": "生产",
+      "font_class": "shengchan",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "5524673",
+      "name": "404",
+      "font_class": "icon-test",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7339804",
+      "name": "统计",
+      "font_class": "tongji",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "8314474",
+      "name": "SIM 流量卡",
+      "font_class": "wulianwang-",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "677608",
+      "name": "用户",
+      "font_class": "yonghu1",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "693703",
+      "name": "退出",
+      "font_class": "tuichu1",
+      "unicode": "e682",
+      "unicode_decimal": 59010
+    },
+    {
+      "icon_id": "797165",
+      "name": "系统设置",
+      "font_class": "xitongshezhi",
+      "unicode": "e680",
+      "unicode_decimal": 59008
+    },
+    {
+      "icon_id": "1029145",
+      "name": "文件夹",
+      "font_class": "wenjianjia",
+      "unicode": "e768",
+      "unicode_decimal": 59240
+    },
+    {
+      "icon_id": "1486835",
+      "name": "首页",
+      "font_class": "shouye",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "4320334",
+      "name": "菜单",
+      "font_class": "caidan1",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "4935798",
+      "name": "icon-退出",
+      "font_class": "icon-tuichu",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "5114095",
+      "name": "消息推送",
+      "font_class": "huaban",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    }
+  ]
+}

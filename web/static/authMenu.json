@@ -1,0 +1,66 @@
+{
+  "data": [
+  {
+    "rescCode": "",
+    "resName": "推送管理",
+    "resUrl": "manage",
+    "level": 2,
+    "seqNum": 1,
+    "iconUrl": "",
+    "childResources": [
+    {
+      "rescCode": "",
+      "resName": "推送列表",
+      "resUrl": "pushList",
+      "level": 3,
+      "seqNum": 1,
+      "iconUrl": ""
+    },
+    {
+      "rescCode": "",
+      "resName": "推送统计",
+      "resUrl": "statistics",
+      "level": 3,
+      "seqNum": 2,
+      "iconUrl": ""
+    },
+    {
+      "rescCode": "",
+      "resName": "任务管理",
+      "resUrl": "task",
+      "level": 3,
+      "seqNum": 3,
+      "iconUrl": ""
+    }],
+    "checkedFlag": 0,
+    "childNum": null
+  },
+  {
+    "rescCode": "",
+    "resName": "推送通道",
+    "resUrl": "channel",
+    "level": 2,
+    "seqNum": 2,
+    "iconUrl": "",
+    "childResources": [
+    {
+      "rescCode": "",
+      "resName": "通道列表",
+      "resUrl": "channelList",
+      "level": 3,
+      "seqNum": 1,
+      "iconUrl": ""
+    }, {
+      "rescCode": "",
+      "resName": "推送模板",
+      "resUrl": "template",
+      "level": 3,
+      "seqNum": 2,
+      "iconUrl": ""
+    }],
+    "checkedFlag": 0,
+    "childNum": null
+  }],
+  "status": 0,
+  "msg": "success"
+}
