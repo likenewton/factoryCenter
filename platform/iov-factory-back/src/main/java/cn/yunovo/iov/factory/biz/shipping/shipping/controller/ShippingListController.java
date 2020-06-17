@@ -156,9 +156,9 @@ class ShippingListController {
 			statisticsShippingService.insertStatisticsShipping(statisticsShippingDO);
 			
 			// 插入数据权限
-			DacHelper.insertChannelResource("t_statistics_shipping", statisticsShippingDO.getId(),channelDTO.getPhone(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-			DacHelper.insertBrandResource("t_statistics_shipping", statisticsShippingDO.getId(), statisticsShippingDO.getBrandName(), loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-			//DacHelper.insertFactoryResource("t_statistics_shipping", statisticsShippingDO.getId(), statisticsShippingDO.getFactoryName(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
+			DacHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(),channelDTO.getPhone(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
+			DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), statisticsShippingDO.getBrandName(), loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
+			//DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), statisticsShippingDO.getFactoryName(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
 
 		}
 
@@ -382,7 +382,7 @@ class ShippingListController {
 		// 插入数据权限
 		DacHelper.insertChannelResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(),channelDTO.getPhone(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
 		DacHelper.insertBrandResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), shippingListDO.getBrandName(), loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-		//DacHelper.insertFactoryResource("t_shipping_list", shippingListDO.getId(), shippingListDO.getFactoryName(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
+		//DacHelper.insertFactoryResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), shippingListDO.getFactoryName(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
 
 		log.info("insertShippingList ShippingListController insert result[{}]", shippingListVO);
 		return result;

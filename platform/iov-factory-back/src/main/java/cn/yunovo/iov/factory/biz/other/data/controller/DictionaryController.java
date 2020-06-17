@@ -27,6 +27,7 @@ import cn.yunovo.iov.factory.biz.other.data.model.DictionaryDTO;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryVO;
 import cn.yunovo.iov.factory.biz.other.data.service.DictionaryService;
+import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ExtensionProperty;
@@ -47,6 +48,9 @@ import lombok.extern.slf4j.Slf4j;
 @Api(value = "[]相关 api")
 class DictionaryController {
 
+	@Autowired
+	private LoginInfoUtil loginInfoUtil;
+	
 	@Autowired
 	private DictionaryService dictionaryService;
 
@@ -69,6 +73,11 @@ class DictionaryController {
 		conditionMap.put(Condition.OFFSET, offset);
 		conditionMap.put(Condition.GROUP, group);
 		result.setData(dictionaryService.selectDictionary(dictionaryQuery, conditionMap));
+		
+		// 如何是工厂账号登录，只能看到自己的工厂
+		if(2 == loginInfoUtil.getLoginBaseInfo().getUserType()) {
+			
+		}
 		return result;
 	}
 	
