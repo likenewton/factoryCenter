@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.shipping.shipping.mapper.ShippingListMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="channelId" column="channel_id" jdbcType="INTEGER"/>
+			<result property="area" column="area" jdbcType="VARCHAR"/>
+			<result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
+			<result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+			<result property="yunovoCode" column="yunovo_code" jdbcType="VARCHAR"/>
+			<result property="deviceNumber" column="device_number" jdbcType="INTEGER"/>
+			<result property="modelNumber" column="model_number" jdbcType="VARCHAR"/>
+			<result property="workOrderno" column="work_orderno" jdbcType="VARCHAR"/>
+			<result property="remark" column="remark" jdbcType="VARCHAR"/>
+			<result property="operator" column="operator" jdbcType="VARCHAR"/>
+			<result property="importTime" column="import_time" jdbcType="TIMESTAMP"/>
+			<result property="productDate" column="product_date" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,channel_id,area,brand_name,factory_name,yunovo_code,device_number,model_number,work_orderno,remark,operator,import_time,product_date,create_time,update_time
+	</sql>
+	
+	<select id="getShippingListById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_shipping_list
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectShippingList"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_shipping_list
+		<where>
+			<if test="query.channelId != null">
+			  and channel_id = #{ query.channelId, jdbcType=INTEGER }
+			</if>
+			<if test="query.area != null and query.area != ''">
+			  and area = #{ query.area, jdbcType=VARCHAR }
+			</if>
+			<if test="query.brandName != null and query.brandName != ''">
+			  and brand_name = #{ query.brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.factoryName != null and query.factoryName != ''">
+			  and factory_name = #{ query.factoryName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.yunovoCode != null and query.yunovoCode != ''">
+			  and yunovo_code like '%${query.yunovoCode}%'
+			</if>
+			<if test="query.deviceNumber != null">
+			  and device_number = #{ query.deviceNumber, jdbcType=INTEGER }
+			</if>
+			<if test="query.modelNumber != null and query.modelNumber != ''">
+			  and model_number = #{ query.modelNumber, jdbcType=VARCHAR }
+			</if>
+			<if test="query.workOrderno != null and query.workOrderno != ''">
+			  and work_orderno = #{ query.workOrderno, jdbcType=VARCHAR }
+			</if>
+			<if test="query.remark != null and query.remark != ''">
+			  and remark = #{ query.remark, jdbcType=VARCHAR }
+			</if>
+			<if test="query.operator != null and query.operator != ''">
+			  and operator = #{ query.operator, jdbcType=VARCHAR }
+			</if>
+			<if test="query.importTime != null and query.importTime != ''">
+			  and import_time = #{ query.importTime, jdbcType=TIMESTAMP }
+			</if>
+			<if test="query.productDate != null and query.productDate != ''">
+			  and product_date = #{ query.productDate, jdbcType=DATE }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( import_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( import_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertShippingList" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListDO">
+		insert into t_shipping_list
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="channelId != null">
+				channel_id,
+			</if>
+			<if test="area != null">
+				area,
+			</if>
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="factoryName != null">
+				factory_name,
+			</if>
+			<if test="yunovoCode != null">
+				yunovo_code,
+			</if>
+			<if test="deviceNumber != null">
+				device_number,
+			</if>
+			<if test="modelNumber != null">
+				model_number,
+			</if>
+			<if test="workOrderno != null">
+				work_orderno,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="operator != null">
+				operator,
+			</if>
+			<if test="importTime != null">
+				import_time,
+			</if>
+			<if test="productDate != null">
+				product_date,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="channelId != null">
+				#{channelId, jdbcType=INTEGER},
+			</if>
+			<if test="area != null">
+				#{area, jdbcType=VARCHAR},
+			</if>
+			<if test="brandName != null">
+				#{brandName, jdbcType=VARCHAR},
+			</if>
+			<if test="factoryName != null">
+				#{factoryName, jdbcType=VARCHAR},
+			</if>
+			<if test="yunovoCode != null">
+				#{yunovoCode, jdbcType=VARCHAR},
+			</if>
+			<if test="deviceNumber != null">
+				#{deviceNumber, jdbcType=INTEGER},
+			</if>
+			<if test="modelNumber != null">
+				#{modelNumber, jdbcType=VARCHAR},
+			</if>
+			<if test="workOrderno != null">
+				#{workOrderno, jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark, jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null">
+				#{operator, jdbcType=VARCHAR},
+			</if>
+			<if test="importTime != null">
+				#{importTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="productDate != null">
+				#{productDate, jdbcType=DATE},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateShippingList"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListDO">
+		update t_shipping_list 
+		<set>  
+			<if test="channelId != null">
+				channel_id = #{channelId,jdbcType=INTEGER },
+			</if>
+			<if test="area != null">
+				area = #{area,jdbcType=VARCHAR },
+			</if>
+			<if test="brandName != null">
+				brand_name = #{brandName,jdbcType=VARCHAR },
+			</if>
+			<if test="factoryName != null">
+				factory_name = #{factoryName,jdbcType=VARCHAR },
+			</if>
+			<if test="yunovoCode != null">
+				yunovo_code = #{yunovoCode,jdbcType=VARCHAR },
+			</if>
+			<if test="deviceNumber != null">
+				device_number = #{deviceNumber,jdbcType=INTEGER },
+			</if>
+			<if test="modelNumber != null">
+				model_number = #{modelNumber,jdbcType=VARCHAR },
+			</if>
+			<if test="workOrderno != null">
+				work_orderno = #{workOrderno,jdbcType=VARCHAR },
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR },
+			</if>
+			<if test="operator != null">
+				operator = #{operator,jdbcType=VARCHAR },
+			</if>
+			<if test="importTime != null">
+				import_time = #{importTime,jdbcType=TIMESTAMP },
+			</if>
+			<if test="productDate != null">
+				product_date = #{productDate,jdbcType=DATE },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteShippingListById" parameterType="integer">
+		delete from
+		t_shipping_list
+		where
+		id = #{id}
+	</delete>
+	
+	<select id="statisticsCurrentDay"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListQuery"
+		resultType="int">
+		select sum(device_number) from t_shipping_list 
+		<where>
+			<if test="importTime != null and importTime != ''">
+			  DATE_FORMAT( import_time, '%Y-%m-%d' ) = DATE_FORMAT( #{importTime}, '%Y-%m-%d' )
+			</if>
+			<if test="channelId != null">
+			  and channel_id = #{ channelId, jdbcType=INTEGER }
+			</if>
+			<if test="brandName != null and brandName != ''">
+			  and brand_name = #{ brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="factoryName != null and factoryName != ''">
+			  and factory_name = #{ factoryName, jdbcType=VARCHAR }
+			</if>
+			<if test="area != null and area != ''">
+			  and area like '${area}%'
+			</if>
+		</where>
+		
+	</select>
+</mapper>

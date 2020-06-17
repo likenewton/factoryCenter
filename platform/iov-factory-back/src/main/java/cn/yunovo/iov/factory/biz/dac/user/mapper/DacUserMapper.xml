@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.dac.user.mapper.DacUserMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.dac.user.model.DacUserDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="userId" column="user_id" jdbcType="VARCHAR"/>
+			<result property="userMapper" column="user_mapper" jdbcType="VARCHAR"/>
+			<result property="userType" column="user_type" jdbcType="TINYINT"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,user_id,user_mapper,user_type
+	</sql>
+	
+	<sql id="Base_Where">
+		<where>
+			<if test="query.userId != null and query.userId != ''">
+			  and user_id = #{ query.userId, jdbcType=VARCHAR }
+			</if>
+			<if test="query.userMapper != null and query.userMapper != ''">
+			  and user_mapper = #{ query.userMapper, jdbcType=VARCHAR }
+			</if>
+			<if test="query.userType != null">
+			  and user_type = #{ query.userType, jdbcType=TINYINT }
+			</if>
+		</where>
+	</sql>
+	
+	<select id="getDacUserById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_dac_usermapper
+		where
+			id = #{id}
+	</select>
+	
+	<select id="selectDacUser"
+		parameterType="cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_dac_usermapper
+		    <include refid="Base_Where" />
+			<if test="condition != null">
+				<if test="condition.order.asc != null and condition.order.desc == null">
+					  order by ${condition.order.asc } asc
+				</if>
+				<if test="condition.order.desc != null and condition.order.asc == null">
+					  order by ${condition.order.desc } desc
+				</if>
+				<if test="condition.order.asc != null and condition.order.desc != null">
+					  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+				</if>
+				<if test="condition.limit.limit != null">
+					  limit ${condition.limit.limit }
+				</if>
+			</if>
+	</select>
+	
+	<select id="queryDacUser"
+		parameterType="cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_dac_usermapper
+		    <include refid="Base_Where" />
+	</select>
+		    
+	<insert id="insertDacUser" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.dac.user.model.DacUserDO">
+		insert into t_dac_usermapper
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userMapper != null">
+				user_mapper,
+			</if>
+			<if test="userType != null">
+				user_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId, jdbcType=VARCHAR},
+			</if>
+			<if test="userMapper != null">
+				#{userMapper, jdbcType=VARCHAR},
+			</if>
+			<if test="userType != null">
+				#{userType, jdbcType=TINYINT},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateDacUser"
+		parameterType="cn.yunovo.iov.factory.biz.dac.user.model.DacUserDO">
+		update t_dac_usermapper 
+		<set>  
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=VARCHAR },
+			</if>
+			<if test="userMapper != null">
+				user_mapper = #{userMapper,jdbcType=VARCHAR },
+			</if>
+			<if test="userType != null">
+				user_type = #{userType,jdbcType=TINYINT },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteDacUserById" parameterType="integer">
+		delete from
+		t_dac_usermapper
+		where
+			id = #{id}
+	</delete>
+	
+	<delete id="deleteDacUser" parameterType="cn.yunovo.iov.factory.biz.dac.user.model.DacUserDO">
+	    <if test="item != null">
+		delete from
+		t_dac_usermapper
+		<where>
+			<if test="item.userId != null">
+				and user_id = #{item.userId,jdbcType=VARCHAR }
+			</if>
+			<if test="item.userMapper != null">
+				and user_mapper = #{item.userMapper,jdbcType=VARCHAR }
+			</if>
+			<if test="item.userType != null">
+				and user_type = #{item.userType,jdbcType=TINYINT }
+			</if>
+		</where>
+		</if>
+	</delete>
+	
+</mapper>

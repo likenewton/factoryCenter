@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.yunovo.iov.factory.biz.packing.mapper.PackingReportMapper">
+	<update id="saveOrInsertPackingReport"
+		parameterType="cn.yunovo.iov.factory.biz.packing.model.PackingReportDO">
+		insert into
+		t_packing_report(imei,sw_code,yunovo_code,reporter,create_datetime)
+		value(#{imei},#{swCode},#{yunovoCode},#{reporter},#{createDatetime})
+	</update>
+	
+	<select id="listPackingReport"
+		parameterType="cn.yunovo.iov.factory.biz.packing.model.PackingReportQuery"
+		resultType="cn.yunovo.iov.factory.biz.packing.model.PackingReportDO">
+		select imei,sw_code swCode,yunovo_code yunovoCode,reporter,create_datetime createDatetime from t_packing_report
+		<where>
+			<if test="imei != null and imei != ''">
+				imei = #{imei}
+			</if>
+			<if test="swCode != null and swCode != ''">
+				sw_code = #{swCode}
+			</if>
+		</where>
+	</select>
+</mapper>

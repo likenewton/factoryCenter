@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.dac.channel.mapper.ChannelResourceMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="dataId" column="data_id" jdbcType="INTEGER"/>
+			<result property="dataProvider" column="data_provider" jdbcType="VARCHAR"/>
+			<result property="creatorId" column="creator_id" jdbcType="VARCHAR"/>
+			<result property="sourceCreatorId" column="source_creator_id" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,data_id,data_provider,creator_id,source_creator_id,create_time,update_time
+	</sql>
+	
+	<sql id="Base_Where">
+		<where>
+			<if test="query.dataId != null">
+			  and data_id = #{ query.dataId, jdbcType=INTEGER }
+			</if>
+			<if test="query.dataProvider != null and query.dataProvider != ''">
+			  and data_provider = #{ query.dataProvider, jdbcType=VARCHAR }
+			</if>
+			<if test="query.creatorId != null and query.creatorId != ''">
+			  and creator_id = #{ query.creatorId, jdbcType=VARCHAR }
+			</if>
+			<if test="query.sourceCreatorId != null and query.sourceCreatorId != ''">
+			  and source_creator_id = #{ query.sourceCreatorId, jdbcType=VARCHAR }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+	</sql>
+	
+	<select id="getChannelResourceById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_dac_channel
+		where
+			id = #{id}
+	</select>
+	
+	<select id="selectChannelResource"
+		parameterType="cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_dac_channel
+		    <include refid="Base_Where" />
+			<if test="condition != null">
+				<if test="condition.order.asc != null and condition.order.desc == null">
+					  order by ${condition.order.asc } asc
+				</if>
+				<if test="condition.order.desc != null and condition.order.asc == null">
+					  order by ${condition.order.desc } desc
+				</if>
+				<if test="condition.order.asc != null and condition.order.desc != null">
+					  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+				</if>
+				<if test="condition.limit.limit != null">
+					  limit ${condition.limit.limit }
+				</if>
+			</if>
+	</select>
+	
+	<select id="queryChannelResource"
+		parameterType="cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_dac_channel
+		    <include refid="Base_Where" />
+	</select>
+		    
+	<insert id="insertChannelResource" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDO">
+		insert into t_dac_channel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="dataId != null">
+				data_id,
+			</if>
+			<if test="dataProvider != null">
+				data_provider,
+			</if>
+			<if test="creatorId != null">
+				creator_id,
+			</if>
+			<if test="sourceCreatorId != null">
+				source_creator_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="dataId != null">
+				#{dataId, jdbcType=INTEGER},
+			</if>
+			<if test="dataProvider != null">
+				#{dataProvider, jdbcType=VARCHAR},
+			</if>
+			<if test="creatorId != null">
+				#{creatorId, jdbcType=VARCHAR},
+			</if>
+			<if test="sourceCreatorId != null">
+				#{sourceCreatorId, jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateChannelResource"
+		parameterType="cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDO">
+		update t_dac_channel 
+		<set>  
+			<if test="dataId != null">
+				data_id = #{dataId,jdbcType=INTEGER },
+			</if>
+			<if test="dataProvider != null">
+				data_provider = #{dataProvider,jdbcType=VARCHAR },
+			</if>
+			<if test="creatorId != null">
+				creator_id = #{creatorId,jdbcType=VARCHAR },
+			</if>
+			<if test="sourceCreatorId != null">
+				source_creator_id = #{sourceCreatorId,jdbcType=VARCHAR },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteChannelResourceById" parameterType="integer">
+		delete from
+		t_dac_channel
+		where
+			id = #{id}
+	</delete>
+	
+	<delete id="deleteChannelResource" parameterType="cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDO">
+	    <if test="item != null">
+		delete from
+		t_dac_channel
+		<where>
+			<if test="item.dataId != null">
+				and data_id = #{item.dataId,jdbcType=INTEGER }
+			</if>
+			<if test="item.dataProvider != null">
+				and data_provider = #{item.dataProvider,jdbcType=VARCHAR }
+			</if>
+			<if test="item.creatorId != null">
+				and creator_id = #{item.creatorId,jdbcType=VARCHAR }
+			</if>
+			<if test="item.sourceCreatorId != null">
+				and source_creator_id = #{item.sourceCreatorId,jdbcType=VARCHAR }
+			</if>
+			<if test="item.createTime != null">
+				and create_time = #{item.createTime,jdbcType=TIMESTAMP }
+			</if>
+			<if test="item.updateTime != null">
+				and update_time = #{item.updateTime,jdbcType=TIMESTAMP }
+			</if>
+		</where>
+		</if>
+	</delete>
+	
+</mapper>

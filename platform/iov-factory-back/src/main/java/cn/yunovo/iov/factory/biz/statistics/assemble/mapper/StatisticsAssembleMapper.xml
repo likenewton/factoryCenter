@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.statistics.assemble.mapper.StatisticsAssembleMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
+			<result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+			<result property="deviceNumber" column="device_number" jdbcType="INTEGER"/>
+			<result property="errorNumber" column="error_number" jdbcType="INTEGER"/>
+			<result property="reportTime" column="report_time" jdbcType="DATE"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,brand_name,factory_name,device_number,error_number,report_time,create_time,update_time
+	</sql>
+	
+	<select id="getStatisticsAssembleById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_statistics_assemble
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectStatisticsAssemble"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_assemble
+		<where>
+			<if test="query.brandName != null and query.brandName != ''">
+			  and brand_name = #{ query.brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.factoryName != null and query.factoryName != ''">
+			  and factory_name = #{ query.factoryName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.deviceNumber != null">
+			  and device_number = #{ query.deviceNumber, jdbcType=INTEGER }
+			</if>
+			<if test="query.errorNumber != null">
+			  and error_number = #{ query.errorNumber, jdbcType=INTEGER }
+			</if>
+			<if test="query.reportTime != null and query.reportTime != ''">
+			  and report_time = #{ query.reportTime, jdbcType=DATE }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( report_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( report_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertStatisticsAssemble" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleDO">
+		insert into t_statistics_assemble
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="factoryName != null">
+				factory_name,
+			</if>
+			<if test="deviceNumber != null">
+				device_number,
+			</if>
+			<if test="errorNumber != null">
+				error_number,
+			</if>
+			<if test="reportTime != null">
+				report_time,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="brandName != null">
+				#{brandName, jdbcType=VARCHAR},
+			</if>
+			<if test="factoryName != null">
+				#{factoryName, jdbcType=VARCHAR},
+			</if>
+			<if test="deviceNumber != null">
+				#{deviceNumber, jdbcType=INTEGER},
+			</if>
+			<if test="errorNumber != null">
+				#{errorNumber, jdbcType=INTEGER},
+			</if>
+			<if test="reportTime != null">
+				#{reportTime, jdbcType=DATE},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateStatisticsAssemble"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleDO">
+		update t_statistics_assemble set 
+				     brand_name = #{brandName,jdbcType=VARCHAR }
+				     ,factory_name = #{factoryName,jdbcType=VARCHAR }
+				     ,device_number = #{deviceNumber,jdbcType=INTEGER }
+				     ,error_number = #{errorNumber,jdbcType=INTEGER }
+				     ,report_time = #{reportTime,jdbcType=DATE }
+				     ,update_time = #{updateTime,jdbcType=TIMESTAMP }
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteStatisticsAssembleById" parameterType="integer">
+		delete from
+		t_statistics_assemble
+		where
+		id = #{id}
+	</delete>
+	
+	<select id="statisticsCurrentDay"
+	parameterType="cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleQuery"
+	resultType="int">
+		select sum(device_number) from t_statistics_assemble 
+		   <where>
+			<if test="reportTime != null">
+				report_time=#{reportTime,jdbcType=VARCHAR }
+			</if>
+		</where>
+	</select>
+</mapper>

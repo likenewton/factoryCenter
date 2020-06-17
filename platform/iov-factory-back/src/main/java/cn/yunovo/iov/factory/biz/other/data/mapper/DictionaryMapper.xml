@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.other.data.mapper.DictionaryMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.other.data.model.DictionaryDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="wordKey" column="word_key" jdbcType="VARCHAR"/>
+			<result property="wordValue" column="word_value" jdbcType="VARCHAR"/>
+			<result property="wordType" column="word_type" jdbcType="TINYINT"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,word_key,word_value,word_type
+	</sql>
+	
+	<sql id="Base_Where">
+		<where>
+			<if test="query.wordKey != null and query.wordKey != ''">
+			  and word_key = #{ query.wordKey, jdbcType=VARCHAR }
+			</if>
+			<if test="query.wordValue != null and query.wordValue != ''">
+			  and word_value = #{ query.wordValue, jdbcType=VARCHAR }
+			</if>
+			<if test="query.wordType != null">
+			  and word_type = #{ query.wordType, jdbcType=TINYINT }
+			</if>
+		</where>
+	</sql>
+	
+	<select id="getDictionaryById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_data_dictionary
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectDictionary"
+		parameterType="cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_data_dictionary
+		    <include refid="Base_Where" />
+			<if test="condition != null">
+				<if test="condition.order.asc != null and condition.order.desc == null">
+					  order by ${condition.order.asc } asc
+				</if>
+				<if test="condition.order.desc != null and condition.order.asc == null">
+					  order by ${condition.order.desc } desc
+				</if>
+				<if test="condition.order.asc != null and condition.order.desc != null">
+					  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+				</if>
+				<if test="condition.limit.limit != null">
+					  limit ${condition.limit.limit }
+				</if>
+			</if>
+	</select>
+	
+	<select id="queryDictionary"
+		parameterType="cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_data_dictionary
+		    <include refid="Base_Where" />
+	</select>
+		    
+	<insert id="insertDictionary" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.other.data.model.DictionaryDO">
+		insert into t_data_dictionary
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="wordKey != null">
+				word_key,
+			</if>
+			<if test="wordValue != null">
+				word_value,
+			</if>
+			<if test="wordType != null">
+				word_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="wordKey != null">
+				#{wordKey, jdbcType=VARCHAR},
+			</if>
+			<if test="wordValue != null">
+				#{wordValue, jdbcType=VARCHAR},
+			</if>
+			<if test="wordType != null">
+				#{wordType, jdbcType=TINYINT},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateDictionary"
+		parameterType="cn.yunovo.iov.factory.biz.other.data.model.DictionaryDO">
+		update t_data_dictionary set 
+				     word_key = #{wordKey,jdbcType=VARCHAR }
+				     ,word_value = #{wordValue,jdbcType=VARCHAR }
+				     ,word_type = #{wordType,jdbcType=TINYINT }
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteDictionaryById" parameterType="integer">
+		delete from
+		t_data_dictionary
+		where
+		id = #{id}
+	</delete>
+</mapper>

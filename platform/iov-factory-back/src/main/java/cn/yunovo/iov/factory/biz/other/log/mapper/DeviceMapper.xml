@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.other.log.mapper.DeviceMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.other.log.model.DeviceDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="iccid" column="iccid" jdbcType="VARCHAR"/>
+			<result property="optType" column="opt_type" jdbcType="TINYINT"/>
+			<result property="optDesc" column="opt_desc" jdbcType="VARCHAR"/>
+			<result property="reporter" column="reporter" jdbcType="VARCHAR"/>
+			<result property="addDatetime" column="add_datetime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,iccid,opt_type,opt_desc,reporter,add_datetime
+	</sql>
+	
+	<select id="getDeviceById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_service_log
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectDevice"
+		parameterType="cn.yunovo.iov.factory.biz.other.log.model.DeviceQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_service_log
+		<where>
+			<if test="query.iccid != null and query.iccid != ''">
+			  and iccid = #{ query.iccid, jdbcType=VARCHAR }
+			</if>
+			<if test="query.optType != null">
+			  and opt_type = #{ query.optType, jdbcType=TINYINT }
+			</if>
+			<if test="query.optDesc != null and query.optDesc != ''">
+			  and opt_desc = #{ query.optDesc, jdbcType=VARCHAR }
+			</if>
+			<if test="query.reporter != null and query.reporter != ''">
+			  and reporter = #{ query.reporter, jdbcType=VARCHAR }
+			</if>
+			<if test="query.addDatetime != null and query.addDatetime != ''">
+			  and add_datetime = #{ query.addDatetime, jdbcType=TIMESTAMP }
+			</if>
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertDevice" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.other.log.model.DeviceDO">
+		insert into t_service_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="iccid != null">
+				iccid,
+			</if>
+			<if test="optType != null">
+				opt_type,
+			</if>
+			<if test="optDesc != null">
+				opt_desc,
+			</if>
+			<if test="reporter != null">
+				reporter,
+			</if>
+			<if test="addDatetime != null">
+				add_datetime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="iccid != null">
+				#{iccid, jdbcType=VARCHAR},
+			</if>
+			<if test="optType != null">
+				#{optType, jdbcType=TINYINT},
+			</if>
+			<if test="optDesc != null">
+				#{optDesc, jdbcType=VARCHAR},
+			</if>
+			<if test="reporter != null">
+				#{reporter, jdbcType=VARCHAR},
+			</if>
+			<if test="addDatetime != null">
+				#{addDatetime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateDevice"
+		parameterType="cn.yunovo.iov.factory.biz.other.log.model.DeviceDO">
+		update t_service_log
+		<set>
+			<if test="iccid != null">
+				iccid = #{iccid,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="optType != null">
+				opt_type = #{optType,
+				jdbcType=TINYINT },
+			</if>
+			<if test="optDesc != null">
+				opt_desc = #{optDesc,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="reporter != null">
+				reporter = #{reporter,
+				jdbcType=VARCHAR },
+			</if>
+			<if test="addDatetime != null">
+				add_datetime = #{addDatetime,
+				jdbcType=TIMESTAMP },
+			</if>
+		</set>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteDeviceById" parameterType="integer">
+		delete from
+		t_service_log
+		where
+		id = #{id}
+	</delete>
+</mapper>

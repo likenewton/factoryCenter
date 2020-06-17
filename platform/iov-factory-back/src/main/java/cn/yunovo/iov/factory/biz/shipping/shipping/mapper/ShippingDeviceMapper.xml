@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.shipping.shipping.mapper.ShippingDeviceMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingDeviceDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="imei" column="imei" jdbcType="VARCHAR"/>
+			<result property="shippingId" column="shipping_id" jdbcType="INTEGER"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,imei,shipping_id,create_time
+	</sql>
+	
+	<select id="getShippingDeviceById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_shipping_device
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectShippingDevice"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingDeviceQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_shipping_device
+		<where>
+			<if test="query.imei != null and query.imei != ''">
+			  and imei = #{ query.imei, jdbcType=VARCHAR }
+			</if>
+			<if test="query.shippingId != null">
+			  and shipping_id = #{ query.shippingId, jdbcType=INTEGER }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+		<if test="condition != null">
+			<if test="condition.order.asc != null and condition.order.desc == null">
+				  order by ${condition.order.asc } asc
+			</if>
+			<if test="condition.order.desc != null and condition.order.asc == null">
+				  order by ${condition.order.desc } desc
+			</if>
+			<if test="condition.order.asc != null and condition.order.desc != null">
+				  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+			</if>
+			<if test="condition.limit.limit != null">
+				  limit ${condition.limit.limit }
+			</if>
+		</if>
+	</select>
+	<insert id="insertShippingDevice" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingDeviceDO">
+		insert into t_shipping_device
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="imei != null">
+				imei,
+			</if>
+			<if test="shippingId != null">
+				shipping_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="imei != null">
+				#{imei, jdbcType=VARCHAR},
+			</if>
+			<if test="shippingId != null">
+				#{shippingId, jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchInsertDevice">
+      insert into t_shipping_device(imei,shipping_id,create_time)
+      values
+      <foreach collection="list" item="device" separator=",">
+      (#{device.imei},#{device.shippingId},#{device.createTime})
+      </foreach>
+     </insert>
+
+	<update id="updateShippingDevice"
+		parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingDeviceDO">
+		update t_shipping_device set 
+				     imei = #{imei,jdbcType=VARCHAR }
+				     ,shipping_id = #{shippingId,jdbcType=INTEGER }
+		where
+		id = #{id}
+	</update>
+
+	<delete id="deleteShippingDeviceById" parameterType="integer">
+		delete from
+		t_shipping_device
+		where
+		id = #{id}
+	</delete>
+	
+	<delete id="deleteShippingDeviceByShippingId" parameterType="integer">
+		delete from
+		t_shipping_device
+		where
+		shipping_id = #{shippingId}
+	</delete>
+</mapper>

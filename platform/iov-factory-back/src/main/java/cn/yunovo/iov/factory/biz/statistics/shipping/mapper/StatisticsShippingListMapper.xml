@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.statistics.shipping.mapper.StatisticsShippingListMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="channelId" column="channel_id" jdbcType="INTEGER"/>
+			<result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
+			<result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+			<result property="deviceNumber" column="device_number" jdbcType="INTEGER"/>
+			<result property="reportTime" column="report_time" jdbcType="DATE"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,channel_id,brand_name,factory_name,device_number,report_time,create_time,update_time
+	</sql>
+	
+	<sql id="Base_Where">
+		<where>
+			<if test="query.channelId != null">
+			  and channel_id = #{ query.channelId, jdbcType=INTEGER }
+			</if>
+			<if test="query.brandName != null and query.brandName != ''">
+			  and brand_name = #{ query.brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.factoryName != null and query.factoryName != ''">
+			  and factory_name = #{ query.factoryName, jdbcType=VARCHAR }
+			</if>
+			<if test="query.deviceNumber != null">
+			  and device_number = #{ query.deviceNumber, jdbcType=INTEGER }
+			</if>
+			<if test="query.reportTime != null and query.reportTime != ''">
+			  and report_time = #{ query.reportTime, jdbcType=DATE }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( report_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( report_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+	</sql>
+	
+	<select id="getStatisticsShippingListById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_statistics_shippinglist
+		where
+		id = #{id}
+	</select>
+	
+	<select id="selectStatisticsShippingList"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_shippinglist
+		    <include refid="Base_Where" />
+			<if test="condition != null">
+				<if test="condition.order.asc != null and condition.order.desc == null">
+					  order by ${condition.order.asc } asc
+				</if>
+				<if test="condition.order.desc != null and condition.order.asc == null">
+					  order by ${condition.order.desc } desc
+				</if>
+				<if test="condition.order.asc != null and condition.order.desc != null">
+					  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+				</if>
+				<if test="condition.limit.limit != null">
+					  limit ${condition.limit.limit }
+				</if>
+			</if>
+	</select>
+	
+	<select id="queryStatisticsShippingList"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_shippinglist
+		    <include refid="Base_Where" />
+	</select>
+		    
+	<insert id="insertStatisticsShippingList" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO">
+		insert into t_statistics_shippinglist
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="channelId != null">
+				channel_id,
+			</if>
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="factoryName != null">
+				factory_name,
+			</if>
+			<if test="deviceNumber != null">
+				device_number,
+			</if>
+			<if test="reportTime != null">
+				report_time,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="channelId != null">
+				#{channelId, jdbcType=INTEGER},
+			</if>
+			<if test="brandName != null">
+				#{brandName, jdbcType=VARCHAR},
+			</if>
+			<if test="factoryName != null">
+				#{factoryName, jdbcType=VARCHAR},
+			</if>
+			<if test="deviceNumber != null">
+				#{deviceNumber, jdbcType=INTEGER},
+			</if>
+			<if test="reportTime != null">
+				#{reportTime, jdbcType=DATE},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateStatisticsShippingList"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO">
+		update t_statistics_shippinglist 
+		<set>  
+			<if test="channelId != null">
+				channel_id = #{channelId,jdbcType=INTEGER },
+			</if>
+			<if test="brandName != null">
+				brand_name = #{brandName,jdbcType=VARCHAR },
+			</if>
+			<if test="factoryName != null">
+				factory_name = #{factoryName,jdbcType=VARCHAR },
+			</if>
+			<if test="deviceNumber != null">
+				device_number = #{deviceNumber,jdbcType=INTEGER },
+			</if>
+			<if test="reportTime != null">
+				report_time = #{reportTime,jdbcType=DATE },
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteStatisticsShippingListById" parameterType="integer">
+		delete from
+		t_statistics_shippinglist
+		where
+		id = #{id}
+	</delete>
+	
+	<select id="statisticsCurrentDay"
+	parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery"
+	resultType="int">
+		select sum(device_number) from t_statistics_shippinglist 
+		   <where>
+			<if test="reportTime != null">
+				report_time=#{reportTime,jdbcType=VARCHAR }
+			</if>
+			<if test="channelId != null">
+			  and channel_id = #{ channelId, jdbcType=INTEGER }
+			</if>
+			<if test="brandName != null and brandName != ''">
+			  and brand_name = #{ brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="factoryName != null and factoryName != ''">
+			  and factory_name = #{ factoryName, jdbcType=VARCHAR }
+			</if>
+		</where>
+	</select>
+</mapper>
