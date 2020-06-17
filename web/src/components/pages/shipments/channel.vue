@@ -29,7 +29,7 @@
           <el-table-column prop="level" label="级别" width="100">
             <template slot-scope="scope">{{scope.row.node.level | valueToLabel(levels)}}</template>
           </el-table-column>
-          <el-table-column prop="contacts" label="联系人" width="100">
+          <el-table-column prop="contacts" label="联系人" width="140">
             <template slot-scope="scope">{{scope.row.node.contacts}}</template>
           </el-table-column>
           <el-table-column prop="phone" label="手机" width="140">

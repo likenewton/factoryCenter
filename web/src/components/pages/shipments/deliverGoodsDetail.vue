@@ -88,12 +88,8 @@ export default {
       let result = ''
       const getResult = (dataArr) => {
         dataArr.forEach((v) => {
-          if (v.nodeId == value) {
-            result = v.nodeName
-          }
-          if (v.childNode) {
-            result = getResult(v.childNode)
-          }
+          if (v.nodeId == value) result = v.nodeName
+          if (v.childNode) result = getResult(v.childNode)
         })
         return result
       }

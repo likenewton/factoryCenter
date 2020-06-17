@@ -3,7 +3,7 @@
     <el-card class="clearfix" shadow="never" v-loading="loadData">
       <el-row>
         <el-button-group style="margin-bottom: 10px">
-          <el-button size="small" type="warning" @click="showExportDialog" :disabled="!pageAuthBtn.factory_deliverGoods_export">导入</el-button>
+          <el-button size="small" type="warning" @click="importVisible = true" :disabled="!pageAuthBtn.factory_deliverGoods_export">导入</el-button>
         </el-button-group>
         <el-form :inline="true" :model="formInline" class="search-form" size="small" @submit.native.prevent>
           <el-form-item>
@@ -208,12 +208,8 @@ export default {
       let result = ''
       const getResult = (dataArr) => {
         dataArr.forEach((v) => {
-          if (v.nodeId == value) {
-            result = v.nodeName
-          } 
-          if (v.childNode) {
-            result = getResult(v.childNode)
-          }
+          if (v.nodeId == value) result = v.nodeName
+          if (v.childNode) result = getResult(v.childNode)
         })
         return result
       }
@@ -252,12 +248,7 @@ export default {
         }
       })
     },
-    showExportDialog() {
-      this.importVisible = true
-      // this.getChannels()
-    },
     showPriview() {
-      // factoryCenter
       if (process.env.NODE_ENV === 'development') {
         window.open('../../../../static/imei.xlsx', '_self')
       } else {
@@ -300,29 +291,6 @@ export default {
       }
     },
     qrcodeChange(value = '') {
-      // 特定的格式待后续看是否要用
-      // let str = value || ''
-      // let arr = str.split('\n')
-      // let searchArr = []
-      // arr.forEach((v, i) => {
-      //   if (v.trim()) {
-      //     searchArr.push(v.trim())
-      //   }
-      // })
-      // console.log(searchArr)
-      // // 开始解析
-      // searchArr.forEach((v) => {
-      //   if (v.includes('T')) {
-      //     this.$set(this.uploadForm, 'modelNumber', v.split(':')[1])
-      //   } else if (v.includes('O')) {
-      //     this.$set(this.uploadForm, 'workOrderno', v.split(':')[1])
-      //   } else if (v.includes('Y')) {
-      //     this.$set(this.uploadForm, 'yunovoCode', v.split(':')[1])
-      //     this.$nextTick(() => { this.yunovoCodeChange(v.split(':')[1]) })
-      //   }
-      // })
-      // this.uploadForm.qrcode = ''
-
       // 先待定是imei字符串
       let str = value.replace(/[\s\n]/g, "")
       let arr = []
