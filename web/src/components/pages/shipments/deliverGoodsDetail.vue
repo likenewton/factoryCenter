@@ -25,6 +25,9 @@
             <template slot-scope="scope">{{scope.row.factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 1), 'wordValue', 'wordKey')}}</template>
           </el-table-column>
           <el-table-column prop="area" label="区域" width="200"></el-table-column>
+          <el-table-column prop="channelId" label="渠道" min-width="150">
+            <template slot-scope="scope">{{scope.row.channelId | channelFilter(Allchannels)}}</template>
+          </el-table-column>
           <el-table-column prop="yunovoCode" label="云智码" width="200"></el-table-column>
           <el-table-column prop="deviceNumber" label="设备数量" width="80" align="right"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
@@ -70,12 +73,32 @@ export default {
         total: 0,
       },
       id: Api.UNITS.getQuery('id'),
+      Allchannels: [],
     }
   },
   mounted() {
     this.getFahuoById(() => {
       this.getData()
+      this.getChannels()
     })
+  },
+  filters: {
+    // 对树状渠道进行valueToLabel
+    channelFilter: (value, channels) => {
+      let result = ''
+      const getResult = (dataArr) => {
+        dataArr.forEach((v) => {
+          if (v.nodeId == value) {
+            result = v.nodeName
+          }
+          if (v.childNode) {
+            result = getResult(v.childNode)
+          }
+        })
+        return result
+      }
+      return getResult(channels)
+    },
   },
   methods: {
     getFahuoById(cb) {
@@ -87,7 +110,7 @@ export default {
           this.brandName = data.brandName
           this.factoryName = data.factoryName
           this.area = data.area,
-          cb && cb()
+            cb && cb()
         }
       })
     },
@@ -101,6 +124,25 @@ export default {
           factoryName: this.factoryName,
           area: this.area,
           desc: 'import_time',
+        }
+      })
+    },
+    getChannels() {
+      const removeEmptyChildNode = (data = []) => {
+        data.forEach((v) => {
+          if (v.childNode.length === 0) {
+            Reflect.deleteProperty(v, 'childNode')
+          } else {
+            removeEmptyChildNode(v.childNode)
+          }
+        })
+        return data
+      }
+      _axios.send({
+        method: 'get',
+        url: `${_axios.ajaxAd.channels}?tree`,
+        done: (res) => {
+          this.Allchannels = removeEmptyChildNode(res.data)
         }
       })
     },
