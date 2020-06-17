@@ -20,7 +20,10 @@
           <el-table-column prop="factoryName" label="贴片工厂" min-width="200">
             <template slot-scope="scope">{{scope.row.factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 0), 'wordValue', 'wordKey')}}</template>
           </el-table-column>
-          <el-table-column prop="pasterNumber" label="贴片数量" width="160" align="right"></el-table-column>
+          <el-table-column prop="brandName" label="品牌" width="220">
+            <template slot-scope="scope">{{scope.row.brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</template>
+          </el-table-column>
+          <el-table-column prop="pasterNumber" label="贴片数量" width="200" align="right"></el-table-column>
           <el-table-column prop="errorNumber" label="错误数量" width="160" align="right"></el-table-column>
           <el-table-column prop="reportTime" label="上报时间" width="160"></el-table-column>
           <el-table-column label="操作" width="80">
