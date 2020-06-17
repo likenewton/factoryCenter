@@ -101,6 +101,57 @@ public class StatisticsTypeJob {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private void statisticsArea(StatisticsTypeVO statisticsTypeVO) {
+		ShippingListQuery shippingListQuery = new ShippingListQuery();
+		Integer deviceNumber = 0;
+		shippingListQuery.setBrandName(statisticsTypeVO.getOrgCode());
+		shippingListQuery.setFactoryName(statisticsTypeVO.getFactoryName());
+		shippingListQuery.setChannelId(statisticsTypeVO.getChannelId());
+		List<ShippingListVO> shippings = (List<ShippingListVO>) shippingListService.selectShippingList(shippingListQuery, null, false);
+		if (null != shippings && 0 < shippings.size()) {
+			ShippingListVO shippingListVO = shippings.get(0);
+			String area = YunovoCodeUtil.getArea(shippingListVO.getArea());
+	
+			shippingListQuery = new ShippingListQuery();
+			shippingListQuery.setArea(area);
+			shippingListQuery.setBrandName(statisticsTypeVO.getOrgCode());
+			shippingListQuery.setFactoryName(statisticsTypeVO.getFactoryName());
+			shippingListQuery.setChannelId(statisticsTypeVO.getChannelId());
+			deviceNumber = shippingListService.statisticsCurrentDay(shippingListQuery);
+			if (null == deviceNumber) {
+				deviceNumber = 0;
+			}
+			StatisticsAreaQuery statisticsAreaQuery = new StatisticsAreaQuery();
+			statisticsAreaQuery.setArea(area);
+			statisticsAreaQuery.setBrandName(statisticsTypeVO.getOrgCode());
+			statisticsAreaQuery.setFactoryName(statisticsTypeVO.getFactoryName());
+			statisticsAreaQuery.setChannelId(statisticsTypeVO.getChannelId());
+			StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
+	
+			StatisticsAreaDO statisticsAreaDO = new StatisticsAreaDO();
+			statisticsAreaDO.setArea(area);
+			statisticsAreaDO.setChannelId(statisticsTypeVO.getChannelId());
+			statisticsAreaDO.setFactoryName(statisticsTypeVO.getFactoryName());
+			statisticsAreaDO.setBrandName(shippingListVO.getBrandName());
+			statisticsAreaDO.setDeviceNumber(deviceNumber);
+	
+			if (null != statisticsAreaDTO) {
+				statisticsAreaDO.setId(statisticsAreaDTO.getId());
+				statisticsAreaService.updateStatisticsArea(statisticsAreaDO);
+			} else {
+				statisticsAreaService.insertStatisticsArea(statisticsAreaDO);
+				ChannelDTO channelDTO = channelService.getChannelById(statisticsTypeVO.getChannelId());
+	
+				// 插入数据权限
+				DacHelper.insertChannelResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), channelDTO.getPhone(), statisticsTypeVO.getCreateId(), null);
+				DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId(), null);
+				DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), null, statisticsTypeVO.getCreateId(), null, statisticsTypeVO.getFactoryName());
+	
+			}
+		}
+	}
+
 	@SuppressWarnings({ "unchecked" })
 	private void statisticsShipping(String reportTimeString, Date reportTime, StatisticsTypeVO statisticsTypeVO) {
 
@@ -144,48 +195,7 @@ public class StatisticsTypeJob {
 		}
 
 		// 统计省发货数量
-		shippingListQuery = new ShippingListQuery();
-		shippingListQuery.setBrandName(statisticsTypeVO.getOrgCode());
-		shippingListQuery.setFactoryName(statisticsTypeVO.getFactoryName());
-		shippingListQuery.setChannelId(statisticsTypeVO.getChannelId());
-		List<ShippingListVO> shippings = (List<ShippingListVO>) shippingListService.selectShippingList(shippingListQuery, null, false);
-		if (null != shippings && 0 < shippings.size()) {
-			ShippingListVO shippingListVO = shippings.get(0);
-			String area = YunovoCodeUtil.getArea(shippingListVO.getArea());
-
-			shippingListQuery = new ShippingListQuery();
-			shippingListQuery.setArea(area);
-			deviceNumber = shippingListService.statisticsCurrentDay(shippingListQuery);
-			if (null == deviceNumber) {
-				deviceNumber = 0;
-			}
-			StatisticsAreaQuery statisticsAreaQuery = new StatisticsAreaQuery();
-			statisticsAreaQuery.setArea(area);
-			statisticsAreaQuery.setBrandName(statisticsTypeVO.getOrgCode());
-			statisticsAreaQuery.setChannelId(statisticsTypeVO.getChannelId());
-			StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
-
-			StatisticsAreaDO statisticsAreaDO = new StatisticsAreaDO();
-			statisticsAreaDO.setChannelId(statisticsTypeVO.getChannelId());
-			statisticsAreaDO.setArea(area);
-			statisticsAreaDO.setFactoryName(statisticsTypeVO.getFactoryName());
-			statisticsAreaDO.setBrandName(shippingListVO.getBrandName());
-			statisticsAreaDO.setDeviceNumber(deviceNumber);
-
-			if (null != statisticsAreaDTO) {
-				statisticsAreaDO.setId(statisticsAreaDTO.getId());
-				statisticsAreaService.updateStatisticsArea(statisticsAreaDO);
-			} else {
-				statisticsAreaService.insertStatisticsArea(statisticsAreaDO);
-				ChannelDTO channelDTO = channelService.getChannelById(statisticsTypeVO.getChannelId());
-
-				// 插入数据权限
-				DacHelper.insertChannelResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), channelDTO.getPhone(), statisticsTypeVO.getCreateId(), null);
-				DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId(), null);
-				DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), null, statisticsTypeVO.getCreateId(), null, statisticsTypeVO.getFactoryName());
-
-			}
-		}
+		statisticsArea(statisticsTypeVO);
 
 		Integer todayNumber = 0;
 		Integer sumTotal = 0;
