@@ -49,7 +49,6 @@ Vue.prototype.$http = axios
 Vue.prototype.$store = store
 Vue.config.productionTip = false
 
-
 // 路由进入前的全局钩子
 router.beforeEach((to, from, next) => {
   if (window.api.UNITS.getQuery('iov-token')) {
