@@ -72,7 +72,7 @@ class OrganController {
 			}
 			List<CooperateOrganVo> filterList = new ArrayList<CooperateOrganVo>();
 			
-			//品牌结构的时候
+			//品牌机构的时候
 			List<CooperateOrganVo> orgList = cooperateOrganViewComponent.queryCooperateOrganList(cooperateOrganQueryBean, getLoginBaseInfo(request));
 			if(1 == loginInfoUtil.getLoginBaseInfo().getUserType()) {
 				for(CooperateOrganVo vo: orgList) {

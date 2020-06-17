@@ -126,6 +126,14 @@ public class StatisticsPasterVO {
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
+	}
 	
 	
 	

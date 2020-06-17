@@ -50,12 +50,12 @@ public class DacQueryInterceptor implements Interceptor {
 
 		// 和 PageHelper分页有冲突
 		dacHelper.clearProvider();
-		
-		//是否需要做数据权限
-		if (dacHelper.skip(dacProperties.getMaster(),dacProperties.getUserType())) {
+
+		// 是否需要做数据权限
+		if (dacHelper.skip(dacProperties.getMaster(), dacProperties.getUserType())) {
 			return invocation.proceed();
 		}
-		
+
 		Object[] args = invocation.getArgs();
 		MappedStatement ms = (MappedStatement) args[0];
 		Object parameter = args[1];
@@ -76,7 +76,7 @@ public class DacQueryInterceptor implements Interceptor {
 		}
 		String sql = boundSql.getSql();
 
-		if (dacHelper.skipQuery(sql, dataProviderMap, dacProperties.getMaster(),dacProperties.getUserType())) {
+		if (dacHelper.skipQuery(sql, dataProviderMap, dacProperties.getMaster(), dacProperties.getUserType())) {
 			return invocation.proceed();
 		} else {
 			DataResource dataResource = dacHelper.getDataAuthorityControl();
@@ -90,7 +90,6 @@ public class DacQueryInterceptor implements Interceptor {
 				providerByBoundSql.setAdditionalParameter(key, additionalParameters.get(key));
 			}
 			return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, providerByBoundSql);
-
 		}
 	}
 

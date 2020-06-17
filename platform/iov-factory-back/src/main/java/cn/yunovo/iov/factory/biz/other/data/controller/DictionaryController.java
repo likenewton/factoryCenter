@@ -1,6 +1,8 @@
 package cn.yunovo.iov.factory.biz.other.data.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +24,15 @@ import cn.yunovo.iov.boot.autoconfigure.request.select.Limit;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Offset;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Order;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Pages;
+import cn.yunovo.iov.factory.biz.dac.user.model.DacUserDTO;
+import cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery;
+import cn.yunovo.iov.factory.biz.dac.user.service.DacUserService;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryDO;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryDTO;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryVO;
 import cn.yunovo.iov.factory.biz.other.data.service.DictionaryService;
+import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaVO;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,6 +59,9 @@ class DictionaryController {
 	
 	@Autowired
 	private DictionaryService dictionaryService;
+	
+	@Autowired
+	private DacUserService dacUserService;
 
 	/*
 	 * 分页查询访问方式：GET http://ip:port/other/dictionarys?page=1&page_size=2
@@ -72,12 +81,30 @@ class DictionaryController {
 		conditionMap.put(Condition.ORDER, order);
 		conditionMap.put(Condition.OFFSET, offset);
 		conditionMap.put(Condition.GROUP, group);
-		result.setData(dictionaryService.selectDictionary(dictionaryQuery, conditionMap));
+		Object obj = dictionaryService.selectDictionary(dictionaryQuery, conditionMap);
+		result.setData(obj);
+		List<DictionaryVO> list = (List<DictionaryVO>) obj;
+		List<DictionaryVO> filterList = new ArrayList<DictionaryVO>();
+		Map<String, DictionaryVO> map = new HashMap<String, DictionaryVO>();
 		
 		// 如何是工厂账号登录，只能看到自己的工厂
 		if(2 == loginInfoUtil.getLoginBaseInfo().getUserType()) {
+			DacUserQuery dacUserQuery = new DacUserQuery();
+			dacUserQuery.setUserId(loginInfoUtil.getLoginBaseInfo().getLoginName());
+			DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
 			
+			for(DictionaryVO vo :list) {
+				if(0 == vo.getWordType()||1 == vo.getWordType()  ) {
+					if(dacUserDTO.getUserMapper().equals(vo.getWordKey())) {
+						filterList.add(vo);
+					}
+				}else {
+					filterList.add(vo);
+				}
+			}
+			result.setData(filterList);
 		}
+		
 		return result;
 	}
 	

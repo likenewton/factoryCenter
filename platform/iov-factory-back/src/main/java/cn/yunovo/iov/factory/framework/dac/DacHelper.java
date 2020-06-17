@@ -49,10 +49,7 @@ public class DacHelper {
 				return true;
 			}
 
-			if (userType == user.getUserType()) {
-				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_RESOURCE).providerBy(tableName).userId(user.getUserId());
-				DacHelper.dataAuthorityControl(dac, master);
-			} else if (1 == user.getUserType()) {
+			if (1 == user.getUserType()) {
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_BRAND).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (2 == user.getUserType()) {
@@ -60,6 +57,12 @@ public class DacHelper {
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (3 == user.getUserType()) {
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_CHANNEL).providerBy(tableName).userId(user.getUserId());
+				DacHelper.dataAuthorityControl(dac, master);
+			} else if (4 == user.getUserType()) {
+				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FACTORY).providerBy(tableName).userId(user.getUserId());
+				DacHelper.dataAuthorityControl(dac, master);
+			} else {
+				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_RESOURCE).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			}
 
