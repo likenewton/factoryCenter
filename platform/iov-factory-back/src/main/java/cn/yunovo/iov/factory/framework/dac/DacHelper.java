@@ -11,6 +11,8 @@ import cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDO;
 import cn.yunovo.iov.factory.biz.dac.channel.service.ChannelResourceService;
 import cn.yunovo.iov.factory.biz.dac.factory.model.FactoryResourceDO;
 import cn.yunovo.iov.factory.biz.dac.factory.service.FactoryResourceService;
+import cn.yunovo.iov.factory.biz.dac.flogistics.model.FlogisticsResourceDO;
+import cn.yunovo.iov.factory.biz.dac.flogistics.service.FlogisticsResourceService;
 import cn.yunovo.iov.factory.biz.dac.resource.model.DataResourceDO;
 import cn.yunovo.iov.factory.biz.dac.resource.service.DataResourceService;
 import cn.yunovo.iov.factory.biz.dac.user.model.DacUserDTO;
@@ -62,8 +64,8 @@ public class DacHelper {
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_CHANNEL).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (4 == user.getUserType()) {
-				//物流和工厂一样
-				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FACTORY).providerBy(tableName).userId(user.getUserId());
+				//物流用户
+				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FLOGISTICS).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else {
 				//平台用户
@@ -96,6 +98,10 @@ public class DacHelper {
 			} else if (3 == user.getUserType()) {
 				// 渠道用户
 				insertChannelResource(tableName, dataId, user.getUserId(), null, null);
+			}
+			else if (4 == user.getUserType()) {
+				// 物流用户
+				insertFlogisticsResource(tableName, dataId, user.getUserId(), null, null);
 			}
 
 			clearUser();
@@ -154,6 +160,19 @@ public class DacHelper {
 		brandResourceService.insertBrandResource(brandResourceDO);
 	}
 
+	public static void insertFlogisticsResource(String tableName, Integer dataId, String userId, String sourceCreatorId, Integer userType) {
+		if (null != userType && 4 == userType) {
+			return;
+		}
+		FlogisticsResourceService flogisticsResourceService = SpringContext.getBean(FlogisticsResourceService.class);
+		FlogisticsResourceDO flogisticsResourceDO = new FlogisticsResourceDO();
+		flogisticsResourceDO.setDataId(dataId);
+		flogisticsResourceDO.setDataProvider(tableName);
+		flogisticsResourceDO.setCreatorId(userId);
+		flogisticsResourceDO.setSourceCreatorId(sourceCreatorId);
+		flogisticsResourceService.insertFlogisticsResource(flogisticsResourceDO);
+	}
+	
 	public static void insertChannelResource(String tableName, Integer dataId, String userId, String sourceCreatorId, Integer userType) {
 		if (null != userType && 3 == userType) {
 			return;

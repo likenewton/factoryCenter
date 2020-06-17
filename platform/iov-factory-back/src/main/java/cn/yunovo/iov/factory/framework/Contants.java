@@ -30,6 +30,7 @@ public class Contants extends ResultMessage {
 	public static final String TABLE_DAC_CHANNEL = "t_dac_channel";
 	public static final String TABLE_DAC_FACTORY = "t_dac_factory";
 	public static final String TABLE_DAC_RESOURCE = "t_dac_resource";
+	public static final String TABLE_DAC_FLOGISTICS = "t_dac_flogistics";
 	
 	public static final String TABLE_STATISTICS_PASTER = "t_statistics_paster";
 	public static final String TABLE_STATISTICS_ASSEMBLE = "t_statistics_assemble";
