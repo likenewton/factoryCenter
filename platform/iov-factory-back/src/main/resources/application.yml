@@ -34,7 +34,7 @@ nacos:
         config-long-poll-timeout: 46000
         config-retry-time: 2333
         data-id: application-test.properties
-        group: cn.yunovo.iov.iov-zen-back
+        group: cn.yunovo.iov.iov-factory-back
         max-retry: 10
         namespace: f06cd285-94d7-4f3d-85d5-3dec8579b023
         server-addr: 192.168.3.240:8848
