@@ -50,11 +50,6 @@ public class DacQueryInterceptor implements Interceptor {
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 
-		// 和 PageHelper分页有冲突
-		if (null == PageHelper.getLocalPage()) {
-			dacHelper.clearProvider();
-		}
-
 		// 是否需要做数据权限
 		if (dacHelper.skip(dacProperties.getMaster(), dacProperties.getUserType())) {
 			return invocation.proceed();
@@ -97,9 +92,12 @@ public class DacQueryInterceptor implements Interceptor {
 				return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, providerByBoundSql);
 			}
 		} finally {
+
+			// 和 PageHelper分页有冲突
 			if (null == PageHelper.getLocalPage()) {
+				dacHelper.clearProvider();
 				dacHelper.clearUser();
-			} 
+			}
 		}
 	}
 
