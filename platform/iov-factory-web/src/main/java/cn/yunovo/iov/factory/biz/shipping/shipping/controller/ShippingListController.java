@@ -230,6 +230,7 @@ class ShippingListController {
 		shippingListVO.setArea(shippingListDTO.getArea());
 		shippingListVO.setBrandName(shippingListDTO.getBrandName());
 		shippingListVO.setFactoryName(shippingListDTO.getFactoryName());
+		shippingListVO.setChannelId(shippingListDTO.getChannelId());
 		statistics(shippingListVO, "del", request, null);
 
 		log.info("delete ShippingListController delete result[{}]", del);
@@ -285,6 +286,7 @@ class ShippingListController {
 			shippingListVO.setProductDate(productDate);
 		}
 
+		DacHelper.skip();
 		ChannelDTO channelDTO = channelService.getChannelById(shippingListVO.getChannelId());
 		shippingListVO.setArea(channelDTO.getArea());
 
