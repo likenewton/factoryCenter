@@ -7,24 +7,24 @@
           <el-card class="box-card" style="background: rgb(39, 218, 153);">
             <i class="iconfont-huaqiangxincheng-icon-"></i>
             <h3>贴片</h3>
-            <span class="calc">今日：{{totals_1.todayNumber}}</span>
-            <span class="calc">累计：{{totals_1.sumTotal}}</span>
+            <span class="calc">今日：{{totals_1.todayNumber || 0}}</span>
+            <span class="calc">累计：{{totals_1.sumTotal || 0}}</span>
           </el-card>
         </el-col>
         <el-col :span="8">
           <el-card class="box-card" style="background: rgb(255, 195, 103);">
             <i class="iconfont-zuzhuangfuwu"></i>
             <h3>组装</h3>
-            <span class="calc">今日：{{totals_2.todayNumber}}</span>
-            <span class="calc">累计：{{totals_2.sumTotal}}</span>
+            <span class="calc">今日：{{totals_2.todayNumber || 0}}</span>
+            <span class="calc">累计：{{totals_2.sumTotal || 0}}</span>
           </el-card>
         </el-col>
         <el-col :span="8">
           <el-card class="box-card" style="background: rgb(60, 177, 255);">
             <i class="iconfont-fahuo"></i>
             <h3>发货</h3>
-            <span class="calc">今日：{{totals_3.todayNumber}}</span>
-            <span class="calc">累计：{{totals_3.sumTotal}}</span>
+            <span class="calc">今日：{{totals_3.todayNumber || 0}}</span>
+            <span class="calc">累计：{{totals_3.sumTotal || 0}}</span>
           </el-card>
         </el-col>
       </el-row>
@@ -81,8 +81,6 @@ export default {
       myChart_1: null,
       myChart_2: null,
       myChart_3: null,
-      myChart_4: null,
-      myChart_5: null,
     }
   },
   mounted() {
