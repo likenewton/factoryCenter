@@ -128,6 +128,7 @@ class ShippingListController {
 		statisticsShippingQuery.setArea(shippingListVO.getArea());
 		statisticsShippingQuery.setBrandName(shippingListVO.getBrandName());
 		statisticsShippingQuery.setFactoryName(shippingListVO.getFactoryName());
+		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
 		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
 

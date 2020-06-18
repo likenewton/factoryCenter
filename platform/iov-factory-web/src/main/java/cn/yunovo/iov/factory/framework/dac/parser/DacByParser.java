@@ -31,6 +31,16 @@ public class DacByParser {
 
 	private static final Log log = LogFactory.getLog(DacByParser.class);
 
+	private static Statement getStatement(String sql) {
+		Statement statement = null;
+		try {
+			statement = CCJSqlParserUtil.parse(sql);
+		} catch (JSQLParserException e) {
+			log.error("数据权限解析SQL异常", e);
+		}
+		return statement;
+	}
+
 	public static String queryConverToProviderBySql(String sql, DataResource dataResource) {
 		// 解析SQL
 		try {
@@ -108,7 +118,7 @@ public class DacByParser {
 			log.error("数据权限解析SQL异常", e);
 		}
 
-		System.out.println("拦截后的：" + sql);
+		System.out.println("Intercept After SQL：" + sql);
 		return sql;
 	}
 
@@ -117,15 +127,5 @@ public class DacByParser {
 		TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
 		List<String> tableList = tablesNamesFinder.getTableList(statement);
 		return tableList;
-	}
-
-	private static Statement getStatement(String sql) {
-		Statement statement = null;
-		try {
-			statement = CCJSqlParserUtil.parse(sql);
-		} catch (JSQLParserException e) {
-			log.error("数据权限解析SQL异常", e);
-		}
-		return statement;
 	}
 }
