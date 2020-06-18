@@ -3,9 +3,12 @@ package cn.yunovo.iov.factory.biz.statistics.shipping.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.github.pagehelper.Page;
+
 import cn.yunovo.iov.boot.autoconfigure.request.SearchCondition;
-import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
-import cn.yunovo.iov.framework.web.PageInfo;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.factory.biz.statistics.shipping.manager.StatisticsShippingListManager;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO;
@@ -13,14 +16,9 @@ import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingLis
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingListService;
-import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.github.pagehelper.Page;
+import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
+import cn.yunovo.iov.framework.web.PageInfo;
 
 @Service
 public class StatisticsShippingListServiceImpl implements StatisticsShippingListService {
@@ -28,8 +26,6 @@ public class StatisticsShippingListServiceImpl implements StatisticsShippingList
 	@Autowired
 	private StatisticsShippingListManager statisticsShippingListManager;
 
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 
 	@Override
 	public StatisticsShippingListDTO getStatisticsShippingListById(Integer id) {
@@ -46,8 +42,8 @@ public class StatisticsShippingListServiceImpl implements StatisticsShippingList
 	public Object selectStatisticsShippingList(StatisticsShippingListQuery statisticsShippingListQuery, Map<String, Condition> conditionMap, Boolean isDac) {
 		Page<Object> page = null;
 
-		if(isDac) {
-			DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
+		if(!isDac) {
+			DacHelper.skip();
 		}
 
 		// [分页查询]

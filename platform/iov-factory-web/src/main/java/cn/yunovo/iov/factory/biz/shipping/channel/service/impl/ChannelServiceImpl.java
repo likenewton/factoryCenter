@@ -18,9 +18,7 @@ import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelDTO;
 import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelQuery;
 import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelVO;
 import cn.yunovo.iov.factory.biz.shipping.channel.service.ChannelService;
-import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 
@@ -30,8 +28,6 @@ public class ChannelServiceImpl implements ChannelService {
 	@Autowired
 	private ChannelManager channelManager;
 
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 
 	@Override
 	public ChannelDTO getChannelById(Integer id) {
@@ -43,8 +39,8 @@ public class ChannelServiceImpl implements ChannelService {
 	public Object selectChannel(ChannelQuery channelQuery, Map<String, Condition> conditionMap) {
 		Page<Object> page = null;
 
-		if(null == channelQuery.getBrandName()) {
-			DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
+		if(null != channelQuery.getBrandName()) {
+			DacHelper.skip();
 		}
 		
 		// [分页查询]
@@ -77,13 +73,11 @@ public class ChannelServiceImpl implements ChannelService {
 
 	@Override
 	public Integer insertChannel(ChannelDO channelDO) {
-		DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
 		return channelManager.insertChannel(channelDO);
 	}
 
 	@Override
 	public Integer deleteChannelById(Integer id) {
-		DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
 		return channelManager.deleteChannelById(id);
 	}
 

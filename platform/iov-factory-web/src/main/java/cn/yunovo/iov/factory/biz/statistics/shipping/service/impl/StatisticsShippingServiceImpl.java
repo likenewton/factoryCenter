@@ -18,9 +18,6 @@ import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
-import cn.yunovo.iov.factory.framework.LoginInfoUtil;
-import cn.yunovo.iov.factory.framework.dac.DacHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 
@@ -29,9 +26,7 @@ public class StatisticsShippingServiceImpl implements StatisticsShippingService 
 
 	@Autowired
 	private StatisticsShippingManager statisticsShippingManager;
-	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
+
 
 	@Override
 	public StatisticsShippingDTO getStatisticsShippingById(Integer id) {
@@ -42,8 +37,6 @@ public class StatisticsShippingServiceImpl implements StatisticsShippingService 
 	@OpLog( opType=OpTypeEnum.QUERY, opName = "根据条件查询[统计发货管理]信息")
 	public Object selectStatisticsShipping(StatisticsShippingQuery statisticsShippingQuery, Map<String, Condition> conditionMap) {
 		Page<Object> page = null;
-		
-		DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
 		
 		// [分页查询]
 		page = SearchCondition.conditionByPages(conditionMap);
@@ -74,7 +67,6 @@ public class StatisticsShippingServiceImpl implements StatisticsShippingService 
 	}
 	@Override
 	public Integer insertStatisticsShipping(StatisticsShippingDO statisticsShippingDO) {
-		DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
 		return statisticsShippingManager.insertStatisticsShipping(statisticsShippingDO);
 	}
 

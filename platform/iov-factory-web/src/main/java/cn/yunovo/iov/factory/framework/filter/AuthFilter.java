@@ -32,6 +32,7 @@ import cn.yunovo.iov.boot.autoconfigure.cas.h5.bean.LoginInfo;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 
+@SuppressWarnings("unused")
 @Component
 @WebFilter(urlPatterns = { "/*", "" }, filterName = "authFilter")
 public class AuthFilter implements Filter {
@@ -41,8 +42,6 @@ public class AuthFilter implements Filter {
 	
 	private static String ALLRESOURCEMAP = "allResourceMap";
 	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 
 	@Resource
 	private ISystemResourceViewComponent systemResourceViewComponent;
@@ -97,7 +96,6 @@ public class AuthFilter implements Filter {
 	}
 
 	private void extracted(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain, HttpServletRequest request, String uri) {
-		LoginInfo info = loginInfoUtil.getLoginBaseInfo();
 		try {
 			
 			Object allResourceObj = request.getSession().getAttribute(ALLRESOURCEMAP);
@@ -105,7 +103,7 @@ public class AuthFilter implements Filter {
 				//allResourceObj = request.getServletContext().getAttribute(ALLRESOURCEMAP);
 			}
 			
-			Object existResourceObj = request.getSession().getAttribute(info.getId());
+			Object existResourceObj = request.getSession().getAttribute(LoginInfoUtil.getLoginBaseInfo(request).getId());
 			if(null == existResourceObj) {
 				//existResourceObj = request.getServletContext().getAttribute(info.getId());
 			}
@@ -119,7 +117,7 @@ public class AuthFilter implements Filter {
 				}
 				
 				Map<String, SystemResourceVo> existResourceMap = new HashMap<String, SystemResourceVo>();
-				List<SystemResourceVo> existResourceList = systemResourceViewComponent.querySystemResourceByUserIdAndSiteCode(info.getId(), SITECODE);
+				List<SystemResourceVo> existResourceList = systemResourceViewComponent.querySystemResourceByUserIdAndSiteCode(LoginInfoUtil.getLoginBaseInfo(request).getId(), SITECODE);
 				for (SystemResourceVo vo : existResourceList) {
 					existResourceMap.put(vo.getResUrl(), vo);
 				}
@@ -127,8 +125,8 @@ public class AuthFilter implements Filter {
 				request.getServletContext().setAttribute(ALLRESOURCEMAP, allResourceMap);
 				request.getSession().setAttribute(ALLRESOURCEMAP, allResourceMap);
 				
-				request.getServletContext().setAttribute(info.getId(), existResourceMap);
-				request.getSession().setAttribute(info.getId(), existResourceMap);
+				request.getServletContext().setAttribute(LoginInfoUtil.getLoginBaseInfo(request).getId(), existResourceMap);
+				request.getSession().setAttribute(LoginInfoUtil.getLoginBaseInfo(request).getId(), existResourceMap);
 				
 				returnJson(servletRequest, servletResponse, filterChain, uri, allResourceMap, existResourceMap);
 
@@ -154,6 +152,7 @@ public class AuthFilter implements Filter {
 		if (0 < uri.indexOf("/sso")) {
 			filterChain.doFilter(servletRequest, servletResponse);
 		} else {
+			LoginInfoUtil.getLoginBaseInfo(request);
 			extracted(servletRequest, servletResponse, filterChain, request, uri);
 		}
 	}

@@ -3,6 +3,8 @@ package cn.yunovo.iov.factory.biz.statistics.area.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import cn.yunovo.iov.boot.autoconfigure.auditlog.annotation.OpLog;
 import cn.yunovo.iov.boot.autoconfigure.auditlog.enums.OpTypeEnum;
 import cn.yunovo.iov.boot.autoconfigure.request.SearchCondition;
@@ -31,7 +33,7 @@ public class StatisticsAreaServiceImpl implements StatisticsAreaService {
 	private StatisticsAreaManager statisticsAreaManager;
 	
 	@Autowired
-	private LoginInfoUtil loginInfoUtil;
+	private HttpServletRequest request;
 
 	@Override
 	public StatisticsAreaDTO getStatisticsAreaById(Integer id) {
@@ -48,8 +50,8 @@ public class StatisticsAreaServiceImpl implements StatisticsAreaService {
 	public Object selectStatisticsArea(StatisticsAreaQuery statisticsAreaQuery, Map<String, Condition> conditionMap, Boolean isDac) {
 		Page<Object> page = null;
 		
-		if(isDac) {
-			DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
+		if(!isDac) {
+			DacHelper.skip();
 		}
 
 		// [分页查询]

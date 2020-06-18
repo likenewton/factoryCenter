@@ -36,6 +36,7 @@ import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingListService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
+import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
 import cn.yunovo.iov.factory.framework.tree.CFNode;
 import cn.yunovo.iov.factory.framework.tree.CFTree;
 import cn.yunovo.iov.factory.framework.tree.Tree;
@@ -65,9 +66,7 @@ class ChannelController {
 	
 	@Autowired
 	private ShippingListService shippingListService;
-	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
+
 	
 	/*
 	 * 分页查询访问方式：GET http://ip:port/shipping/channels?page=1&page_size=2
@@ -158,9 +157,10 @@ class ChannelController {
 		channelVO = BeanMapper.map(channelDTO, ChannelVO.class);
 		
 		// 插入数据权限
-		DacHelper.insertChannelResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(),channelDTO.getPhone(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-		DacHelper.insertBrandResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getBrandName(), loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-		
+		DacResourceHelper.insertChannelResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+		DacResourceHelper.insertBrandResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getBrandName(),LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+
+
 		log.info("insertChannel ChannelController insert result[{}]", channelVO);
 		return channelVO;
 	}

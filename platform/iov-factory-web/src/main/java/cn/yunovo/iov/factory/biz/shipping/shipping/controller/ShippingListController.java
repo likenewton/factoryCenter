@@ -64,6 +64,7 @@ import cn.yunovo.iov.factory.biz.statistics.type.service.StatisticsTypeService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
+import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.commons.lang.date.DateFormatConstants;
 import cn.yunovo.iov.framework.commons.lang.date.DateGeneralUtils;
@@ -100,18 +101,15 @@ class ShippingListController {
 
 	@Autowired
 	private StatisticsTypeService statisticsTypeService;
-	
+
 	@Autowired
 	private StatisticsShippingListService statisticsShippingListService;
-	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
-	
+
 	@Autowired
 	private DictionaryService dictionaryService;
-	
+
 	private static Map<String, String> dictYearMap;
-	
+
 	private static Map<String, String> dictMonthMap;
 
 	private static Map<String, String> suffixFile = new HashMap<String, String>();
@@ -122,8 +120,8 @@ class ShippingListController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void statistics(ShippingListVO shippingListVO, String opt, HttpServletRequest request,ChannelDTO channelDTO) {
-		
+	private void statistics(ShippingListVO shippingListVO, String opt, HttpServletRequest request, ChannelDTO channelDTO) {
+
 		// 统计发货数据
 		StatisticsShippingQuery statisticsShippingQuery = new StatisticsShippingQuery();
 		statisticsShippingQuery.setArea(shippingListVO.getArea());
@@ -154,11 +152,10 @@ class ShippingListController {
 			statisticsShippingDO.setLastImporttime(new Date());
 			statisticsShippingDO.setChannelId(shippingListVO.getChannelId());
 			statisticsShippingService.insertStatisticsShipping(statisticsShippingDO);
-			
+
 			// 插入数据权限
-			DacHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(),channelDTO.getPhone(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-			DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), statisticsShippingDO.getBrandName(), loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-			//DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), statisticsShippingDO.getFactoryName(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
+			DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+			DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 
 		}
 
@@ -216,7 +213,7 @@ class ShippingListController {
 	// 删除一个对象：DELETE http://ip:port/shipping/lists/{id}
 	@ApiOperation(notes = "根据ID删除[发货导入清单]信息", value = "根据ID删除[发货导入清单]信息", extensions = { @Extension(name = "auditLog", properties = { @ExtensionProperty(name = "opType", value = "DELETE") }) })
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResultEntity<Integer> deleteShippingListById(HttpServletRequest request,@PathVariable("id") Integer id) {
+	public ResultEntity<Integer> deleteShippingListById(HttpServletRequest request, @PathVariable("id") Integer id) {
 		ResultEntity<Integer> result = new ResultEntity<>();
 		ShippingListDTO shippingListDTO = shippingListService.getShippingListById(id);
 		Integer del = shippingListService.deleteShippingListById(id);
@@ -227,7 +224,7 @@ class ShippingListController {
 		shippingListVO.setArea(shippingListDTO.getArea());
 		shippingListVO.setBrandName(shippingListDTO.getBrandName());
 		shippingListVO.setFactoryName(shippingListDTO.getFactoryName());
-		statistics(shippingListVO, "del",request,null);
+		statistics(shippingListVO, "del", request, null);
 
 		log.info("delete ShippingListController delete result[{}]", del);
 		return result;
@@ -256,25 +253,25 @@ class ShippingListController {
 		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 3 <= shippingListVO.getYunovoCode().length()) {
 			factoryName = String.valueOf(shippingListVO.getYunovoCode().charAt(2));
 		}
-		
+
 		// 获取云智码解析组装厂
 		String productDate = null;
-		if ((StringUtils.isBlank(shippingListVO.getProductDate()) || "null".equals(shippingListVO.getProductDate()))&& StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 16 <= shippingListVO.getYunovoCode().length()) {
-			
-			if(null == dictYearMap) {
+		if ((StringUtils.isBlank(shippingListVO.getProductDate()) || "null".equals(shippingListVO.getProductDate())) && StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 16 <= shippingListVO.getYunovoCode().length()) {
+
+			if (null == dictYearMap) {
 				DictionaryQuery dictionaryQuery = new DictionaryQuery();
 				dictionaryQuery.setWordType(7);
 				List<DictionaryVO> list = (List<DictionaryVO>) dictionaryService.selectDictionary(dictionaryQuery, null);
 				dictYearMap = list.stream().collect(Collectors.toMap(DictionaryVO::getWordKey, DictionaryVO::getWordValue));
-				
+
 				dictionaryQuery.setWordType(8);
 				list = (List<DictionaryVO>) dictionaryService.selectDictionary(dictionaryQuery, null);
 				dictMonthMap = list.stream().collect(Collectors.toMap(DictionaryVO::getWordKey, DictionaryVO::getWordValue));
 			}
-			
+
 			char a = shippingListVO.getYunovoCode().charAt(14);
 			String year = dictYearMap.get(String.valueOf(a));
-			if(null != year) {
+			if (null != year) {
 				char b = shippingListVO.getYunovoCode().charAt(15);
 				String month = dictMonthMap.get(String.valueOf(b));
 				productDate = year + "-" + month;
@@ -374,15 +371,14 @@ class ShippingListController {
 
 		ShippingListDTO shippingListDTO = shippingListService.getShippingListById(shippingListDO.getId());
 		shippingListVO = BeanMapper.map(shippingListDTO, ShippingListVO.class);
-		
+
 		// 统计数据
-		statistics(shippingListVO, null,request,channelDTO);
+		statistics(shippingListVO, null, request, channelDTO);
 		result.setData(listDevice.size());
-		
+
 		// 插入数据权限
-		DacHelper.insertChannelResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(),channelDTO.getPhone(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-		DacHelper.insertBrandResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), shippingListDO.getBrandName(), loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
-		//DacHelper.insertFactoryResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), shippingListDO.getFactoryName(),loginInfoUtil.getLoginBaseInfo().getLoginName(),loginInfoUtil.getLoginBaseInfo().getUserType());
+		DacResourceHelper.insertChannelResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+		DacResourceHelper.insertBrandResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 
 		log.info("insertShippingList ShippingListController insert result[{}]", shippingListVO);
 		return result;

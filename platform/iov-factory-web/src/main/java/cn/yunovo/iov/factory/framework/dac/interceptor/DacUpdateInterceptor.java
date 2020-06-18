@@ -23,6 +23,7 @@ import org.springframework.util.ReflectionUtils;
 
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.factory.framework.dac.metadata.DacProperties;
+import cn.yunovo.iov.factory.framework.dac.parser.DacByParser;
 
 @Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class DacUpdateInterceptor implements Interceptor {
@@ -49,8 +50,8 @@ public class DacUpdateInterceptor implements Interceptor {
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 
-		// 是否需要做数据权限
-		if (dacHelper.skip(dacProperties.getMaster(), dacProperties.getUserType())) {
+		// 判断是否设置了跳过
+		if (dacHelper.isSkip()) {
 			return invocation.proceed();
 		}
 
@@ -75,7 +76,16 @@ public class DacUpdateInterceptor implements Interceptor {
 				if (null != dataId) {
 					BoundSql boundSql = ms.getBoundSql(parameter);
 					String sql = boundSql.getSql();
-					dacHelper.skipInsert(sql, dataProviderMap, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+
+					// 是否需要做数据权限
+					List<String> tables = DacByParser.getTablesNames(sql);
+					for (String table : tables) {
+						if (!dacHelper.skip(dacProperties, dataProviderMap, tables)) {
+							String insertTable = table;
+							dacHelper.insert(insertTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+						}
+					}
+
 				}
 
 			} else if ("DELETE".equals(commandType.toString())) {
@@ -90,7 +100,16 @@ public class DacUpdateInterceptor implements Interceptor {
 							dataId = Integer.valueOf(parameter.toString());
 							BoundSql boundSql = ms.getBoundSql(parameter);
 							String sql = boundSql.getSql();
-							dacHelper.skipDelete(sql, dataProviderMap, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+
+							// 是否需要做数据权限
+							List<String> tables = DacByParser.getTablesNames(sql);
+							for (String table : tables) {
+								if (!dacHelper.skip(dacProperties, dataProviderMap, tables)) {
+									String deleteTable = table;
+									dacHelper.delete(deleteTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+								}
+							}
+							
 						}
 					} catch (NumberFormatException e) {
 						log.warn(e.toString());

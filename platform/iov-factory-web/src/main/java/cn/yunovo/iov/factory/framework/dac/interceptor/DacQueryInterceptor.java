@@ -50,8 +50,8 @@ public class DacQueryInterceptor implements Interceptor {
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 
-		// 是否需要做数据权限
-		if (dacHelper.skip(dacProperties.getMaster(), dacProperties.getUserType())) {
+		// 判断是否设置了跳过
+		if (dacHelper.isSkip()) {
 			return invocation.proceed();
 		}
 
@@ -64,39 +64,49 @@ public class DacQueryInterceptor implements Interceptor {
 			Executor executor = (Executor) invocation.getTarget();
 			CacheKey cacheKey;
 			BoundSql boundSql;
+
 			// 由于逻辑关系，只会进入一次
 			if (args.length == 4) {
+
 				// 4 个参数时
 				boundSql = ms.getBoundSql(parameter);
 				cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
 			} else {
+
 				// 6 个参数时
 				cacheKey = (CacheKey) args[4];
 				boundSql = (BoundSql) args[5];
 			}
+
 			String sql = boundSql.getSql();
 
-			if (dacHelper.skipQuery(sql, dataProviderMap, dacProperties.getMaster(), dacProperties.getUserType())) {
+			// 是否需要做数据权限
+			List<String> tables = DacByParser.getTablesNames(sql);
+			if (dacHelper.skip(dacProperties, dataProviderMap, tables)) {
 				return invocation.proceed();
-			} else {
-				DataResource dataResource = dacHelper.getDataAuthorityControl();
-				String providerBy = dataResource.getProviderBy();
-				String providerBySql = DacByParser.converToProviderBySql(sql, dataResource);
-				// 更新cacheKey，防止缓存错误
-				cacheKey.update(providerBy);
-				BoundSql providerByBoundSql = new BoundSql(ms.getConfiguration(), providerBySql, boundSql.getParameterMappings(), parameter);
-				Map<String, Object> additionalParameters = (Map<String, Object>) additionalParametersField.get(boundSql);
-				for (String key : additionalParameters.keySet()) {
-					providerByBoundSql.setAdditionalParameter(key, additionalParameters.get(key));
-				}
-				return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, providerByBoundSql);
 			}
+
+			DataResource dataResource = dacHelper.getDataAuthorityControl();
+			String providerBy = dataResource.getProviderBy();
+			String providerBySql = DacByParser.queryConverToProviderBySql(sql, dataResource);
+			// 更新cacheKey，防止缓存错误
+			cacheKey.update(providerBy);
+			BoundSql providerByBoundSql = new BoundSql(ms.getConfiguration(), providerBySql, boundSql.getParameterMappings(), parameter);
+			Map<String, Object> additionalParameters = (Map<String, Object>) additionalParametersField.get(boundSql);
+			for (String key : additionalParameters.keySet()) {
+				providerByBoundSql.setAdditionalParameter(key, additionalParameters.get(key));
+			}
+			return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, providerByBoundSql);
+
 		} finally {
 
 			// 和 PageHelper分页有冲突
 			if (null == PageHelper.getLocalPage()) {
 				dacHelper.clearProvider();
 				dacHelper.clearUser();
+				dacHelper.clearSkip();
+			} else {
+				// System.out.println(PageHelper.getLocalPage());
 			}
 		}
 	}

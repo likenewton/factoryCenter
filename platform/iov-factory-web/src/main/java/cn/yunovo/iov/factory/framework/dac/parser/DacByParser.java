@@ -9,6 +9,7 @@ import cn.yunovo.iov.factory.framework.dac.bean.DataResource;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
@@ -30,7 +31,7 @@ public class DacByParser {
 
 	private static final Log log = LogFactory.getLog(DacByParser.class);
 
-	public static String converToProviderBySql(String sql, DataResource dataResource) {
+	public static String queryConverToProviderBySql(String sql, DataResource dataResource) {
 		// 解析SQL
 		try {
 			if (0 < sql.indexOf(dataResource.getMapperBy())) {
@@ -52,6 +53,8 @@ public class DacByParser {
 				fromTable.setAlias(new Alias("targer"));
 				String alias = fromTable.getAlias().getName();
 				equalsTo.setLeftExpression(new Column(alias + ".id"));
+
+				// 为查询项添加别名
 				List<SelectItem> selectItemlist = plainSelect.getSelectItems();
 				if (null != selectItemlist) {
 					for (SelectItem item : selectItemlist) {
@@ -69,8 +72,22 @@ public class DacByParser {
 						}
 					}
 				}
-			}
 
+				// 为查询条件添加别名
+				Expression where = plainSelect.getWhere();
+				if(null != where) {
+					where.accept(new ExpressionVisitorAdapter() {
+						@Override
+						public void visit(Column column) {
+							super.visit(column);
+							column.setColumnName(alias + "." + column.getColumnName());
+						}
+					});
+
+				}
+			}
+			
+			// 添加权限过滤表
 			equalsTo.setRightExpression(new Column("dacr.data_id"));
 			Table table = new Table(dataResource.getMapperBy());
 			Alias alias = new Alias("dacr");
@@ -86,20 +103,20 @@ public class DacByParser {
 
 			Join addJoin = SelectUtils.addJoin(select, table, equalsTo);
 			addJoin.setRight(true);
-			System.out.println(select.toString());
 			sql = select.toString();
 		} catch (Throwable e) {
 			log.error("数据权限解析SQL异常", e);
 		}
+
+		System.out.println("拦截后的：" + sql);
 		return sql;
 	}
 
-	public static String getTablesNames(String sql) {
+	public static List<String> getTablesNames(String sql) {
 		Statement statement = getStatement(sql);
 		TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
 		List<String> tableList = tablesNamesFinder.getTableList(statement);
-		String tableName = tableList.get(0);
-		return tableName;
+		return tableList;
 	}
 
 	private static Statement getStatement(String sql) {

@@ -16,9 +16,7 @@ import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListDTO;
 import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListQuery;
 import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListVO;
 import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingListService;
-import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 
@@ -27,9 +25,6 @@ public class ShippingListServiceImpl implements ShippingListService {
 
 	@Autowired
 	private ShippingListManager shippingListManager;
-	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 
 
 	@Override
@@ -42,8 +37,8 @@ public class ShippingListServiceImpl implements ShippingListService {
 	public Object selectShippingList(ShippingListQuery shippingListQuery, Map<String, Condition> conditionMap, Boolean isDac) {
 		Page<Object> page = null;
 		
-		if(isDac) {
-			DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
+		if(!isDac) {
+			DacHelper.skip();
 		}
 		
 		// [分页查询]
@@ -75,13 +70,11 @@ public class ShippingListServiceImpl implements ShippingListService {
 	}
 	@Override
 	public Integer insertShippingList(ShippingListDO shippingListDO) {
-		DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
 		return shippingListManager.insertShippingList(shippingListDO);
 	}
 
 	@Override
 	public Integer deleteShippingListById(Integer id) {
-		DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
 		return shippingListManager.deleteShippingListById(id);
 	}
 

@@ -42,8 +42,6 @@ class OrganController {
 	@Autowired
 	private NacosValueConfig nacosValueConfig;
 
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 	
 	private String getLoginBaseInfo(HttpServletRequest request) {
 		if(null != request.getAttribute(H5ClientAuthenticationFilter.CONST_CAS_ASSERTION)) {
@@ -74,10 +72,10 @@ class OrganController {
 			
 			//品牌机构的时候
 			List<CooperateOrganVo> orgList = cooperateOrganViewComponent.queryCooperateOrganList(cooperateOrganQueryBean, getLoginBaseInfo(request));
-			if(1 == loginInfoUtil.getLoginBaseInfo().getUserType()) {
+			if(1 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
 				for(CooperateOrganVo vo: orgList) {
 					if(orgCodesMap.containsKey(vo.getCode())) {
-						if(loginInfoUtil.getLoginBaseInfo().getOrganCode().equals(orgCodesMap.get(vo.getCode()))) {
+						if(LoginInfoUtil.getLoginBaseInfo(request).getOrganCode().equals(orgCodesMap.get(vo.getCode()))) {
 							filterList.add(vo);
 						}
 					}

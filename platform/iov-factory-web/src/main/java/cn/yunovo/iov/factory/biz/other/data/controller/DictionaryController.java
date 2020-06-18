@@ -53,9 +53,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/other/dictionarys")
 @Api(value = "[]相关 api")
 class DictionaryController {
-
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 	
 	@Autowired
 	private DictionaryService dictionaryService;
@@ -88,9 +85,9 @@ class DictionaryController {
 		Map<String, DictionaryVO> map = new HashMap<String, DictionaryVO>();
 		
 		// 如何是工厂账号登录，只能看到自己的工厂
-		if(2 == loginInfoUtil.getLoginBaseInfo().getUserType()) {
+		if(2 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
 			DacUserQuery dacUserQuery = new DacUserQuery();
-			dacUserQuery.setUserId(loginInfoUtil.getLoginBaseInfo().getLoginName());
+			dacUserQuery.setUserId(LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 			DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
 			
 			for(DictionaryVO vo :list) {

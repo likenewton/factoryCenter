@@ -16,9 +16,7 @@ import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterDTO;
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterQuery;
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterVO;
 import cn.yunovo.iov.factory.biz.statistics.paster.service.StatisticsPasterService;
-import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 
@@ -27,9 +25,6 @@ public class StatisticsPasterServiceImpl implements StatisticsPasterService {
 
 	@Autowired
 	private StatisticsPasterManager statisticsPasterManager;
-
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 	
 	@Override
 	public StatisticsPasterDTO getStatisticsPasterById(Integer id) {
@@ -40,8 +35,8 @@ public class StatisticsPasterServiceImpl implements StatisticsPasterService {
 	public Object selectStatisticsPaster(StatisticsPasterQuery statisticsPasterQuery, Map<String, Condition> conditionMap, Boolean isDac) {
 		Page<Object> page = null;
 
-		if(isDac) {
-			DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
+		if(!isDac) {
+			DacHelper.skip();
 		}
 		
 		// [分页查询]

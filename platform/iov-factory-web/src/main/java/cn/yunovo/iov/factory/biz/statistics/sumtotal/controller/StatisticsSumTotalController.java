@@ -71,10 +71,6 @@ class StatisticsSumTotalController {
 	
 	@Autowired
 	private StatisticsAssembleService statisticsAssembleService;
-	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
-	
 
 	/*
 	 * 分页查询访问方式：GET http://ip:port/statistics/sum/totals?page=1&page_size=2
@@ -90,7 +86,7 @@ class StatisticsSumTotalController {
 		ResultEntity<Object> result = new ResultEntity<Object>();
 		
 		// 平台用户
-		if(0 == loginInfoUtil.getLoginBaseInfo().getUserType()) {
+		if(0 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
 			Map<String,Condition> conditionMap = new HashMap<String,Condition>();
 			conditionMap.put(Condition.PAGES, pages);
 			conditionMap.put(Condition.LIMIT, limit);

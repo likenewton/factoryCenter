@@ -8,6 +8,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.github.ore.boot.context.SpringContext;
+
+import cn.yunovo.iov.factory.biz.dac.user.model.DacUserDTO;
+import cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery;
+import cn.yunovo.iov.factory.biz.dac.user.service.DacUserService;
 import cn.yunovo.iov.factory.biz.production.test.model.DeviceTestQuery;
 import cn.yunovo.iov.factory.biz.production.test.service.DeviceTestService;
 import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelDTO;
@@ -42,6 +47,7 @@ import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.YunovoCodeUtil;
 import cn.yunovo.iov.factory.framework.config.NacosValueConfig;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
+import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
 import cn.yunovo.iov.framework.commons.lang.date.DateFormatConstants;
 import cn.yunovo.iov.framework.commons.lang.date.DateGeneralUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +118,7 @@ public class StatisticsTypeJob {
 		if (null != shippings && 0 < shippings.size()) {
 			ShippingListVO shippingListVO = shippings.get(0);
 			String area = YunovoCodeUtil.getArea(shippingListVO.getArea());
-	
+
 			shippingListQuery = new ShippingListQuery();
 			shippingListQuery.setArea(area);
 			shippingListQuery.setBrandName(statisticsTypeVO.getOrgCode());
@@ -128,26 +134,33 @@ public class StatisticsTypeJob {
 			statisticsAreaQuery.setFactoryName(statisticsTypeVO.getFactoryName());
 			statisticsAreaQuery.setChannelId(statisticsTypeVO.getChannelId());
 			StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
-	
+
 			StatisticsAreaDO statisticsAreaDO = new StatisticsAreaDO();
 			statisticsAreaDO.setArea(area);
 			statisticsAreaDO.setChannelId(statisticsTypeVO.getChannelId());
 			statisticsAreaDO.setFactoryName(statisticsTypeVO.getFactoryName());
 			statisticsAreaDO.setBrandName(shippingListVO.getBrandName());
 			statisticsAreaDO.setDeviceNumber(deviceNumber);
-	
+
 			if (null != statisticsAreaDTO) {
 				statisticsAreaDO.setId(statisticsAreaDTO.getId());
 				statisticsAreaService.updateStatisticsArea(statisticsAreaDO);
 			} else {
 				statisticsAreaService.insertStatisticsArea(statisticsAreaDO);
 				ChannelDTO channelDTO = channelService.getChannelById(statisticsTypeVO.getChannelId());
-	
+
 				// 插入数据权限
-				DacHelper.insertChannelResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), channelDTO.getPhone(), statisticsTypeVO.getCreateId(), null);
-				DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId(), null);
-				DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), null, statisticsTypeVO.getCreateId(), null, statisticsTypeVO.getFactoryName());
-	
+				DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), channelDTO.getPhone(), statisticsTypeVO.getCreateId());
+				DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId());
+
+				DacUserService dacUserService = SpringContext.getBean(DacUserService.class);
+				DacUserQuery dacUserQuery = new DacUserQuery();
+				dacUserQuery.setUserMapper(statisticsTypeVO.getFactoryName());
+				dacUserQuery.setUserType(2);
+				DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
+				if (null != dacUserDTO) {
+					DacResourceHelper.insertFactoryResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), dacUserDTO.getUserId(), statisticsTypeVO.getCreateId());
+				}
 			}
 		}
 	}
@@ -188,10 +201,17 @@ public class StatisticsTypeJob {
 			ChannelDTO channelDTO = channelService.getChannelById(statisticsTypeVO.getChannelId());
 
 			// 插入数据权限
-			DacHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPINGLIST, statisticsShippingListDO.getId(), channelDTO.getPhone(), statisticsTypeVO.getCreateId(), null);
-			DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPINGLIST, statisticsShippingListDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId(), null);
-			DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_SHIPPINGLIST, statisticsShippingListDO.getId(), null, statisticsTypeVO.getCreateId(), null, statisticsTypeVO.getFactoryName());
+			DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPINGLIST, statisticsShippingListDO.getId(), channelDTO.getPhone(), statisticsTypeVO.getCreateId());
+			DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPINGLIST, statisticsShippingListDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId());
 
+			DacUserService dacUserService = SpringContext.getBean(DacUserService.class);
+			DacUserQuery dacUserQuery = new DacUserQuery();
+			dacUserQuery.setUserMapper(statisticsTypeVO.getFactoryName());
+			dacUserQuery.setUserType(2);
+			DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
+			if (null != dacUserDTO) {
+				DacResourceHelper.insertFactoryResource(Contants.TABLE_STATISTICS_SHIPPINGLIST, statisticsShippingListDO.getId(), dacUserDTO.getUserId(), statisticsTypeVO.getCreateId());
+			}
 		}
 
 		// 统计省发货数量
@@ -247,12 +267,16 @@ public class StatisticsTypeJob {
 
 			statisticsAssembleService.insertStatisticsAssemble(statisticsAssembleDO);
 
-			// 特殊情况可以硬编码方式：插入组装数据机构用户权限
-			DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_ASSEMBLE, statisticsAssembleDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId(), null);
-
-			// 特殊情况可以硬编码方式：插入贴片数据工厂用户权限
-			DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_ASSEMBLE, statisticsAssembleDO.getId(), null, statisticsTypeVO.getCreateId(), null, statisticsTypeVO.getFactoryName());
-
+			// 插入数据权限
+			DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_ASSEMBLE, statisticsAssembleDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId());
+			DacUserService dacUserService = SpringContext.getBean(DacUserService.class);
+			DacUserQuery dacUserQuery = new DacUserQuery();
+			dacUserQuery.setUserMapper(statisticsTypeVO.getFactoryName());
+			dacUserQuery.setUserType(2);
+			DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
+			if (null != dacUserDTO) {
+				DacResourceHelper.insertFactoryResource(Contants.TABLE_STATISTICS_ASSEMBLE, statisticsAssembleDO.getId(), dacUserDTO.getUserId(), statisticsTypeVO.getCreateId());
+			}
 		}
 
 		Integer todayNumber = 0;
@@ -313,12 +337,16 @@ public class StatisticsTypeJob {
 
 			statisticsPasterService.insertStatisticsPaster(statisticsPasterDO);
 
-			// 特殊情况可以硬编码方式：插入组装数据机构用户权限
-			DacHelper.insertBrandResource(Contants.TABLE_STATISTICS_PASTER, statisticsPasterDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId(), null);
-
-			// 特殊情况可以硬编码方式：插入贴片数据工厂用户权限
-			DacHelper.insertFactoryResource(Contants.TABLE_STATISTICS_PASTER, statisticsPasterDO.getId(), null, statisticsTypeVO.getCreateId(), null,statisticsTypeVO.getFactoryName());
-
+			// 插入数据权限
+			DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_PASTER, statisticsPasterDO.getId(), statisticsTypeVO.getOrgCode(), statisticsTypeVO.getCreateId());
+			DacUserService dacUserService = SpringContext.getBean(DacUserService.class);
+			DacUserQuery dacUserQuery = new DacUserQuery();
+			dacUserQuery.setUserMapper(statisticsTypeVO.getFactoryName());
+			dacUserQuery.setUserType(2);
+			DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
+			if (null != dacUserDTO) {
+				DacResourceHelper.insertFactoryResource(Contants.TABLE_STATISTICS_PASTER, statisticsPasterDO.getId(), dacUserDTO.getUserId(), statisticsTypeVO.getCreateId());
+			}
 		}
 
 		Integer todayNumber = 0;

@@ -16,9 +16,7 @@ import cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleDTO
 import cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleQuery;
 import cn.yunovo.iov.factory.biz.statistics.assemble.model.StatisticsAssembleVO;
 import cn.yunovo.iov.factory.biz.statistics.assemble.service.StatisticsAssembleService;
-import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 
@@ -28,8 +26,6 @@ public class StatisticsAssembleServiceImpl implements StatisticsAssembleService 
 	@Autowired
 	private StatisticsAssembleManager statisticsAssembleManager;
 	
-	@Autowired
-	private LoginInfoUtil loginInfoUtil;
 	
 	@Override
 	public StatisticsAssembleDTO getStatisticsAssembleById(Integer id) {
@@ -45,8 +41,8 @@ public class StatisticsAssembleServiceImpl implements StatisticsAssembleService 
 	public Object selectStatisticsAssemble(StatisticsAssembleQuery statisticsAssembleQuery, Map<String, Condition> conditionMap, Boolean isDac) {
 		Page<Object> page = null;
 
-		if(isDac) {
-			DacHelper.setUser(LoginUser.create().userId(loginInfoUtil.getLoginBaseInfo().getLoginName()).userType(loginInfoUtil.getLoginBaseInfo().getUserType()));
+		if(!isDac) {
+			DacHelper.skip();
 		}
 		
 		// [分页查询]
