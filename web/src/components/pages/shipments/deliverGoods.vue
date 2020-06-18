@@ -19,7 +19,7 @@
       </el-row>
       <el-row>
         <el-table v-viewer ref="listTable" :data="list.data" @sort-change="handleSortChange" :stripe="isStripe" :max-height="maxTableHeight" border resizable size="mini">
-          <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+          <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
           <el-table-column prop="brandName" label="品牌" min-width="200">
             <template slot-scope="scope">{{scope.row.brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</template>
           </el-table-column>
@@ -27,14 +27,12 @@
             <template slot-scope="scope">{{scope.row.factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 1), 'wordValue', 'wordKey')}}</template>
           </el-table-column>
           <el-table-column prop="area" label="区域" min-width="200"></el-table-column>
-          <el-table-column prop="channelId" label="渠道" min-width="150">
-            <template slot-scope="scope">{{scope.row.channelId | channelFilter(Allchannels)}}</template>
-          </el-table-column>
+          <el-table-column prop="channelName" label="渠道" min-width="150"></el-table-column>
           <el-table-column prop="deviceNumber" label="设备总数量" width="100" align="right"></el-table-column>
           <el-table-column prop="lastImporttime" label="最后导入时间" width="160">
             <template slot-scope="scope">{{scope.row.lastImporttime}}</template>
           </el-table-column>
-          <el-table-column label="操作" width="80">
+          <el-table-column label="操作" width="80" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" class="text_parimaty" @click="goDetail(scope.row)" :disabled="!pageAuthBtn.factory_deliverGoods_detail">详情</el-button>
             </template>
@@ -200,7 +198,6 @@ export default {
   },
   mounted() {
     this.getData()
-    this.getChannels()
   },
   filters: {
     // 对树状渠道进行valueToLabel
@@ -227,6 +224,7 @@ export default {
         }
       })
     },
+    // 通过地址获取，暂不使用该接口
     getChannels(brandName) {
       const removeEmptyChildNode = (data = []) => {
         data.forEach((v) => {
@@ -349,6 +347,7 @@ export default {
         name: 'deliverGoodsDetail',
         query: {
           id: row.id,
+          channelName: row.channelName,
           title: '发货管理详情'
         },
       })

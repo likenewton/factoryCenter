@@ -16,7 +16,7 @@
       </el-row>
       <el-row>
         <el-table v-viewer ref="listTable" :data="list.data" @sort-change="handleSortChange" :stripe="isStripe" :max-height="maxTableHeight" border resizable size="mini">
-          <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+          <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
           <el-table-column prop="factoryName" label="贴片工厂" min-width="200">
             <template slot-scope="scope">{{scope.row.factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 0), 'wordValue', 'wordKey')}}</template>
           </el-table-column>
@@ -26,7 +26,7 @@
           <el-table-column prop="pasterNumber" label="贴片数量" width="200" align="right"></el-table-column>
           <el-table-column prop="errorNumber" label="错误数量" width="160" align="right"></el-table-column>
           <el-table-column prop="reportTime" label="上报时间" width="160"></el-table-column>
-          <el-table-column label="操作" width="80">
+          <el-table-column label="操作" width="80" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" class="text_parimaty" @click="goDetail(scope.row)" :disabled="!pageAuthBtn.factory_patch_detail">详情</el-button>
             </template>
@@ -89,6 +89,7 @@ export default {
           title: `${factoryName}(${row.reportTime})`,
           factoryName: row.factoryName,
           reportTime: row.reportTime,
+          brandName: row.brandName,
           productionPhase: 1,
         }
       })

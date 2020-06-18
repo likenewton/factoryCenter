@@ -14,11 +14,29 @@
             <el-button type="warning" @click="resetData">重置</el-button>
           </el-form-item>
         </el-form>
+        <div class="base_message">
+          <span class="item">
+            <span class="label">品牌：</span>
+            <span class="value bold text_purple">{{brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</span>
+          </span>
+          <span class="item">
+            <span class="label">组装工厂：</span>
+            <span class="value bold text_purple">{{factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 1), 'wordValue', 'wordKey')}}</span>
+          </span>
+          <span class="item">
+            <span class="label">区域：</span>
+            <span class="value bold text_purple">{{area}}</span>
+          </span>
+          <span class="item">
+            <span class="label">渠道 ：</span>
+            <span class="value bold text_purple">{{channelName}}</span>
+          </span>
+        </div>
       </el-row>
       <el-row>
         <el-table v-viewer ref="listTable" :data="list.data" @sort-change="handleSortChange" :stripe="isStripe" :max-height="maxTableHeight" border resizable size="mini">
-          <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
-          <el-table-column prop="brandName" label="品牌" width="220">
+          <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
+         <!--  <el-table-column prop="brandName" label="品牌" width="220">
             <template slot-scope="scope">{{scope.row.brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</template>
           </el-table-column>
           <el-table-column prop="factoryName" label="组装工厂" width="220">
@@ -26,10 +44,10 @@
           </el-table-column>
           <el-table-column prop="area" label="区域" width="200"></el-table-column>
           <el-table-column prop="channelId" label="渠道" min-width="150">
-            <template slot-scope="scope">{{scope.row.channelId | channelFilter(Allchannels)}}</template>
-          </el-table-column>
-          <el-table-column prop="yunovoCode" label="云智码" width="200"></el-table-column>
-          <el-table-column prop="deviceNumber" label="设备数量" width="80" align="right"></el-table-column>
+            <template slot-scope="scope">{{channelName}}</template>
+          </el-table-column> -->
+          <el-table-column prop="yunovoCode" label="云智码" width="220"></el-table-column>
+          <el-table-column prop="deviceNumber" label="设备数量" width="100" align="right"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column prop="productDate" label="生产日期" width="120"></el-table-column>
           <el-table-column prop="importTime" label="导入时间" width="160"></el-table-column>
@@ -72,14 +90,17 @@ export default {
         currentPage: 1,
         total: 0,
       },
+      brandName: '',
+      factoryName: '',
+      area: '',
       id: Api.UNITS.getQuery('id'),
+      channelName: decodeURIComponent(Api.UNITS.getQuery('channelName')),
       Allchannels: [],
     }
   },
   mounted() {
     this.getFahuoById(() => {
       this.getData()
-      this.getChannels()
     })
   },
   filters: {
@@ -123,6 +144,7 @@ export default {
         }
       })
     },
+    // 通过地址获取，暂不使用该接口
     getChannels() {
       const removeEmptyChildNode = (data = []) => {
         data.forEach((v) => {
@@ -199,6 +221,17 @@ export default {
 
 </script>
 <style lang="scss">
-.deliverGoodsDetail-container {}
+.deliverGoodsDetail-container {
+  .base_message {
+    position: absolute;
+    font-size: 14px;
+    bottom: 25px;
+    left: 70px;
+
+    .item {
+      padding: 0 10px;
+    }
+  }
+}
 
 </style>

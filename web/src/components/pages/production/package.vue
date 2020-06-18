@@ -16,7 +16,7 @@
       </el-row>
       <el-row>
         <el-table v-viewer ref="listTable" :data="list.data" @sort-change="handleSortChange" :stripe="isStripe" :max-height="maxTableHeight" border resizable size="mini">
-          <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+          <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
           <el-table-column prop="brandName" label="品牌" min-width="200">
             <template slot-scope="scope">{{scope.row.brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</template>
           </el-table-column>
@@ -26,7 +26,7 @@
           <el-table-column prop="deviceNumber" label="设备数量" width="100" align="right"></el-table-column>
           <el-table-column prop="errorNumber" label="错误数量" width="100" align="right"></el-table-column>
           <el-table-column prop="reportTime" label="上报时间" width="160"></el-table-column>
-          <el-table-column label="操作" width="80">
+          <el-table-column label="操作" width="80" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" class="text_parimaty" @click="goDetail(scope.row)" :disabled="!pageAuthBtn.factory_package_detail">详情</el-button>
             </template>

@@ -17,7 +17,7 @@
       </el-row>
       <el-row>
         <el-table v-viewer ref="listTable" :data="list.data" @sort-change="handleSortChange" :stripe="isStripe" :max-height="maxTableHeight" border resizable size="mini">
-          <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+          <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
           <el-table-column prop="sn" label="SN" width="160"></el-table-column>
           <el-table-column prop="imei" label="IMEI" width="160"></el-table-column>
           <el-table-column prop="iccid" label="ICCID" width="180"></el-table-column>
