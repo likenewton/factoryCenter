@@ -194,7 +194,13 @@ public class StatisticsTypeJob {
 			StatisticsShippingListVO statisticsShippingVO = shippingList.get(0);
 			statisticsShippingListDO.setId(statisticsShippingVO.getId());
 			statisticsShippingListDO.setDeviceNumber(deviceNumber);
-			statisticsShippingListService.updateStatisticsShippingList(statisticsShippingListDO);
+
+			if (0 == deviceNumber) {
+				statisticsShippingListService.deleteStatisticsShippingListById(statisticsShippingVO.getId());
+			} else {
+				statisticsShippingListService.updateStatisticsShippingList(statisticsShippingListDO);
+			}
+
 		} else {
 			statisticsShippingListDO.setDeviceNumber(deviceNumber);
 			statisticsShippingListDO.setChannelId(statisticsTypeVO.getChannelId());
@@ -309,11 +315,11 @@ public class StatisticsTypeJob {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private void statisticsPaster(String reportTimeString, Date reportTime, StatisticsTypeVO statisticsTypeVO) {
-		
+
 		if (StringUtils.isBlank(statisticsTypeVO.getFactoryName()) || StringUtils.isBlank(statisticsTypeVO.getFactoryName())) {
 			return;
 		}
-		
+
 		// 查询贴片设备数量
 		DeviceTestQuery deviceTestQuery = new DeviceTestQuery();
 		deviceTestQuery.setFactoryName(statisticsTypeVO.getFactoryName());
