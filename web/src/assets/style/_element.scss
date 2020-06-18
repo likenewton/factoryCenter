@@ -1,0 +1,284 @@
+.page-container {
+  .el-main {
+    padding-bottom: 100px;
+  }
+
+  .el-card__body::after,
+  .el-card__body::before {
+    line-height: 0;
+
+    display: block;
+    visibility: hidden;
+    clear: both;
+
+    height: 0;
+
+    content: '';
+  }
+
+  .comment {
+    font-size: 14px;
+    color: #858585;
+  }
+
+  .editor {
+    background: #3ecec9 !important;
+    border-color: #3ecec9 !important;
+
+    &:hover {
+      background: #3ed5c9 !important;
+      border-color: #3ed5c9 !important;
+    }
+  }
+
+  .el-button--text.is-disabled {
+    color: #C0C4CC !important;
+
+    &:hover {
+      color: #C0C4CC !important;
+    }
+  }
+
+  .text_editor {
+    color: #3ecec9 !important;
+
+    &:hover {
+      color: #3ed5c9 !important;
+    }
+  }
+
+  .purple {
+    background: #9a83da !important;
+    border-color: #9a83da !important;
+
+    &:hover {
+      background: #9a8dda !important;
+      border-color: #9a8dda !important;
+    }
+  }
+
+  .text_purple {
+    color: #9a83da !important;
+
+    &:hover {
+      color: #9a8dda !important;
+    }
+  }
+
+  .text_danger {
+    color: #ff7477 !important;
+
+    &:hover {
+      color: #ff9092 !important;
+    }
+  }
+
+  .text_warning {
+    color: #ffc367 !important;
+
+    &:hover {
+      color: #ffcf85 !important;
+    }
+  }
+
+  .text_success {
+    color: #27da99 !important;
+
+    &:hover {
+      color: #52e1ad !important;
+    }
+  }
+
+  .text_primary {
+    color: #3cb1ff !important;
+
+    &:hover {
+      color: #63c1ff !important;
+    }
+  }
+
+  .btn-link {
+    cursor: pointer;
+    color: #3cb1ff !important;
+
+    &:hover {
+      color: #63c1ff !important;
+    }
+  }
+
+  .el-tabs__nav-wrap::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px !important;
+    background-color: #E4E7ED;
+    z-index: 1;
+  }
+
+  .el-card__header {
+    font-size: 16px !important;
+  }
+
+  .el-table {
+    .el-button--text {
+      padding: 4px 0 !important;
+    }
+
+    .caret-wrapper {
+      width: 17px !important;
+    }
+
+    .el-button--text {
+      margin-left: 2px !important;
+
+      &:first-of-type {
+        margin-left: 0 !important;
+      }
+    }
+
+    .cell {
+      padding: 0 9px !important;
+    }
+
+    th {
+      background: #fff !important;
+
+      .cell {
+        font-weight: bold;
+      }
+    }
+
+    td .cell {
+      font-size: 14px;
+    }
+  }
+
+  .pagination-table {
+    float: right;
+    margin: 25px 40px 0 0;
+  }
+
+  .el-date-editor .el-range-separator {
+    width: auto !important;
+  }
+
+  .el-form.search-form {
+    float: right;
+
+    .el-input,
+    .el-select,
+    .el-date-editor {
+      width: 180px !important;
+    }
+  }
+
+  .el-button-group {
+    i {
+      vertical-align: bottom;
+    }
+  }
+
+  .el-card.search-card {
+    .el-card__body {
+      padding-bottom: 3px !important;
+    }
+  }
+
+  .IE {
+    .el-loading-mask {
+      display: none !important;
+    }
+  }
+
+  .editor-form {
+    width: 50%;
+    min-width: 750px;
+  }
+
+  .searchForm_vip {
+    .el-form {
+      .el-form-item {
+        display: inline-block;
+
+        input {
+          width: 220px !important;
+        }
+      }
+    }
+  }
+
+  div[style*='background-color: rgb(255, 255, 255)'] {
+    top: 4px !important;
+
+    h4 {
+      color: #666 !important;
+      font-size: 16px;
+    }
+  }
+
+  .dataViewContainer {
+    position: relative;
+    margin: 0 20px 0;
+    height: 100%;
+    overflow: hidden;
+
+    .dataViewTable {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      border-collapse: collapse;
+
+      .thead {
+        display: flex;
+        position: absolute;
+        background-color: white;
+
+        .th {
+          font-weight: bold;
+          line-height: 30px;
+          font-size: 14px;
+          color: #666;
+          height: 30px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding: 0 5px;
+          width: 100px;
+          min-width: 100px;
+          border-bottom: 1px solid #666666;
+        }
+
+      }
+
+      .wrap_tbody {
+        padding-top: 30px;
+        height: 100%;
+        overflow: auto;
+
+        .tbody {
+          display: flex;
+
+          .td {
+            display: inline-block;
+            font-size: 14px;
+            color: #666;
+            line-height: 26px;
+            // white-space: nowrap;
+            width: 100px;
+            min-width: 100px;
+            // white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
+  }
+
+}
+
+.el-notification__content {
+  word-break: break-all;
+}
