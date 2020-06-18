@@ -3,7 +3,6 @@ package cn.yunovo.iov.factory.framework.dac;
 import java.util.Map;
 
 import com.github.ore.boot.context.SpringContext;
-import com.github.pagehelper.PageHelper;
 
 import cn.yunovo.iov.factory.biz.dac.brand.model.BrandResourceDO;
 import cn.yunovo.iov.factory.biz.dac.brand.service.BrandResourceService;
