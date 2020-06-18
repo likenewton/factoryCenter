@@ -51,7 +51,7 @@ public class DacUpdateInterceptor implements Interceptor {
 	public Object intercept(Invocation invocation) throws Throwable {
 
 		// 判断是否设置了跳过
-		if (dacHelper.isSkip()) {
+		if (dacHelper.isIntercept()) {
 			return invocation.proceed();
 		}
 
@@ -71,21 +71,22 @@ public class DacUpdateInterceptor implements Interceptor {
 			if ("INSERT".equals(commandType.toString())) {
 				String methodName = "getId";
 				Method method = ReflectionUtils.findMethod(parameter.getClass(), methodName);
-				dataId = method.invoke(parameter);
+				if(null != method) {
+					dataId = method.invoke(parameter);
 
-				if (null != dataId) {
-					BoundSql boundSql = ms.getBoundSql(parameter);
-					String sql = boundSql.getSql();
+					if (null != dataId) {
+						BoundSql boundSql = ms.getBoundSql(parameter);
+						String sql = boundSql.getSql();
 
-					// 是否需要做数据权限
-					List<String> tables = DacByParser.getTablesNames(sql);
-					for (String table : tables) {
-						if (!dacHelper.skip(dacProperties, dataProviderMap, tables)) {
-							String insertTable = table;
-							dacHelper.insert(insertTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+						// 是否需要做数据权限
+						List<String> tables = DacByParser.getTablesNames(sql);
+						for (String table : tables) {
+							if (!dacHelper.containsProvider(dacProperties, dataProviderMap, tables)) {
+								String insertTable = table;
+								dacHelper.insert(insertTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+							}
 						}
 					}
-
 				}
 
 			} else if ("DELETE".equals(commandType.toString())) {
@@ -104,7 +105,7 @@ public class DacUpdateInterceptor implements Interceptor {
 							// 是否需要做数据权限
 							List<String> tables = DacByParser.getTablesNames(sql);
 							for (String table : tables) {
-								if (!dacHelper.skip(dacProperties, dataProviderMap, tables)) {
+								if (!dacHelper.containsProvider(dacProperties, dataProviderMap, tables)) {
 									String deleteTable = table;
 									dacHelper.delete(deleteTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
 								}

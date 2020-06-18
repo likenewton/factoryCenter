@@ -35,8 +35,8 @@ import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListVO;
 import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingListService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
-import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
+import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.factory.framework.tree.CFNode;
 import cn.yunovo.iov.factory.framework.tree.CFTree;
 import cn.yunovo.iov.factory.framework.tree.Tree;
@@ -157,10 +157,14 @@ class ChannelController {
 		channelVO = BeanMapper.map(channelDTO, ChannelVO.class);
 		
 		// 插入数据权限
-		DacResourceHelper.insertChannelResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
-		DacResourceHelper.insertBrandResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getBrandName(),LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
-
-
+		LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+		if(3 != loginUser.getUserType()) {
+			DacResourceHelper.insertChannelResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+		}
+		if(1 != loginUser.getUserType()) {
+			DacResourceHelper.insertBrandResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getBrandName(),LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+		}
+		
 		log.info("insertChannel ChannelController insert result[{}]", channelVO);
 		return channelVO;
 	}

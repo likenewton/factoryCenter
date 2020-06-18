@@ -26,18 +26,16 @@ public class LoginInfoUtil {
 		loginInfo.setOrganCode(String.valueOf(attr.get("organCode")));
 		loginInfo.setUserType(Integer.valueOf(attr.get("userType").toString()));
 
-		if (null == LOGINUSER_LOCAL.get()) {
-			LoginUser loginUser = null;
+		LoginUser loginUser = null;
 
-			if (1 == loginInfo.getUserType()) {
-				// 机构用户，做机构代码和用户登录名转换
-				loginUser = LoginUser.create().userId(loginInfo.getId()).userType(loginInfo.getUserType()).loginName(loginInfo.getOrganCode());
-			} else {
-				loginUser = LoginUser.create().userId(loginInfo.getId()).userType(loginInfo.getUserType()).loginName(loginInfo.getLoginName());
-			}
-
-			LOGINUSER_LOCAL.set(loginUser);
+		if (1 == loginInfo.getUserType()) {
+			// 机构用户，做机构代码和用户登录名转换
+			loginUser = LoginUser.create().userId(loginInfo.getId()).userType(loginInfo.getUserType()).loginName(loginInfo.getOrganCode());
+		} else {
+			loginUser = LoginUser.create().userId(loginInfo.getId()).userType(loginInfo.getUserType()).loginName(loginInfo.getLoginName());
 		}
+
+		LOGINUSER_LOCAL.set(loginUser);
 
 		return loginInfo;
 	}

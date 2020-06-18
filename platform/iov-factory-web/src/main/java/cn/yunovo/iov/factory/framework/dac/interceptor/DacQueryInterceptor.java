@@ -51,7 +51,8 @@ public class DacQueryInterceptor implements Interceptor {
 	public Object intercept(Invocation invocation) throws Throwable {
 
 		// 判断是否设置了跳过
-		if (dacHelper.isSkip()) {
+		if (dacHelper.isIntercept()) {
+			dacHelper.clearSkip();
 			return invocation.proceed();
 		}
 
@@ -82,7 +83,7 @@ public class DacQueryInterceptor implements Interceptor {
 
 			// 是否需要做数据权限
 			List<String> tables = DacByParser.getTablesNames(sql);
-			if (dacHelper.skip(dacProperties, dataProviderMap, tables)) {
+			if (dacHelper.containsProvider(dacProperties, dataProviderMap, tables)) {
 				return invocation.proceed();
 			}
 

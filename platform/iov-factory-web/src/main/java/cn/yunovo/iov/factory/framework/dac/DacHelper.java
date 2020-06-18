@@ -51,13 +51,24 @@ public class DacHelper {
 
 	}
 
-	public boolean isSkip() {
+	public boolean isIntercept() {
+
+		// 平台用户不拦截
+		if (0 == LoginInfoUtil.LOGINUSER_LOCAL.get().getUserType()) {
+			return true;
+		}
+
+		// 没有设置是否跳过拦截
 		if (null == IS_SKIP_LOCAL.get()) {
 			return false;
 		}
+
+		// 设置是否跳过拦截
 		if (IS_SKIP_LOCAL.get()) {
 			return true;
 		}
+
+		// 默认拦截
 		return false;
 	}
 
@@ -65,12 +76,15 @@ public class DacHelper {
 		return PROVIDER_LOCAL.get();
 	}
 
-	public boolean skip(DacProperties dacProperties, Map<String, String> dataProviderMap, List<String> tables) {
+	public boolean containsProvider(DacProperties dacProperties, Map<String, String> dataProviderMap, List<String> tables) {
 		for (String table : tables) {
 			if (dataProviderMap.containsKey(table)) {
-				USER_LOCAL.set(LoginInfoUtil.LOGINUSER_LOCAL.get());
-				setDataAuthorityControl(dacProperties.getMaster(), dacProperties.getUserType(), table);
-				return false;
+				if (null != LoginInfoUtil.LOGINUSER_LOCAL.get()) {
+					USER_LOCAL.set(LoginInfoUtil.LOGINUSER_LOCAL.get());
+					setDataAuthorityControl(dacProperties.getMaster(), dacProperties.getUserType(), table);
+					return false;
+				}
+
 			}
 		}
 

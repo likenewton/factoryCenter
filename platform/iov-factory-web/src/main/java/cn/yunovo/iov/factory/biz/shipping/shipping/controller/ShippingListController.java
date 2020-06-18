@@ -65,6 +65,7 @@ import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
+import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.commons.lang.date.DateFormatConstants;
 import cn.yunovo.iov.framework.commons.lang.date.DateGeneralUtils;
@@ -154,8 +155,13 @@ class ShippingListController {
 			statisticsShippingService.insertStatisticsShipping(statisticsShippingDO);
 
 			// 插入数据权限
-			DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
-			DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+			LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+			if(3 != loginUser.getUserType()) {
+				DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+			}
+			if(1 != loginUser.getUserType()) {
+				DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+			}
 
 		}
 
@@ -377,9 +383,14 @@ class ShippingListController {
 		result.setData(listDevice.size());
 
 		// 插入数据权限
-		DacResourceHelper.insertChannelResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
-		DacResourceHelper.insertBrandResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
-
+		LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+		if(3 != loginUser.getUserType()) {
+			DacResourceHelper.insertChannelResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+		}
+		if(1 != loginUser.getUserType()) {
+			DacResourceHelper.insertBrandResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+		}
+		
 		log.info("insertShippingList ShippingListController insert result[{}]", shippingListVO);
 		return result;
 	}
