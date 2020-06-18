@@ -62,7 +62,7 @@ class AXIOS {
 
     axios({
       method: data.method,
-      url: 'http://127.0.0.1:9036'+`${this.env === 'development' ? '/factoryCenter/api' : '/factoryCenter/api'}${data.url}`,
+      url: `${this.env === 'development' ? '/factoryCenter/api' : '/factoryCenter/api'}${data.url}`,
       data: data.data,
       params: data.params,
       timeout: data.timeout,
