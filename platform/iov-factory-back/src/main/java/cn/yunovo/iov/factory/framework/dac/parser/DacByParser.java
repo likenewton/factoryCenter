@@ -7,15 +7,23 @@ import org.apache.ibatis.logging.LogFactory;
 
 import cn.yunovo.iov.factory.framework.dac.bean.DataResource;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Limit;
-import net.sf.jsqlparser.statement.select.OrderByElement;
+import net.sf.jsqlparser.statement.select.FromItem;
+import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
+import net.sf.jsqlparser.util.SelectUtils;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 
 public class DacByParser {
@@ -28,59 +36,58 @@ public class DacByParser {
 			if (0 < sql.indexOf(dataResource.getMapperBy())) {
 				return sql;
 			}
+
 			Statement statement = getStatement(sql);
 			Select select = (Select) statement;
 			SelectBody selectBody = select.getSelectBody();
 			PlainSelect plainSelect = (PlainSelect) selectBody;
 
-			// 获取查询字段
-			String clomus = "";
-			List<SelectItem> selectItemlist = plainSelect.getSelectItems();
-			if (null != selectItemlist) {
-				for (SelectItem itme : selectItemlist) {
-					clomus = clomus + "," + itme.toString();
+			FromItem fromItem = plainSelect.getFromItem();
+			Table fromTable = (Table) fromItem;
+
+			final EqualsTo equalsTo = new EqualsTo();
+			if (null != fromTable.getAlias()) {
+				equalsTo.setLeftExpression(new Column(fromTable.getAlias().getName() + ".id"));
+			} else {
+				fromTable.setAlias(new Alias("targer"));
+				String alias = fromTable.getAlias().getName();
+				equalsTo.setLeftExpression(new Column(alias + ".id"));
+				List<SelectItem> selectItemlist = plainSelect.getSelectItems();
+				if (null != selectItemlist) {
+					for (SelectItem item : selectItemlist) {
+						SelectExpressionItem sei = (SelectExpressionItem) item;
+						Expression expressionColumn = sei.getExpression();
+
+						if (expressionColumn instanceof Column) {
+							Column c = (Column) expressionColumn;
+							c.setColumnName(alias + "." + c.getColumnName());
+						}
+
+						if (expressionColumn instanceof Function) {
+							// Column c = (Column) expressionColumn;
+							// c.setColumnName(alias + "." + c.getColumnName());
+						}
+					}
 				}
-				clomus = clomus.substring(1, clomus.length());
 			}
 
-			// 获取where查询条件
-			String where = "";
-			Expression whereExpression = plainSelect.getWhere();
-			if (null != whereExpression) {
-				where = whereExpression.toString();
-			}
-
-			// 获取排序字段
-			String orderBy = "";
-			List<OrderByElement> orderByList = plainSelect.getOrderByElements();
-			if (null != orderByList) {
-				for (OrderByElement itme : orderByList) {
-					orderBy = orderBy + "," + itme.toString();
-				}
-				orderBy = orderBy.substring(1, orderBy.length());
-			}
-
-			// 获取分页
-			Limit limit = plainSelect.getLimit();
-
-			// 拼接新SQL
-			String tableName = getTablesNames(sql);
+			equalsTo.setRightExpression(new Column("dacr.data_id"));
+			Table table = new Table(dataResource.getMapperBy());
+			Alias alias = new Alias("dacr");
+			table.setAlias(alias);
 			String providerBy = dataResource.getProviderBy();
-			String adcSql = "select resource.* from " + dataResource.getMapperBy() + " dacr left join " + tableName + " resource on resource.id=dacr.data_id where dacr.data_provider='" + providerBy + "' and dacr.creator_id='" + dataResource.getUserId()
-					+ "'";
-			sql = "SELECT " + clomus + " FROM  (" + adcSql + ") filterAfter";
-
-			if (null != whereExpression) {
-				sql = sql + " where " + where + " ";
+			String whereString = "dacr.data_provider='" + providerBy + "' and dacr.creator_id='" + dataResource.getUserId() + "'";
+			Expression whereExpression = CCJSqlParserUtil.parseCondExpression(whereString);
+			if (plainSelect.getWhere() == null) {
+				plainSelect.setWhere(whereExpression);
+			} else {
+				plainSelect.setWhere(new AndExpression(plainSelect.getWhere(), whereExpression));
 			}
 
-			if (null != orderByList) {
-				sql = sql + " order by " + orderBy.toString();
-			}
-
-			if (null != limit) {
-				sql = sql + limit.toString();
-			}
+			Join addJoin = SelectUtils.addJoin(select, table, equalsTo);
+			addJoin.setRight(true);
+			System.out.println(select.toString());
+			sql = select.toString();
 		} catch (Throwable e) {
 			log.error("数据权限解析SQL异常", e);
 		}

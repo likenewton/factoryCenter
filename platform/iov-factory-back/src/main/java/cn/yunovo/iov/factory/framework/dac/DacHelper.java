@@ -29,7 +29,7 @@ public class DacHelper {
 
 	private static ThreadLocal<LoginUser> USERID_LOCAL = new ThreadLocal<LoginUser>();
 
-	private void clearUser() {
+	public void clearUser() {
 		USERID_LOCAL.remove();
 	}
 
@@ -56,19 +56,19 @@ public class DacHelper {
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_BRAND).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (2 == user.getUserType()) {
-				//工厂用户
+				// 工厂用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FACTORY).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (3 == user.getUserType()) {
-				//渠道用户
+				// 渠道用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_CHANNEL).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else if (4 == user.getUserType()) {
-				//物流用户
+				// 物流用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_FLOGISTICS).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			} else {
-				//平台用户
+				// 平台用户
 				DataResource dac = DataResource.create().mapperBy(Contants.TABLE_DAC_RESOURCE).providerBy(tableName).userId(user.getUserId());
 				DacHelper.dataAuthorityControl(dac, master);
 			}
@@ -98,8 +98,7 @@ public class DacHelper {
 			} else if (3 == user.getUserType()) {
 				// 渠道用户
 				insertChannelResource(tableName, dataId, user.getUserId(), null, null);
-			}
-			else if (4 == user.getUserType()) {
+			} else if (4 == user.getUserType()) {
 				// 物流用户
 				insertFlogisticsResource(tableName, dataId, user.getUserId(), null, null);
 			}
@@ -172,7 +171,7 @@ public class DacHelper {
 		flogisticsResourceDO.setSourceCreatorId(sourceCreatorId);
 		flogisticsResourceService.insertFlogisticsResource(flogisticsResourceDO);
 	}
-	
+
 	public static void insertChannelResource(String tableName, Integer dataId, String userId, String sourceCreatorId, Integer userType) {
 		if (null != userType && 3 == userType) {
 			return;
@@ -218,8 +217,6 @@ public class DacHelper {
 	}
 
 	public void clearProvider() {
-		if (null == PageHelper.getLocalPage()) {
-			PROVIDER_LOCAL.remove();
-		}
+		PROVIDER_LOCAL.remove();
 	}
 }

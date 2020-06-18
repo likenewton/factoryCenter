@@ -40,8 +40,8 @@
 		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery"
 		resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />
-		from t_statistics_shipping
+		s.id,s.channel_id,c.channel_name,s.brand_name,s.area,s.factory_name,s.device_number,s.last_importtime,s.create_time,s.update_time
+		from t_statistics_shipping  s left join t_channel_info c on s.channel_id=c.id
 		<where>
 			<if test="query.channelId != null">
 			  and channel_id = #{ query.channelId, jdbcType=INTEGER }

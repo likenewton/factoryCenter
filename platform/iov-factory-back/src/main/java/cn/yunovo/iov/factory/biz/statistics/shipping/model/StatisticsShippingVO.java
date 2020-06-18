@@ -35,6 +35,12 @@ public class StatisticsShippingVO {
 	private Integer channelId;
 	
 	/**
+	 * 渠道名称
+	 */
+	@ApiModelProperty(value = "渠道名称", name="channelId")
+	private Integer channelName;
+	
+	/**
 	 * 品牌名称(机构代码orgCode)
 	 */
 	@ApiModelProperty(value = "品牌名称(机构代码orgCode)", name="brandName")
