@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -215,18 +216,23 @@ class StatisticsAreaController {
 			List<StatisticsAreaVO> li = map.get(key);
 			Map<String, StatisticsAreaVO> filterMap = new HashMap<String, StatisticsAreaVO>();
 			for (StatisticsAreaVO vo : li) {
-				if(!filterMap.containsKey(vo.getBrandName())) {
+				if (!filterMap.containsKey(vo.getBrandName())) {
 					vo.setFactoryName(null);
 					filterMap.put(vo.getBrandName(), vo);
-				}else {
+				} else {
 					StatisticsAreaVO ar = filterMap.get(vo.getBrandName());
 					Integer deviceNumber = 0;
-					deviceNumber = ar.getDeviceNumber()+vo.getDeviceNumber();
+					deviceNumber = ar.getDeviceNumber() + vo.getDeviceNumber();
 					ar.setDeviceNumber(deviceNumber);
 				}
 			}
+			List<Entry<String, StatisticsAreaVO>> ll = filterMap.entrySet().stream().collect(Collectors.toList());
+			List<StatisticsAreaVO> sList = new ArrayList<StatisticsAreaVO>();
+			for (Entry<String, StatisticsAreaVO> s : ll) {
+				sList.add(s.getValue());
+			}
 			reMap.put("province", key);
-			reMap.put("list", filterMap.entrySet().stream().collect(Collectors.toList()));
+			reMap.put("list", sList);
 			provinceMap.put(key, key);
 			resultList.add(reMap);
 		}
