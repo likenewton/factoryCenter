@@ -53,6 +53,11 @@ public class DacHelper {
 
 	public boolean isIntercept() {
 
+		// 系统运行定时查询的情况
+		if (null == LoginInfoUtil.LOGINUSER_LOCAL.get()) {
+			return true;
+		}
+		
 		// 平台用户不拦截
 		if (0 == LoginInfoUtil.LOGINUSER_LOCAL.get().getUserType()) {
 			return true;
