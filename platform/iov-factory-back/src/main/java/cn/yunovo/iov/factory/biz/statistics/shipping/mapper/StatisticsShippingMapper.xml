@@ -65,35 +65,35 @@
 		from t_statistics_shipping  s left join t_channel_info c on s.channel_id=c.id
 		<where>
 			<if test="query.channelId != null">
-			  and channel_id = #{ query.channelId, jdbcType=INTEGER }
+			  and s.channel_id = #{ query.channelId, jdbcType=INTEGER }
 			</if>
 			<if test="query.brandName != null and query.brandName != ''">
-				and brand_name = #{ query.brandName, jdbcType=VARCHAR }
+				and s.brand_name = #{ query.brandName, jdbcType=VARCHAR }
 			</if>
 			<if test="query.area != null and query.area != ''">
-				and area = #{ query.area, jdbcType=VARCHAR }
+				and s.area = #{ query.area, jdbcType=VARCHAR }
 			</if>
 			<if test="query.factoryName != null and query.factoryName != ''">
-				and factory_name = #{ query.factoryName, jdbcType=VARCHAR
+				and s.factory_name = #{ query.factoryName, jdbcType=VARCHAR
 				}
 			</if>
 			<if test="query.deviceNumber != null">
-				and device_number = #{ query.deviceNumber,
+				and s.device_number = #{ query.deviceNumber,
 				jdbcType=INTEGER }
 			</if>
 			<if
 				test="query.lastImporttime != null and query.lastImporttime != ''">
-				and last_importtime = #{ query.lastImporttime,
+				and s.last_importtime = #{ query.lastImporttime,
 				jdbcType=TIMESTAMP }
 			</if>
 			<if test="query.selStartTime != null and query.selStartTime != ''">
 			   <![CDATA[ 
-			   AND DATE_FORMAT( last_importtime, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   AND DATE_FORMAT( s.last_importtime, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
 			   ]]>
 			</if>
 			<if test="query.selEndTime != null and query.selEndTime != ''">
 			   <![CDATA[ 
-			   AND DATE_FORMAT( last_importtime, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   AND DATE_FORMAT( s.last_importtime, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
 			   ]]>
 			</if>
 
