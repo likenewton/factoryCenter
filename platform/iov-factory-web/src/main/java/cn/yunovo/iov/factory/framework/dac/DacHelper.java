@@ -100,7 +100,7 @@ public class DacHelper {
 			// 平台用户
 			DacResourceHelper.deleteDataResource(dataId, tableName, user.getLoginName());
 		}
-		// clearUser();
+		clearUser();
 		return false;
 
 	}
@@ -128,7 +128,7 @@ public class DacHelper {
 			DacResourceHelper.insertDataResource(tableName, dataId, user.getLoginName(), null);
 		}
 
-		// clearUser();
+		clearUser();
 		return true;
 	}
 
