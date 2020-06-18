@@ -155,7 +155,9 @@ class ShippingListController {
 					statisticsAreaQuery.setFactoryName(shippingListVO.getFactoryName());
 					statisticsAreaQuery.setChannelId(shippingListVO.getChannelId());
 					StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
-					statisticsAreaService.deleteStatisticsAreaById(statisticsAreaDTO.getId());
+					if(null != statisticsAreaDTO) {
+						statisticsAreaService.deleteStatisticsAreaById(statisticsAreaDTO.getId());
+					}
 				
 				
 			} else {
