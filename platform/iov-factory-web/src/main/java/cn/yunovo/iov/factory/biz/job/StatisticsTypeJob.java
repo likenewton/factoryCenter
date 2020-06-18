@@ -3,12 +3,14 @@ package cn.yunovo.iov.factory.biz.job;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.github.ore.boot.context.SpringContext;
+import com.github.pagehelper.util.StringUtil;
 
 import cn.yunovo.iov.factory.biz.dac.user.model.DacUserDTO;
 import cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery;
@@ -234,6 +236,10 @@ public class StatisticsTypeJob {
 
 	@SuppressWarnings({ "unchecked" })
 	private void statisticsAssemble(String reportTimeString, Date reportTime, StatisticsTypeVO statisticsTypeVO) {
+
+		if (StringUtils.isBlank(statisticsTypeVO.getFactoryName()) || StringUtils.isBlank(statisticsTypeVO.getFactoryName())) {
+			return;
+		}
 		DeviceTestQuery deviceTestQuery = new DeviceTestQuery();
 		deviceTestQuery.setFactoryName(statisticsTypeVO.getFactoryName());
 		deviceTestQuery.setOrgCode(statisticsTypeVO.getOrgCode());
@@ -303,6 +309,11 @@ public class StatisticsTypeJob {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private void statisticsPaster(String reportTimeString, Date reportTime, StatisticsTypeVO statisticsTypeVO) {
+		
+		if (StringUtils.isBlank(statisticsTypeVO.getFactoryName()) || StringUtils.isBlank(statisticsTypeVO.getFactoryName())) {
+			return;
+		}
+		
 		// 查询贴片设备数量
 		DeviceTestQuery deviceTestQuery = new DeviceTestQuery();
 		deviceTestQuery.setFactoryName(statisticsTypeVO.getFactoryName());
