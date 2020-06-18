@@ -1,6 +1,6 @@
 spring:
   application:
-    name: iov-factory-back
+    name: iov-factory-web
   profiles:
     active: dev
 logging:
@@ -15,7 +15,7 @@ nacos:
         config-long-poll-timeout: 46000
         config-retry-time: 2333
         data-id: application-dev.properties
-        group: cn.yunovo.iov.iov-factory-back
+        group: cn.yunovo.iov.iov-factory-web
         max-retry: 10
         namespace: b25f6f07-716f-4a0e-a59f-5d183ebfb9b7
         server-addr: 192.168.3.240:8848
@@ -34,7 +34,7 @@ nacos:
         config-long-poll-timeout: 46000
         config-retry-time: 2333
         data-id: application-test.properties
-        group: cn.yunovo.iov.iov-factory-back
+        group: cn.yunovo.iov.iov-factory-web
         max-retry: 10
         namespace: f06cd285-94d7-4f3d-85d5-3dec8579b023
         server-addr: 192.168.3.240:8848
@@ -47,17 +47,3 @@ nacos:
 #production environment
 spring:
   profiles: prod
-nacos:
-    config:
-        auto-refresh: true
-        config-long-poll-timeout: 46000
-        config-retry-time: 2333
-        data-id: application-prod.properties
-        group: cn.yunovo.iov.iov-zen-back
-        max-retry: 10
-        server-addr: 192.168.3.240:8848
-        type: properties
-    logging:
-        default:
-            config:
-                enabled: false
