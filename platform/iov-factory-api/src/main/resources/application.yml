@@ -1,6 +1,6 @@
 spring:
   application:
-    name: iov-factory-yop
+    name: iov-factory-api
   profiles:
     active: dev
 logging:
@@ -15,7 +15,7 @@ nacos:
         config-long-poll-timeout: 46000
         config-retry-time: 2333
         data-id: application-dev.properties
-        group: cn.yunovo.iov.iov-factory-yop
+        group: cn.yunovo.iov.iov-factory-api
         max-retry: 10
         namespace: b25f6f07-716f-4a0e-a59f-5d183ebfb9b7
         server-addr: 192.168.3.240:8848
@@ -35,7 +35,7 @@ nacos:
         config-long-poll-timeout: 46000
         config-retry-time: 2333
         data-id: application-test.properties
-        group: cn.yunovo.iov.iov-factory-yop
+        group: cn.yunovo.iov.iov-factory-api
         max-retry: 10
         namespace: f06cd285-94d7-4f3d-85d5-3dec8579b023
         server-addr: 192.168.3.240:8848
