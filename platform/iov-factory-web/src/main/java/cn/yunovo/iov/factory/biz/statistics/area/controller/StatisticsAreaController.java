@@ -208,16 +208,28 @@ class StatisticsAreaController {
 		}
 
 		List<Object> re = map.keySet().stream().collect(Collectors.toList());
-		Map<String, String> timeMap = new HashMap<String, String>();
+		Map<String, String> provinceMap = new HashMap<String, String>();
 		for (Object o : re) {
 			Map<String, Object> reMap = new HashMap<String, Object>();
 			String key = o.toString();
+			List<StatisticsAreaVO> li = map.get(key);
+			Map<String, StatisticsAreaVO> filterMap = new HashMap<String, StatisticsAreaVO>();
+			for (StatisticsAreaVO vo : li) {
+				if(!filterMap.containsKey(vo.getBrandName())) {
+					vo.setFactoryName(null);
+					filterMap.put(vo.getBrandName(), vo);
+				}else {
+					StatisticsAreaVO ar = filterMap.get(vo.getBrandName());
+					Integer deviceNumber = 0;
+					deviceNumber = ar.getDeviceNumber()+vo.getDeviceNumber();
+					ar.setDeviceNumber(deviceNumber);
+				}
+			}
 			reMap.put("province", key);
-			reMap.put("list", map.get(key));
-			timeMap.put(key, key);
+			reMap.put("list", filterMap.entrySet().stream().collect(Collectors.toList()));
+			provinceMap.put(key, key);
 			resultList.add(reMap);
 		}
-
 		result.setData(resultList);
 		return result;
 	}

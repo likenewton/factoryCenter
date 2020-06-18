@@ -114,21 +114,4 @@ public class DacResourceHelper {
 		brandResourceService.deleteBrandResource(brandResourceDO);
 		return false;
 	}
-
-	public static void insert(String tableName, Integer dataId, String userId, String sourceCreatorId, Boolean insertBrand, Boolean insertFactory, Boolean insertChannel, Boolean insertFlogistics) {
-		if (insertBrand) {
-			insertBrandResource(tableName, dataId, userId, sourceCreatorId);
-		}
-		if (insertFactory) {
-			insertFactoryResource(tableName, dataId, userId, sourceCreatorId);
-		}
-
-		if (insertChannel) {
-			insertChannelResource(tableName, dataId, userId, sourceCreatorId);
-
-		}
-		if (insertFlogistics) {
-			insertFlogisticsResource(tableName, dataId, userId, sourceCreatorId);
-		}
-	}
 }
