@@ -31,6 +31,12 @@ public class StatisticsShippingManager {
 		return StatisticsShippingDTO;
 	}
 	
+	public StatisticsShippingDTO queryStatisticsShipping(StatisticsShippingQuery statisticsShippingQuery) {
+		StatisticsShippingDO statisticsShippingDO = statisticsShippingMapper.queryStatisticsShipping(statisticsShippingQuery);
+		StatisticsShippingDTO statisticsShippingDTO = BeanMapper.map(statisticsShippingDO, StatisticsShippingDTO.class);
+		return statisticsShippingDTO;
+	}
+	
 	public StatisticsShippingDTO statisticsShipping(StatisticsShippingQuery statisticsShippingQuery) {
 		StatisticsShippingDO statisticsShippingDO = statisticsShippingMapper.statisticsShipping(statisticsShippingQuery);
 		StatisticsShippingDTO StatisticsShippingDTO = BeanMapper.map(statisticsShippingDO, StatisticsShippingDTO.class);

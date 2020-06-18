@@ -39,6 +39,7 @@ import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingLis
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
+import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingListService;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalDO;
@@ -176,7 +177,8 @@ public class StatisticsTypeJob {
 			statisticsShippingQuery.setChannelId(statisticsTypeVO.getChannelId());
 			statisticsShippingQuery.setBrandName(statisticsTypeVO.getOrgCode());
 			statisticsShippingQuery.setFactoryName(statisticsTypeVO.getFactoryName());
-			StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
+			DacHelper.skip();
+			StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.queryStatisticsShipping(statisticsShippingQuery);
 
 			if (null != statisticsShippingDTO) {
 				String area = YunovoCodeUtil.getArea(statisticsShippingDTO.getArea());

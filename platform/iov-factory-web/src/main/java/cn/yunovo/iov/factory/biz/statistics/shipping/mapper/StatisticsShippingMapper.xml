@@ -117,6 +117,16 @@
 			</if>
 		</if>
 	</select>
+	
+	<select id="queryStatisticsShipping"
+		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_statistics_shipping
+		    <include refid="Base_Where" /> limit 1
+	</select>
+	
 	<insert id="insertStatisticsShipping" useGeneratedKeys="true"
 		keyProperty="id"
 		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO">

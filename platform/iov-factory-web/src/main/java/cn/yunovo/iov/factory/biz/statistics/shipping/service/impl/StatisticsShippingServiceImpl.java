@@ -34,7 +34,12 @@ public class StatisticsShippingServiceImpl implements StatisticsShippingService 
 	}
 	
 	@Override
-	@OpLog( opType=OpTypeEnum.QUERY, opName = "根据条件查询[统计发货管理]信息")
+	public StatisticsShippingDTO queryStatisticsShipping(StatisticsShippingQuery statisticsShippingQuery) {
+		return statisticsShippingManager.queryStatisticsShipping(statisticsShippingQuery);
+	}
+	
+	@Override
+	//@OpLog( opType=OpTypeEnum.QUERY, opName = "根据条件查询[统计发货管理]信息")
 	public Object selectStatisticsShipping(StatisticsShippingQuery statisticsShippingQuery, Map<String, Condition> conditionMap) {
 		Page<Object> page = null;
 		

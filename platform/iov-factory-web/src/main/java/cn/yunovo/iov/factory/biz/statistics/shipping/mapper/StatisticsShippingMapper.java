@@ -33,4 +33,7 @@ public interface StatisticsShippingMapper extends GeneralMapper<StatisticsShippi
 	Integer updateStatisticsShipping(StatisticsShippingDO statisticsShippingDO);
 
 	Integer deleteStatisticsShippingById(Integer id);
+	
+	StatisticsShippingDO queryStatisticsShipping(@Param("query")StatisticsShippingQuery statisticsShippingQuery);
+	
 }

@@ -19,6 +19,8 @@ public interface StatisticsShippingService {
 
 	Object selectStatisticsShipping(StatisticsShippingQuery statisticsShippingQuery, Map<String, Condition> conditionMap);
 	
+	StatisticsShippingDTO queryStatisticsShipping(StatisticsShippingQuery statisticsShippingQuery);
+
 	Integer insertStatisticsShipping(StatisticsShippingDO statisticsShippingDO);
 
 	Integer deleteStatisticsShippingById(Integer id);
