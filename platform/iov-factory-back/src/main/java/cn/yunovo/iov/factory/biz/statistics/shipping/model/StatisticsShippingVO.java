@@ -37,8 +37,8 @@ public class StatisticsShippingVO {
 	/**
 	 * 渠道名称
 	 */
-	@ApiModelProperty(value = "渠道名称", name="channelId")
-	private Integer channelName;
+	@ApiModelProperty(value = "渠道名称", name="channelName")
+	private String channelName;
 	
 	/**
 	 * 品牌名称(机构代码orgCode)

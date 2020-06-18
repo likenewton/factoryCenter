@@ -28,7 +28,7 @@ public class StatisticsShippingDO {
 	/**
 	 * 渠道名称
 	 */
-	private Integer channelName;
+	private String channelName;
 	
 	/**
 	 * 品牌名称(机构代码orgCode)
