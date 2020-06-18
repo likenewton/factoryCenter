@@ -50,6 +50,10 @@ import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListQuery;
 import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListVO;
 import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingDeviceService;
 import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingListService;
+import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaDO;
+import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaDTO;
+import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaQuery;
+import cn.yunovo.iov.factory.biz.statistics.area.service.StatisticsAreaService;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO;
@@ -63,6 +67,7 @@ import cn.yunovo.iov.factory.biz.statistics.type.model.StatisticsTypeDO;
 import cn.yunovo.iov.factory.biz.statistics.type.service.StatisticsTypeService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
+import cn.yunovo.iov.factory.framework.YunovoCodeUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
 import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
@@ -99,6 +104,9 @@ class ShippingListController {
 
 	@Autowired
 	private StatisticsShippingService statisticsShippingService;
+	
+	@Autowired
+	private StatisticsAreaService statisticsAreaService;
 
 	@Autowired
 	private StatisticsTypeService statisticsTypeService;
@@ -135,12 +143,21 @@ class ShippingListController {
 		StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
 
 		if (null != list && 0 < list.size()) {
-
 			StatisticsShippingVO statisticsShippingVO = list.get(0);
 
 			// 如何发货设备数量为0时，删除统计数据
 			if (null == statisticsShippingDTO && "del".equals(opt)) {
-				statisticsShippingService.deleteStatisticsShippingById(statisticsShippingVO.getId());
+				    statisticsShippingService.deleteStatisticsShippingById(statisticsShippingVO.getId());
+					String area = YunovoCodeUtil.getArea(shippingListVO.getArea());
+					StatisticsAreaQuery statisticsAreaQuery = new StatisticsAreaQuery();
+					statisticsAreaQuery.setArea(area);
+					statisticsAreaQuery.setBrandName(shippingListVO.getBrandName());
+					statisticsAreaQuery.setFactoryName(shippingListVO.getFactoryName());
+					statisticsAreaQuery.setChannelId(shippingListVO.getChannelId());
+					StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
+					statisticsAreaService.deleteStatisticsAreaById(statisticsAreaDTO.getId());
+				
+				
 			} else {
 				statisticsShippingDO.setUpdateTime(new Date());
 				if (null == opt && !"del".equals(opt)) {

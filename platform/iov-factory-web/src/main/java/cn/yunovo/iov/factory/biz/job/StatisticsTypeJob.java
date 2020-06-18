@@ -34,14 +34,10 @@ import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterDO;
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterQuery;
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterVO;
 import cn.yunovo.iov.factory.biz.statistics.paster.service.StatisticsPasterService;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListVO;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingListService;
-import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalDO;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalDTO;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalQuery;
@@ -92,9 +88,6 @@ public class StatisticsTypeJob {
 
 	@Autowired
 	private NacosValueConfig nacosValueConfig;
-
-	@Autowired
-	private StatisticsShippingService statisticsShippingService;
 
 	private void statisticsSumTotal(Integer statisticsType, Integer todayNumber, Integer sumTotal) {
 		if (null == todayNumber || null == sumTotal) {
@@ -171,36 +164,6 @@ public class StatisticsTypeJob {
 					DacResourceHelper.insertFactoryResource(Contants.TABLE_STATISTICS_AREA, statisticsAreaDO.getId(), dacUserDTO.getUserId(), statisticsTypeVO.getCreateId());
 				}
 			}
-		} else {
-
-			StatisticsShippingQuery statisticsShippingQuery = new StatisticsShippingQuery();
-			statisticsShippingQuery.setChannelId(statisticsTypeVO.getChannelId());
-			statisticsShippingQuery.setBrandName(statisticsTypeVO.getOrgCode());
-			statisticsShippingQuery.setFactoryName(statisticsTypeVO.getFactoryName());
-			DacHelper.skip();
-			StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.queryStatisticsShipping(statisticsShippingQuery);
-
-			if (null != statisticsShippingDTO) {
-				String area = YunovoCodeUtil.getArea(statisticsShippingDTO.getArea());
-				StatisticsAreaQuery statisticsAreaQuery = new StatisticsAreaQuery();
-				statisticsAreaQuery.setArea(area);
-				statisticsAreaQuery.setBrandName(statisticsTypeVO.getOrgCode());
-				statisticsAreaQuery.setFactoryName(statisticsTypeVO.getFactoryName());
-				statisticsAreaQuery.setChannelId(statisticsTypeVO.getChannelId());
-				StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
-
-				StatisticsAreaDO statisticsAreaDO = new StatisticsAreaDO();
-				statisticsAreaDO.setArea(area);
-				statisticsAreaDO.setChannelId(statisticsTypeVO.getChannelId());
-				statisticsAreaDO.setFactoryName(statisticsTypeVO.getFactoryName());
-				statisticsAreaDO.setBrandName(statisticsTypeVO.getOrgCode());
-				statisticsAreaDO.setDeviceNumber(statisticsShippingDTO.getDeviceNumber());
-
-				if (null != statisticsAreaDTO) {
-					statisticsAreaDO.setId(statisticsAreaDTO.getId());
-					statisticsAreaService.updateStatisticsArea(statisticsAreaDO);
-				}
-			}
 		}
 	}
 
@@ -212,7 +175,6 @@ public class StatisticsTypeJob {
 		shippingListQuery.setImportTime(reportTimeString);
 		shippingListQuery.setBrandName(statisticsTypeVO.getOrgCode());
 		shippingListQuery.setFactoryName(statisticsTypeVO.getFactoryName());
-		shippingListQuery.setChannelId(statisticsTypeVO.getChannelId());
 		Integer deviceNumber = shippingListService.statisticsCurrentDay(shippingListQuery);
 		if (null == deviceNumber) {
 			deviceNumber = 0;
@@ -221,7 +183,6 @@ public class StatisticsTypeJob {
 		statisticsShippingListQuery.setBrandName(statisticsTypeVO.getOrgCode());
 		statisticsShippingListQuery.setFactoryName(statisticsTypeVO.getFactoryName());
 		statisticsShippingListQuery.setReportTime(reportTimeString);
-		statisticsShippingListQuery.setChannelId(statisticsTypeVO.getChannelId());
 		List<StatisticsShippingListVO> shippingList = (List<StatisticsShippingListVO>) statisticsShippingListService.selectStatisticsShippingList(statisticsShippingListQuery, null, false);
 
 		StatisticsShippingListDO statisticsShippingListDO = new StatisticsShippingListDO();
@@ -348,11 +309,11 @@ public class StatisticsTypeJob {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private void statisticsPaster(String reportTimeString, Date reportTime, StatisticsTypeVO statisticsTypeVO) {
-
+		
 		if (StringUtils.isBlank(statisticsTypeVO.getFactoryName()) || StringUtils.isBlank(statisticsTypeVO.getFactoryName())) {
 			return;
 		}
-
+		
 		// 查询贴片设备数量
 		DeviceTestQuery deviceTestQuery = new DeviceTestQuery();
 		deviceTestQuery.setFactoryName(statisticsTypeVO.getFactoryName());
