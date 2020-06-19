@@ -81,6 +81,11 @@ public class ShippingListDO {
 	private String productDate;
 	
 	/**
+	 * 屏尺寸
+	 */
+	private String screenSize;
+	
+	/**
 	 * 创建时间
 	 */
 	private Date createTime;

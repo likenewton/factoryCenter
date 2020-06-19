@@ -32,7 +32,6 @@ import cn.yunovo.iov.factory.biz.other.data.model.DictionaryDTO;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryVO;
 import cn.yunovo.iov.factory.biz.other.data.service.DictionaryService;
-import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaVO;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

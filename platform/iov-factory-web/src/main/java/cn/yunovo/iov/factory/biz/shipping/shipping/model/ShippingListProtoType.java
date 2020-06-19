@@ -86,7 +86,7 @@ public class ShippingListProtoType{
 	private String operator;
 	
 	/**
-	 * 上报时间
+	 * 导入时间
 	 */
 	@ColumnType(jdbcType=JdbcType.TIMESTAMP)
 	private Date importTime;
@@ -96,6 +96,12 @@ public class ShippingListProtoType{
 	 */
 	@ColumnType(jdbcType=JdbcType.VARCHAR)
 	private String productDate;
+	
+	/**
+	 * 屏尺寸
+	 */
+	@ColumnType(jdbcType=JdbcType.VARCHAR)
+	private String screenSize;
 	
 	/**
 	 * 创建时间

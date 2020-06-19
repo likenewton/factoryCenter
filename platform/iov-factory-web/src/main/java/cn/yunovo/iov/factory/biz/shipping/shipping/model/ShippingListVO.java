@@ -109,6 +109,13 @@ public class ShippingListVO {
 	private String productDate;
 	
 	/**
+	 * 屏尺寸
+	 */
+	@ApiModelProperty(value = "屏尺寸", name="screenSize")
+	@Size(min = 0, max = 64, message = "[screenSize]长度在[0,64]之间")
+	private String screenSize;
+	
+	/**
 	 * 创建时间
 	 */
 	@ApiModelProperty(value = "创建时间", name="createTime", hidden = true)
@@ -235,6 +242,14 @@ public class ShippingListVO {
 
 	public void setWorkOrderno(String workOrderno) {
 		this.workOrderno = workOrderno;
+	}
+
+	public String getScreenSize() {
+		return screenSize;
+	}
+
+	public void setScreenSize(String screenSize) {
+		this.screenSize = screenSize;
 	}
 	
 	

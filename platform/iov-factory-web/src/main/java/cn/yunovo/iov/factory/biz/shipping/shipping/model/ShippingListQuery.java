@@ -92,6 +92,12 @@ public class ShippingListQuery {
 	private String productDate;
 	
 	/**
+	 * 屏尺寸
+	 */
+	@ApiModelProperty(value = "屏尺寸", name="screenSize")
+	private String screenSize;
+	
+	/**
 	 * 创建时间
 	 */
 	@ApiModelProperty(value = "创建时间", name="createTime")

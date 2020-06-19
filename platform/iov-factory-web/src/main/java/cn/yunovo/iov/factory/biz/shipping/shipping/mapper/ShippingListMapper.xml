@@ -16,12 +16,13 @@
 			<result property="operator" column="operator" jdbcType="VARCHAR"/>
 			<result property="importTime" column="import_time" jdbcType="TIMESTAMP"/>
 			<result property="productDate" column="product_date" jdbcType="VARCHAR"/>
+			<result property="screenSize" column="screen_size" jdbcType="VARCHAR"/>
 			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
 			<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,channel_id,area,brand_name,factory_name,yunovo_code,device_number,model_number,work_orderno,remark,operator,import_time,product_date,create_time,update_time
+		id,channel_id,area,brand_name,factory_name,yunovo_code,device_number,model_number,work_orderno,remark,operator,import_time,product_date,screen_size,create_time,update_time
 	</sql>
 	
 	<select id="getShippingListById" parameterType="integer"
@@ -76,6 +77,9 @@
 			</if>
 			<if test="query.productDate != null and query.productDate != ''">
 			  and product_date = #{ query.productDate, jdbcType=DATE }
+			</if>
+			<if test="query.screenSize != null and query.screenSize != ''">
+			  and screen_size = #{ query.screenSize, jdbcType=VARCHAR }
 			</if>
 	        <if test="query.selStartTime != null and query.selStartTime != ''" >
 			   <![CDATA[ 
@@ -145,6 +149,9 @@
 			<if test="productDate != null">
 				product_date,
 			</if>
+			<if test="screenSize != null">
+				screen_size,
+			</if>
 			<if test="createTime != null">
 				create_time,
 			</if>
@@ -188,6 +195,9 @@
 			</if>
 			<if test="productDate != null">
 				#{productDate, jdbcType=DATE},
+			</if>
+			<if test="screenSize != null">
+				#{screenSize, jdbcType=VARCHAR},
 			</if>
 			<if test="createTime != null">
 				#{createTime, jdbcType=TIMESTAMP},
@@ -238,6 +248,9 @@
 			<if test="productDate != null">
 				product_date = #{productDate,jdbcType=DATE },
 			</if>
+			<if test="screenSize != null">
+				screen_size = #{screenSize,jdbcType=VARCHAR },
+			</if>
 			<if test="updateTime != null">
 				update_time = #{updateTime,jdbcType=TIMESTAMP },
 			</if>
@@ -276,6 +289,19 @@
 			  and area like '${area}%'
 			</if>
 		</where>
-		
 	</select>
+		
+	<select id="selectShippingByDay"
+	parameterType="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListQuery"
+	resultMap="BaseResultMap">
+		select brand_name,factory_name,area,channel_id,sum(device_number)
+		device_number
+		from
+		t_shipping_list where brand_name=#{ brandName, jdbcType=VARCHAR
+		} and factory_name =#{ factoryName, jdbcType=VARCHAR
+		} and area=#{ area, jdbcType=VARCHAR }
+		group by
+		brand_name,factory_name,area,channel_id
+	</select>
+		
 </mapper>

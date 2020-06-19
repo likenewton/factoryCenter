@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Param;
 import cn.yunovo.iov.boot.autoconfigure.mybatis.GeneralMapper;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
 
 

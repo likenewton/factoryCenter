@@ -26,7 +26,6 @@ import cn.yunovo.iov.boot.autoconfigure.request.select.Limit;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Offset;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Order;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Pages;
-import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;

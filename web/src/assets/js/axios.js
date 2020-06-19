@@ -26,7 +26,7 @@ class AXIOS {
       getHomeTotals: '/statistics/sum/totals', // 统计选择
       getPastersEchart: '/statistics/pasters/state', // 贴片图表
       getAssemblesEchart: '/statistics/assembles/state', // 组装图表
-      getShippingEchart: '/statistics/shipping/lists/state', // 发货图表
+      getShippingEchart: '/shipping/lists/state', // 发货图表
       // 上报数据管理
       threeYardsList: '/report/device/cards', // 三码关系列表
       reportedDataList: '/report/device/reports', // 上报数据列表

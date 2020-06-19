@@ -1,6 +1,4 @@
 package cn.yunovo.iov.factory.biz.statistics.sumtotal.model;
-
-
 import javax.validation.constraints.Digits;
 
 import io.swagger.annotations.ApiModel;

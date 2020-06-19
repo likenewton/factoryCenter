@@ -50,24 +50,13 @@ import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListQuery;
 import cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListVO;
 import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingDeviceService;
 import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingListService;
-import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaDO;
-import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaDTO;
-import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaQuery;
-import cn.yunovo.iov.factory.biz.statistics.area.service.StatisticsAreaService;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListDO;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
-import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingVO;
-import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingListService;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
-import cn.yunovo.iov.factory.biz.statistics.type.model.StatisticsTypeDO;
-import cn.yunovo.iov.factory.biz.statistics.type.service.StatisticsTypeService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
-import cn.yunovo.iov.factory.framework.YunovoCodeUtil;
 import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
 import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
@@ -104,16 +93,8 @@ class ShippingListController {
 
 	@Autowired
 	private StatisticsShippingService statisticsShippingService;
+
 	
-	@Autowired
-	private StatisticsAreaService statisticsAreaService;
-
-	@Autowired
-	private StatisticsTypeService statisticsTypeService;
-
-	@Autowired
-	private StatisticsShippingListService statisticsShippingListService;
-
 	@Autowired
 	private DictionaryService dictionaryService;
 
@@ -137,29 +118,16 @@ class ShippingListController {
 		statisticsShippingQuery.setBrandName(shippingListVO.getBrandName());
 		statisticsShippingQuery.setFactoryName(shippingListVO.getFactoryName());
 		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
-		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
 
+		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
 		StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
 
 		if (null != list && 0 < list.size()) {
 			StatisticsShippingVO statisticsShippingVO = list.get(0);
-
 			// 如何发货设备数量为0时，删除统计数据
 			if (null == statisticsShippingDTO && "del".equals(opt)) {
-				    statisticsShippingService.deleteStatisticsShippingById(statisticsShippingVO.getId());
-					String area = YunovoCodeUtil.getArea(shippingListVO.getArea());
-					StatisticsAreaQuery statisticsAreaQuery = new StatisticsAreaQuery();
-					statisticsAreaQuery.setArea(area);
-					statisticsAreaQuery.setBrandName(shippingListVO.getBrandName());
-					statisticsAreaQuery.setFactoryName(shippingListVO.getFactoryName());
-					statisticsAreaQuery.setChannelId(shippingListVO.getChannelId());
-					StatisticsAreaDTO statisticsAreaDTO = statisticsAreaService.queryStatisticsArea(statisticsAreaQuery);
-					if(null != statisticsAreaDTO) {
-						statisticsAreaService.deleteStatisticsAreaById(statisticsAreaDTO.getId());
-					}
-				
-				
+				statisticsShippingService.deleteStatisticsShippingById(statisticsShippingVO.getId());
 			} else {
 				statisticsShippingDO.setUpdateTime(new Date());
 				if (null == opt && !"del".equals(opt)) {
@@ -176,23 +144,13 @@ class ShippingListController {
 
 			// 插入数据权限
 			LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
-			if(3 != loginUser.getUserType()) {
+			if (3 != loginUser.getUserType()) {
 				DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 			}
-			if(1 != loginUser.getUserType()) {
+			if (1 != loginUser.getUserType()) {
 				DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 			}
-
 		}
-
-		// 插入到统计任务表
-		StatisticsTypeDO statisticsTypeDO = new StatisticsTypeDO();
-		statisticsTypeDO.setCreateTime(new Date());
-		statisticsTypeDO.setStatisticsType(3);
-		statisticsTypeDO.setFactoryName(shippingListVO.getFactoryName());
-		statisticsTypeDO.setOrgCode(shippingListVO.getBrandName());
-		statisticsTypeDO.setChannelId(shippingListVO.getChannelId());
-		statisticsTypeService.insertStatisticsType(statisticsTypeDO);
 	}
 
 	private String getLoginBaseInfo(HttpServletRequest request) {
@@ -444,5 +402,72 @@ class ShippingListController {
 		log.info("updateShippingList ShippingListController update result[{}]", shippingListVO);
 		return shippingListVO;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/state",method = RequestMethod.GET)
+	public ResultEntity<List<Map<String,Object>>> state(ShippingListQuery shippingListQuery){
+		String selStartTime = null;
+		String selEndTime = null;
+		Date currentDate = new Date();
+		if (StringUtils.isBlank(shippingListQuery.getSelStartTime())) {
+			selStartTime = DateGeneralUtils.format(DateGeneralUtils.addDays(currentDate, -14), DateFormatConstants.yyyy_MM_dd);
+			shippingListQuery.setSelStartTime(selStartTime);
+		}
+
+		if (StringUtils.isBlank(shippingListQuery.getSelEndTime())) {
+			selEndTime = DateGeneralUtils.format(currentDate, DateFormatConstants.yyyy_MM_dd);
+			shippingListQuery.setSelEndTime(selEndTime);
+		}
+
+		Map<String, String> dayMap = new HashMap<String, String>();
+		for (int i = 0; i < 15; i++) {
+			String day = DateGeneralUtils.format(DateGeneralUtils.addDays(currentDate, -i), DateFormatConstants.yyyy_MM_dd);
+			dayMap.put(day, day);
+		}
+		
+		ResultEntity<List<Map<String,Object>>> result = new ResultEntity<List<Map<String,Object>>>();
+		Object obj = shippingListService.selectShippingList(shippingListQuery, null);
+		List<ShippingListVO> list = (List<ShippingListVO>) obj;
+		Map<String,List<ShippingListVO>> map = new HashMap<String,List<ShippingListVO>>();
+		List<Map<String,Object>> resultList = new ArrayList<Map<String,Object>>();
+		
+		for(ShippingListVO vo:list) {
+			String importTime= vo.getImportTime().substring(0,10);
+			if(!map.containsKey(importTime)) {
+				List<ShippingListVO> timeList = new ArrayList<ShippingListVO>();
+				timeList.add(vo);
+				map.put(importTime, timeList);
+				
+			}else {
+				List<ShippingListVO> timeList = map.get(importTime);
+				timeList.add(vo);
+			}
+		}
+		
+        List<Object> re = map.keySet().stream().collect(Collectors.toList());
+        Map<String, String> timeMap = new HashMap<String, String>();
+        for(Object o:re) {
+        	Map<String,Object> reMap = new HashMap<String,Object>();
+        	String key = o.toString();
+        	reMap.put("time", key);
+        	reMap.put("list", map.get(key));
+        	timeMap.put(key, key);
+        	resultList.add(reMap);
+        }
+        
+        List<String> dayList = dayMap.keySet().stream().collect(Collectors.toList());
+		for (String day : dayList) {
+			if (!timeMap.containsKey(day)) {
+				Map<String, Object> reMap = new HashMap<String, Object>();
+				reMap.put("time", day);
+				reMap.put("list", null);
+				resultList.add(reMap);
+			}
+		}
+		
+		result.setData(resultList);
+		return result;
+	}	
+
 
 }

@@ -262,12 +262,13 @@
 	<select id="statisticsShipping"
 		parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery"
 		resultMap="BaseResultMap">
-		select area,brand_name,factory_name,sum(device_number) device_number from
+		select brand_name,factory_name,area,channel_id,sum(device_number) device_number
+		from
 		t_shipping_list where brand_name=#{ brandName, jdbcType=VARCHAR
 		} and factory_name =#{ factoryName, jdbcType=VARCHAR
 		} and area=#{ area, jdbcType=VARCHAR }
 		group by
-		brand_name,factory_name,area
+		brand_name,factory_name,area,channel_id
 	</select>
 	
 	<select id="statisticsCurrentDay"
