@@ -234,6 +234,7 @@ class ShippingListController {
 			}
 		}
 		
+		//判断是否够3为云智码
 		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 2 >= shippingListVO.getYunovoCode().length()) {
 			result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20013));
 			result.setMsg(ResultMessageUtils.splitMsg(Contants.BIZ_20013));
