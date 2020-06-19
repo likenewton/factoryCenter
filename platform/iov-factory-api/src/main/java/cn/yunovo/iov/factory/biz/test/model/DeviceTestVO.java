@@ -54,7 +54,7 @@ public class DeviceTestVO {
 	 * 卡ICCID
 	 */
 	@ApiModelProperty(value = "卡ICCID", name="iccid")
-	// @NotBlank(message="[iccid]为必填项")
+	@NotBlank(message="[iccid]为必填项")
 	private String iccid;
 	
 	/**
@@ -94,6 +94,7 @@ public class DeviceTestVO {
 	 */
 	@ApiModelProperty(value = "为了区分不同工厂,目前组装厂有两个,安畅星和博毅,编号分别为ACX,BY", name="factoryName")
 	@Size(min = 0, max = 128, message = "[factoryName]长度在[0,128]之间")
+	@NotBlank(message="[factoryName]为必填项")
 	private String factoryName;
 	
 	/**
@@ -101,6 +102,7 @@ public class DeviceTestVO {
 	 */
 	@ApiModelProperty(value = "生产阶段，1贴片 2组装", name="productionPhase")
 	@Digits(fraction = 0, integer = Integer.MAX_VALUE)
+	@NotBlank(message="[productionPhase]为必填项")
 	private Integer productionPhase;
 	
 	/**
