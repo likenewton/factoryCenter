@@ -260,7 +260,18 @@ export default {
         series: echartData.series,
       })
       let option = _echart.getOption()
+      option.grid.right = 270
       option.legend.padding = [6, 0]
+      option.legend.textStyle = {
+        rich: {
+          white: {
+            padding: [1, 0, 1, 0]
+          }
+        }
+      }
+      option.legend.formatter = (name) => {
+        return '{white|' + name.slice(0, 20) + '}'
+      }
       Vue.nextTick(() => {
         this.myChart_1.setOption(option, true)
         $("[_echarts_instance_]").find(":last-child").trigger('click')

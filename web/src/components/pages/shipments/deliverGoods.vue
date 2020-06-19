@@ -97,6 +97,12 @@
           <el-form-item prop="productDate" label="生产月份：">
             <el-date-picker v-model="uploadForm.productDate" type="month" value-format="yyyy-MM" placeholder="生产月份" style="width: 215px"></el-date-picker>
           </el-form-item>
+          <el-form-item prop="screenSize" label="屏幕尺寸：">
+            <el-radio-group v-model="uploadForm.screenSize">
+              <el-radio label="9">9英寸</el-radio>
+              <el-radio label="10">10英寸</el-radio>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item prop="remark" label="备注：">
             <el-input v-model="uploadForm.remark" rows="4" type="textarea" placeholder="请输入" show-word-limit maxlength="256"></el-input>
           </el-form-item>
@@ -136,6 +142,7 @@ export default {
       addBtnDisabled: false,
       importVisible: false,
       uploadForm: {
+        screenSize: '9',
         type: 0,
       },
       rules: {
@@ -183,6 +190,11 @@ export default {
           validator: this.validatorImei,
           trigger: 'blur'
         }],
+        screenSize: [{
+          required: true,
+          message: '请选择屏幕尺寸',
+          trigger: 'change'
+        }]
       },
       // 联级选择的配置属性
       props: {
@@ -356,6 +368,7 @@ export default {
       this.addBtnDisabled = false
       this.$refs[formName] && this.$refs[formName].resetFields()
       this.uploadForm = {
+        screenSize: '9',
         type: 0,
       }
       this.channels = []
@@ -382,6 +395,7 @@ export default {
           formData.append('yunovoCode', this.uploadForm.yunovoCode)
           formData.append('channelId', this.uploadForm.channel)
           formData.append('productDate', this.uploadForm.productDate)
+          formData.append('screenSize', this.uploadForm.screenSize)
           this.uploadForm.remark && formData.append('remark', this.uploadForm.remark)
           if (this.uploadForm.type === 0) {
             formData.append('imeis', this.uploadForm.qrcode)
@@ -462,7 +476,7 @@ export default {
 .deliverGoods-container {
   .imei_export_dialog {
     .el-dialog {
-      margin-top: 7vh !important;
+      margin-top: 3vh !important;
     }
   }
 }

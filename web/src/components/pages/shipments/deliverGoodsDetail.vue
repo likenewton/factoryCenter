@@ -10,6 +10,12 @@
             <el-input v-model="formInline.yunovoCode" @keyup.enter.native="simpleSearch('yunovoCode')" autocomplete="on" auto-complete="on" name="yunovoCode" placeholder="云智码"></el-input>
           </el-form-item>
           <el-form-item>
+            <el-select filterable placeholder="屏幕尺寸" v-model="formInline.screenSize" @change="simpleSearch('screenSize')" clearable>
+              <el-option label="9英寸" value="9"></el-option>
+              <el-option label="10英寸" value="10"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
             <el-button type="primary" @click="searchData">查询</el-button>
             <el-button type="warning" @click="resetData">重置</el-button>
           </el-form-item>
@@ -17,26 +23,26 @@
         <div class="base_message">
           <span class="item">
             <span class="label">品牌：</span>
-            <span class="value bold text_purple">{{brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</span>
+            <span class="value bold text_purple">{{brandName | valueToLabel(orgs, 'cooOrganName', 'code') || '未知'}}</span>
           </span>
           <span class="item">
             <span class="label">组装工厂：</span>
-            <span class="value bold text_purple">{{factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 1), 'wordValue', 'wordKey')}}</span>
+            <span class="value bold text_purple">{{factoryName | valueToLabel(yunovoDic.filter((v) => v.wordType === 1), 'wordValue', 'wordKey') || '未知'}}</span>
           </span>
           <span class="item">
             <span class="label">区域：</span>
-            <span class="value bold text_purple">{{area}}</span>
+            <span class="value bold text_purple">{{area || '未知'}}</span>
           </span>
           <span class="item">
             <span class="label">渠道 ：</span>
-            <span class="value bold text_purple">{{channelName}}</span>
+            <span class="value bold text_purple">{{channelName || '未知'}}</span>
           </span>
         </div>
       </el-row>
       <el-row>
         <el-table v-viewer ref="listTable" :data="list.data" @sort-change="handleSortChange" :stripe="isStripe" :max-height="maxTableHeight" border resizable size="mini">
           <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
-         <!--  <el-table-column prop="brandName" label="品牌" width="220">
+          <!--  <el-table-column prop="brandName" label="品牌" width="220">
             <template slot-scope="scope">{{scope.row.brandName | valueToLabel(orgs, 'cooOrganName', 'code')}}</template>
           </el-table-column>
           <el-table-column prop="factoryName" label="组装工厂" width="220">
@@ -48,6 +54,7 @@
           </el-table-column> -->
           <el-table-column prop="yunovoCode" label="云智码" width="220"></el-table-column>
           <el-table-column prop="deviceNumber" label="设备数量" width="100" align="right"></el-table-column>
+          <el-table-column prop="screenSize" label="屏幕尺寸" width="100" align="right"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
           <el-table-column prop="productDate" label="生产日期" width="120"></el-table-column>
           <el-table-column prop="importTime" label="导入时间" width="160"></el-table-column>
@@ -200,12 +207,17 @@ export default {
       })
     },
     exportExcel() { // 导出
-      Api.UNITS.exportExcel('/factoryCenter/api/' + _axios.ajaxAd.getDeviceDetail, {
-        ...this.formInline,
-        brandName: this.brandName,
-        factoryName: this.factoryName,
-        area: this.area,
-        export: 'export',
+      this.showCfmBox({
+        message: '确定要导出当前查询的列表数据吗？',
+        cb: () => {
+          Api.UNITS.exportExcel('/factoryCenter/api/' + _axios.ajaxAd.getDeviceDetail, {
+            ...this.formInline,
+            brandName: this.brandName,
+            factoryName: this.factoryName,
+            area: this.area,
+            export: 'export',
+          })
+        }
       })
     },
   },

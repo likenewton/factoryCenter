@@ -156,34 +156,34 @@ export default {
         },
       },
       levels: [{
-        label: '总代',
+        label: '省代',
         value: 0
       }, {
-        label: '一级',
+        label: '市代',
         value: 1
       }, {
-        label: '二级',
+        label: '三级',
         value: 2
       }, {
-        label: '三级',
+        label: '四级',
         value: 3
       }, {
-        label: '四级',
+        label: '五级',
         value: 4
       }, {
-        label: '五级',
+        label: '六级',
         value: 5
       }, {
-        label: '六级',
+        label: '七级',
         value: 6
       }, {
-        label: '七级',
+        label: '八级',
         value: 7
       }, {
-        label: '八级',
+        label: '九级',
         value: 8
       }, {
-        label: '九级',
+        label: '十级',
         value: 9
       }],
       props: {
