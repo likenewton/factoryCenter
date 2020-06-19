@@ -120,7 +120,7 @@ class ShippingListController {
 		statisticsShippingQuery.setFactoryName(shippingListVO.getFactoryName());
 		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
-
+		DacHelper.skip();
 		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
 		StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
 
