@@ -168,7 +168,7 @@ public class StatisticsTypeJob {
 		}
 	}
 
-	@Scheduled(cron = "*/59 * * * * ?")
+	@Scheduled(cron = "*/45 * * * * ?")
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void start() {
 		if (nacosValueConfig.statisticsAble) {
@@ -187,14 +187,12 @@ public class StatisticsTypeJob {
 
 							// 统计贴片
 							if (1 == statisticsTypeVO.getStatisticsType()) {
-
 								statisticsPaster(reportTimeString, reportTime, statisticsTypeVO);
 
 							}
+							
 							// 统计组装
 							if (2 == statisticsTypeVO.getStatisticsType()) {
-
-								// 查询设备数量
 								statisticsAssemble(reportTimeString, reportTime, statisticsTypeVO);
 							}
 

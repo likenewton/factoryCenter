@@ -38,6 +38,7 @@ import cn.yunovo.iov.boot.autoconfigure.request.select.Offset;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Order;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Pages;
 import cn.yunovo.iov.cas.client.authentication.H5ClientAuthenticationFilter;
+import cn.yunovo.iov.factory.biz.other.data.model.DictionaryDTO;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryVO;
 import cn.yunovo.iov.factory.biz.other.data.service.DictionaryService;
@@ -232,11 +233,58 @@ class ShippingListController {
 				return result;
 			}
 		}
+		
+		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 2 >= shippingListVO.getYunovoCode().length()) {
+			result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20013));
+			result.setMsg(ResultMessageUtils.splitMsg(Contants.BIZ_20013));
+			return result;
+		}
 
-		// 获取云智码解析组装厂
+		// 检查第一位字母获取云智码解析厂
 		String factoryName = "";
+		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 1 <= shippingListVO.getYunovoCode().length()) {
+			factoryName = String.valueOf(shippingListVO.getYunovoCode().charAt(0));
+		}
+
+		DictionaryQuery dictionaryQuery = new DictionaryQuery();
+		dictionaryQuery.setWordKey(factoryName);
+		dictionaryQuery.setWordType(0);
+		DictionaryDTO dictionaryDTO = dictionaryService.queryDictionary(dictionaryQuery);
+		if (null == dictionaryDTO) {
+			result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20011));
+			result.setMsg(ResultMessageUtils.splitMsg(Contants.BIZ_20011));
+			return result;
+		}
+
+		// 检查第二位字母获取云智码解析厂
+		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 2 <= shippingListVO.getYunovoCode().length()) {
+			factoryName = String.valueOf(shippingListVO.getYunovoCode().charAt(1));
+		}
+
+		dictionaryQuery = new DictionaryQuery();
+		dictionaryQuery.setWordKey(factoryName);
+		dictionaryQuery.setWordType(0);
+		dictionaryDTO = dictionaryService.queryDictionary(dictionaryQuery);
+		if (null == dictionaryDTO) {
+			result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20011));
+			result.setMsg(ResultMessageUtils.splitMsg(Contants.BIZ_20011));
+			return result;
+		}
+
+		// 检查第三位字母获取云智码解析厂
 		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 3 <= shippingListVO.getYunovoCode().length()) {
 			factoryName = String.valueOf(shippingListVO.getYunovoCode().charAt(2));
+		}
+
+		// 检查填写的组装厂是否配置再数据字段表
+		dictionaryQuery = new DictionaryQuery();
+		dictionaryQuery.setWordKey(factoryName);
+		dictionaryQuery.setWordType(1);
+		dictionaryDTO = dictionaryService.queryDictionary(dictionaryQuery);
+		if (null == dictionaryDTO) {
+			result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20012));
+			result.setMsg(ResultMessageUtils.splitMsg(Contants.BIZ_20012));
+			return result;
 		}
 
 		// 获取云智码解析组装厂
@@ -244,7 +292,7 @@ class ShippingListController {
 		if ((StringUtils.isBlank(shippingListVO.getProductDate()) || "null".equals(shippingListVO.getProductDate())) && StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 16 <= shippingListVO.getYunovoCode().length()) {
 
 			if (null == dictYearMap) {
-				DictionaryQuery dictionaryQuery = new DictionaryQuery();
+				dictionaryQuery = new DictionaryQuery();
 				dictionaryQuery.setWordType(7);
 				List<DictionaryVO> list = (List<DictionaryVO>) dictionaryService.selectDictionary(dictionaryQuery, null);
 				dictYearMap = list.stream().collect(Collectors.toMap(DictionaryVO::getWordKey, DictionaryVO::getWordValue));

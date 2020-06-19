@@ -25,6 +25,12 @@ public class Contants extends ResultMessage {
 	public static final String BIZ_20009 = "20009^您暂未分配该功能使用权限,如需使用,请联系管理员进行权限分配!";
 
 	public static final String BIZ_20010 = "20010^上传文件内容格式错误!";
+	
+	public static final String BIZ_20011 = "20011^填写的贴片厂不存在!";
+	
+	public static final String BIZ_20012 = "20012^填写的组装厂不存在!";
+	
+	public static final String BIZ_20013 = "20013^请填写组装厂!";
 
 	public static final String TABLE_DAC_BRAND = "t_dac_brand";
 	public static final String TABLE_DAC_CHANNEL = "t_dac_channel";
