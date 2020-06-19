@@ -5,6 +5,7 @@ import java.util.Map;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO;
+import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
 
 /**
@@ -29,4 +30,5 @@ public interface StatisticsShippingService {
 	
 	StatisticsShippingDTO statisticsShipping(StatisticsShippingQuery statisticsShippingQuery);
 
+	Integer statisticsCurrentDay(StatisticsShippingQuery statisticsShippingQuery);
 }

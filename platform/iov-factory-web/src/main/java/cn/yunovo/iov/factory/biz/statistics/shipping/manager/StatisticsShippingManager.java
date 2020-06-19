@@ -61,4 +61,8 @@ public class StatisticsShippingManager {
 		statisticsShippingDO.setUpdateTime(new Date());
 		return statisticsShippingMapper.updateStatisticsShipping(statisticsShippingDO);
 	}
+	
+	public Integer statisticsCurrentDay(StatisticsShippingQuery statisticsShippingQuery) {
+		return statisticsShippingMapper.statisticsCurrentDay(statisticsShippingQuery);
+	}
 }

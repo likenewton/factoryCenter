@@ -89,4 +89,9 @@ public class StatisticsShippingServiceImpl implements StatisticsShippingService 
 	public StatisticsShippingDTO statisticsShipping(StatisticsShippingQuery statisticsShippingQuery) {
 		return statisticsShippingManager.statisticsShipping(statisticsShippingQuery);
 	}
+
+	@Override
+	public Integer statisticsCurrentDay(StatisticsShippingQuery statisticsShippingQuery) {
+		return statisticsShippingManager.statisticsCurrentDay(statisticsShippingQuery);
+	}
 }

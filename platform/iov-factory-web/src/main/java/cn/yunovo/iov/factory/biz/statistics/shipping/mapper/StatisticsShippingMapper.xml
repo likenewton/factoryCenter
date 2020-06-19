@@ -269,5 +269,25 @@
 		group by
 		brand_name,factory_name,area
 	</select>
+	
+	<select id="statisticsCurrentDay"
+	parameterType="cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery"
+	resultType="int">
+		select sum(device_number) from t_shipping_list 
+		   <where>
+			<if test="createTime != null">
+			 DATE_FORMAT( create_time, '%Y-%m-%d' ) = DATE_FORMAT( #{createTime}, '%Y-%m-%d' ) 
+			</if>
+			<if test="channelId != null">
+			  and channel_id = #{ channelId, jdbcType=INTEGER }
+			</if>
+			<if test="brandName != null and brandName != ''">
+			  and brand_name = #{ brandName, jdbcType=VARCHAR }
+			</if>
+			<if test="factoryName != null and factoryName != ''">
+			  and factory_name = #{ factoryName, jdbcType=VARCHAR }
+			</if>
+		</where>
+	</select>
 
 </mapper>

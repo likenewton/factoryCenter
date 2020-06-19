@@ -30,7 +30,9 @@ import cn.yunovo.iov.factory.biz.statistics.assemble.service.StatisticsAssembleS
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterQuery;
 import cn.yunovo.iov.factory.biz.statistics.paster.service.StatisticsPasterService;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingListQuery;
+import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingListService;
+import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalDO;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalDTO;
 import cn.yunovo.iov.factory.biz.statistics.sumtotal.model.StatisticsSumTotalQuery;
@@ -63,8 +65,11 @@ class StatisticsSumTotalController {
 	@Autowired
 	private StatisticsSumTotalService statisticsSumTotalService;
 	
+	//@Autowired
+	//private StatisticsShippingListService statisticsShippingListService;
+	
 	@Autowired
-	private StatisticsShippingListService statisticsShippingListService;
+	private StatisticsShippingService statisticsShippingService;
 	
 	@Autowired
 	private StatisticsPasterService statisticsPasterService;
@@ -86,7 +91,7 @@ class StatisticsSumTotalController {
 		ResultEntity<Object> result = new ResultEntity<Object>();
 		
 		// 平台用户
-		if(0 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
+		/*if(0 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
 			Map<String,Condition> conditionMap = new HashMap<String,Condition>();
 			conditionMap.put(Condition.PAGES, pages);
 			conditionMap.put(Condition.LIMIT, limit);
@@ -95,7 +100,7 @@ class StatisticsSumTotalController {
 			conditionMap.put(Condition.GROUP, group);
 			result.setData(statisticsSumTotalService.selectStatisticsSumTotal(statisticsSumTotalQuery, conditionMap));
 			return result;
-		}
+		}*/
 		
 		
 		Integer todayNumber = 0;
@@ -105,17 +110,17 @@ class StatisticsSumTotalController {
 		List<StatisticsSumTotalVO> list = new ArrayList<StatisticsSumTotalVO>();
 		
 		// 统计发货总数
-		StatisticsShippingListQuery statisticsShippingListQuery = new StatisticsShippingListQuery();
-		statisticsShippingListQuery.setReportTime(reportTimeString);
-		todayNumber = statisticsShippingListService.statisticsCurrentDay(statisticsShippingListQuery);
+		StatisticsShippingQuery statisticsShippingQuery = new StatisticsShippingQuery();
+		statisticsShippingQuery.setCreateTime(reportTimeString);
+		todayNumber = statisticsShippingService.statisticsCurrentDay(statisticsShippingQuery);
 
 		// 全部发货总数
-		statisticsShippingListQuery = new StatisticsShippingListQuery();
-		sumTotal = statisticsShippingListService.statisticsCurrentDay(statisticsShippingListQuery);
+		statisticsShippingQuery = new StatisticsShippingQuery();
+		sumTotal = statisticsShippingService.statisticsCurrentDay(statisticsShippingQuery);
 
 		StatisticsSumTotalVO shippingSumTotalVO = new StatisticsSumTotalVO();
-		shippingSumTotalVO.setTodayNumber(todayNumber==null?0:todayNumber);
-		shippingSumTotalVO.setSumTotal(sumTotal==null?0:sumTotal);
+		shippingSumTotalVO.setTodayNumber(todayNumber == null ? 0 : todayNumber);
+		shippingSumTotalVO.setSumTotal(sumTotal == null ? 0 : sumTotal);
 		shippingSumTotalVO.setStatisticsType(3);
 		list.add(shippingSumTotalVO);
 		
@@ -132,8 +137,8 @@ class StatisticsSumTotalController {
 		sumTotal = statisticsPasterService.statisticsCurrentDay(statisticsPasterQuery);
 		
 		StatisticsSumTotalVO pasterSumTotalVO = new StatisticsSumTotalVO();
-		pasterSumTotalVO.setTodayNumber(todayNumber==null?0:todayNumber);
-		pasterSumTotalVO.setSumTotal(sumTotal==null?0:sumTotal);
+		pasterSumTotalVO.setTodayNumber(todayNumber == null ? 0 : todayNumber);
+		pasterSumTotalVO.setSumTotal(sumTotal == null ? 0 : sumTotal);
 		pasterSumTotalVO.setStatisticsType(1);
 		list.add(pasterSumTotalVO);
 		
@@ -150,8 +155,8 @@ class StatisticsSumTotalController {
 		sumTotal = statisticsAssembleService.statisticsCurrentDay(statisticsAssembleQuery);
 		
 		StatisticsSumTotalVO assembleSumTotalVO = new StatisticsSumTotalVO();
-		assembleSumTotalVO.setTodayNumber(todayNumber==null?0:todayNumber);
-		assembleSumTotalVO.setSumTotal(sumTotal==null?0:sumTotal);
+		assembleSumTotalVO.setTodayNumber(todayNumber == null ? 0 : todayNumber);
+		assembleSumTotalVO.setSumTotal(sumTotal == null ? 0 : sumTotal);
 		assembleSumTotalVO.setStatisticsType(2);
 		list.add(assembleSumTotalVO);
 		

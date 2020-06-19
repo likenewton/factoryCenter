@@ -41,7 +41,7 @@ requireComponent.keys().forEach(fileName => {
     componentConfig.default || componentConfig
   )
 })
-
+window.api = Api
 Vue.mixin(MinXin) // 全局混入
 window._axios = Api.AXIOS.init() // 将_axios注册到全局，方便调用
 Vue.prototype.$echarts = echarts
@@ -51,9 +51,11 @@ Vue.config.productionTip = false
 
 // 路由进入前的全局钩子
 router.beforeEach((to, from, next) => {
-  if (Api.UNITS.getQuery('iov-token')) {
+  if (window.api.UNITS.getQuery('iov-token')) {
     // 当页面重定向过来的时候带的token 要保存进去
-    Api.UNITS.setCookie(Api.STATIC.token, Api.UNITS.getQuery('iov-token'))
+    var token = window.api.UNITS.getQuery('iov-token')
+    token = token.replace('#/', '')
+    window.api.UNITS.setCookie(Api.STATIC.token, token)
     let targetHref = sessionStorage.getItem('target_href')
     sessionStorage.removeItem('target_href')
     if (targetHref) location.href = targetHref
