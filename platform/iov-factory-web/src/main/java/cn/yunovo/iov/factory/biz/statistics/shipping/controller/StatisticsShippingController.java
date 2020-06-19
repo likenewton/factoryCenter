@@ -206,11 +206,27 @@ class StatisticsShippingController {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/areas", method = RequestMethod.GET)
 	public ResultEntity<Object> area(StatisticsShippingQuery statisticsShippingQuery) {
 		ResultEntity<Object> result = new ResultEntity<Object>();
 		Object obj = statisticsShippingService.selectStatisticsByArea(statisticsShippingQuery);
-		result.setData(obj);
+		List<StatisticsShippingDTO> list = (List<StatisticsShippingDTO>) obj;
+		List<StatisticsShippingDTO> resultList = new ArrayList<StatisticsShippingDTO>();
+		Map<String, StatisticsShippingDTO> map = new HashMap<String, StatisticsShippingDTO>();
+		for (StatisticsShippingDTO dto : list) {
+			String area = YunovoCodeUtil.getArea(dto.getArea());
+			if (!map.containsKey(area)) {
+				map.put(area, dto);
+				resultList.add(dto);
+			} else {
+				StatisticsShippingDTO dtox = map.get(area);
+				Integer deviceNumber = dtox.getDeviceNumber() + dto.getDeviceNumber();
+				dtox.setDeviceNumber(deviceNumber);
+			}
+		}
+		
+		result.setData(resultList);
 		return result;
 	}
 

@@ -2,6 +2,7 @@ package cn.yunovo.iov.factory.biz.test.model;
 
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -102,7 +103,7 @@ public class DeviceTestVO {
 	 */
 	@ApiModelProperty(value = "生产阶段，1贴片 2组装", name="productionPhase")
 	@Digits(fraction = 0, integer = Integer.MAX_VALUE)
-	@NotBlank(message="[productionPhase]为必填项")
+	@NotNull(message="[productionPhase]为必填项")
 	private Integer productionPhase;
 	
 	/**

@@ -311,7 +311,6 @@
 			  and factory_name = #{ factoryName, jdbcType=VARCHAR }
 			</if>
 		</where>
-		GROUP BY area
 	</select>
 
 </mapper>
