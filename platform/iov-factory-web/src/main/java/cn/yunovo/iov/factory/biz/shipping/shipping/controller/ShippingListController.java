@@ -502,9 +502,11 @@ class ShippingListController {
 					if(!listMap.containsKey(factoryName)) {
 						vo.setBrandName(null);
 						sList.add(vo);
+						break;
 					}else {
 						Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
 						shipping.setDeviceNumber(deviceNumber);
+						break;
 					}
 				}
 			}

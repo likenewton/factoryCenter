@@ -203,9 +203,11 @@ class StatisticsPasterController {
 					if(!listMap.containsKey(factoryName)) {
 						vo.setBrandName(null);
 						sList.add(vo);
+						break;
 					}else {
 						Integer pasterNumber = vo.getPasterNumber() + shipping.getPasterNumber();
 						shipping.setPasterNumber(pasterNumber);
+						break;
 					}
 				}
 			}
