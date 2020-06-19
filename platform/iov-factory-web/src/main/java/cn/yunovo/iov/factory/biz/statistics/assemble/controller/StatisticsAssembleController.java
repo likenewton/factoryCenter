@@ -168,12 +168,33 @@ class StatisticsAssembleController {
 		for (StatisticsAssembleVO vo : list) {
 			if (!map.containsKey(vo.getReportTime())) {
 				List<StatisticsAssembleVO> timeList = new ArrayList<StatisticsAssembleVO>();
+				vo.setBrandName(null);
 				timeList.add(vo);
 				map.put(vo.getReportTime(), timeList);
 
 			} else {
 				List<StatisticsAssembleVO> timeList = map.get(vo.getReportTime());
 				timeList.add(vo);
+				
+
+				List<StatisticsAssembleVO> sList = map.get(vo.getReportTime());
+				Map<String, StatisticsAssembleVO> listMap = new HashMap<String, StatisticsAssembleVO>();
+				for(StatisticsAssembleVO shipping:sList) {
+					String factoryName = shipping.getFactoryName();
+					listMap.put(factoryName, shipping);
+				}
+				
+				List<StatisticsAssembleVO> newList = listMap.values().stream().collect(Collectors.toList());
+				
+				for(StatisticsAssembleVO shipping:newList) {
+					String factoryName = shipping.getFactoryName();
+					if(!listMap.containsKey(factoryName)) {
+						sList.add(vo);
+					}else {
+						Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
+						shipping.setDeviceNumber(deviceNumber);
+					}
+				}
 			}
 		}
 

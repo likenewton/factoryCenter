@@ -484,12 +484,29 @@ class ShippingListController {
 			String importTime= vo.getImportTime().substring(0,10);
 			if(!map.containsKey(importTime)) {
 				List<ShippingListVO> timeList = new ArrayList<ShippingListVO>();
+				vo.setBrandName(null);
 				timeList.add(vo);
 				map.put(importTime, timeList);
 				
 			}else {
-				List<ShippingListVO> timeList = map.get(importTime);
-				timeList.add(vo);
+				List<ShippingListVO> sList = map.get(importTime);
+				Map<String, ShippingListVO> listMap = new HashMap<String, ShippingListVO>();
+				for(ShippingListVO shipping:sList) {
+					String factoryName = shipping.getFactoryName();
+					listMap.put(factoryName, shipping);
+				}
+				
+				List<ShippingListVO> newList = listMap.values().stream().collect(Collectors.toList());
+				
+				for(ShippingListVO shipping:newList) {
+					String factoryName = shipping.getFactoryName();
+					if(!listMap.containsKey(factoryName)) {
+						sList.add(vo);
+					}else {
+						Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
+						shipping.setDeviceNumber(deviceNumber);
+					}
+				}
 			}
 		}
 		

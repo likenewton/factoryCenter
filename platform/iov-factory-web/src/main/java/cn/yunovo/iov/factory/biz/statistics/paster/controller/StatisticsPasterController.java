@@ -185,12 +185,29 @@ class StatisticsPasterController {
 		for(StatisticsPasterVO vo:list) {
 			if(!map.containsKey(vo.getReportTime())) {
 				List<StatisticsPasterVO> timeList = new ArrayList<StatisticsPasterVO>();
+				vo.setBrandName(null);
 				timeList.add(vo);
 				map.put(vo.getReportTime(), timeList);
 				
 			}else {
-				List<StatisticsPasterVO> timeList = map.get(vo.getReportTime());
-				timeList.add(vo);
+				List<StatisticsPasterVO> sList = map.get(vo.getReportTime());
+				Map<String, StatisticsPasterVO> listMap = new HashMap<String, StatisticsPasterVO>();
+				for(StatisticsPasterVO shipping:sList) {
+					String factoryName = shipping.getFactoryName();
+					listMap.put(factoryName, shipping);
+				}
+				
+				List<StatisticsPasterVO> newList = listMap.values().stream().collect(Collectors.toList());
+				
+				for(StatisticsPasterVO shipping:newList) {
+					String factoryName = shipping.getFactoryName();
+					if(!listMap.containsKey(factoryName)) {
+						sList.add(vo);
+					}else {
+						Integer pasterNumber = vo.getPasterNumber() + shipping.getPasterNumber();
+						shipping.setPasterNumber(pasterNumber);
+					}
+				}
 			}
 		}
 		
