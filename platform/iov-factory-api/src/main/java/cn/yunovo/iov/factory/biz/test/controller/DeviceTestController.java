@@ -29,6 +29,10 @@ import cn.yunovo.iov.factory.biz.VendorService;
 import cn.yunovo.iov.factory.biz.device.manager.DeviceReportManager;
 import cn.yunovo.iov.factory.biz.device.model.Device;
 import cn.yunovo.iov.factory.biz.device.model.Device.DeviceRelInfo;
+import cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreDO;
+import cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreDTO;
+import cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreQuery;
+import cn.yunovo.iov.factory.biz.device.sn.service.SnNotStoreService;
 import cn.yunovo.iov.factory.biz.statistics.model.StatisticsTypeDO;
 import cn.yunovo.iov.factory.biz.statistics.service.StatisticsTypeService;
 import cn.yunovo.iov.factory.biz.test.model.DeviceTestDO;
@@ -62,6 +66,9 @@ class DeviceTestController {
 
 	@Autowired
 	private DeviceReportManager deviceReportManager;
+	
+	@Autowired
+	private SnNotStoreService snNotStoreService;
 
 	/*
 	 * 分页查询访问方式：GET http://ip:port/production/device/tests?page=1&page_size=2 排除查询访问方式：GET http://ip:port/production/device/tests?name=黄&age=18 条件查询访问方式：GET http://ip:port/production/device/tests?sort=age,desc(按年龄倒叙) 条件查询访问方式：GET
@@ -88,8 +95,18 @@ class DeviceTestController {
 		ResultEntity<DeviceTestVO> result = new ResultEntity<DeviceTestVO>();
 		if (StringUtils.isNotBlank(deviceTestVO.getSn())) {
 			ResultEntity<String> resultEntity = VendorService.queryDevice(deviceTestVO.getSn());
+			SnNotStoreDO snNotStoreDO = new SnNotStoreDO();
+			snNotStoreDO.setSn(deviceTestVO.getSn());
+			
+			SnNotStoreQuery snNotStoreQuery = new SnNotStoreQuery();
+			snNotStoreQuery.setSn(deviceTestVO.getSn());
+			SnNotStoreDTO snNotStoreDTO = snNotStoreService.querySnNotStore(snNotStoreQuery);
+			
 			if (null != resultEntity) {
 				if (null == resultEntity.getData()) {
+					if(null == snNotStoreDTO) {
+						snNotStoreService.insertSnNotStore(snNotStoreDO);
+					}
 					result.setMsg(resultEntity.getMsg());
 					result.setCode(resultEntity.getCode());
 					if (1 == deviceTestVO.getProductionPhase()) {
@@ -102,6 +119,11 @@ class DeviceTestController {
 					}
 					return result;
 				}
+				
+				if(null != snNotStoreDTO) {
+					snNotStoreService.deleteSnNotStore(snNotStoreDO);
+				}
+				
 			} else {
 				result.setMsg("通过SN查询设备异常,SN[" + deviceTestVO.getSn() + "]");
 				return result;

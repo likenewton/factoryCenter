@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yunovo.iov.factory.biz.device.sn.mapper.SnNotStoreMapper">
+
+	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreDO">
+			<id property="id" column="id" jdbcType="INTEGER"/>
+			<result property="sn" column="sn" jdbcType="VARCHAR"/>
+			<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,sn,create_time
+	</sql>
+	
+	<sql id="Base_Where">
+		<where>
+			<if test="query.sn != null and query.sn != ''">
+			  and sn = #{ query.sn, jdbcType=VARCHAR }
+			</if>
+	        <if test="query.selStartTime != null and query.selStartTime != ''" >
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) >= DATE_FORMAT( #{query.selStartTime}, '%Y-%m-%d' ) 
+			   ]]>
+			</if>
+			<if test="query.selEndTime != null and query.selEndTime != ''">
+			   <![CDATA[ 
+			   AND DATE_FORMAT( create_time, '%Y-%m-%d' ) <= DATE_FORMAT( #{query.selEndTime}, '%Y-%m-%d' )
+			   ]]>
+			</if>
+			
+		</where>
+	</sql>
+	
+	<select id="getSnNotStoreById" parameterType="integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		t_sn_notstore
+		where
+			id = #{id}
+	</select>
+	
+	<select id="selectSnNotStore"
+		parameterType="cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_sn_notstore
+		    <include refid="Base_Where" />
+			<if test="condition != null">
+				<if test="condition.order.asc != null and condition.order.desc == null">
+					  order by ${condition.order.asc } asc
+				</if>
+				<if test="condition.order.desc != null and condition.order.asc == null">
+					  order by ${condition.order.desc } desc
+				</if>
+				<if test="condition.order.asc != null and condition.order.desc != null">
+					  order by ${condition.order.asc } asc, ${condition.order.desc } desc
+				</if>
+				<if test="condition.limit.limit != null">
+					  limit ${condition.limit.limit }
+				</if>
+			</if>
+	</select>
+	
+	<select id="querySnNotStore"
+		parameterType="cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreQuery"
+		resultMap="BaseResultMap">
+		select
+			<include refid="Base_Column_List" />
+		from t_sn_notstore
+		    <include refid="Base_Where" />
+		    limit 1
+	</select>
+		    
+	<insert id="insertSnNotStore" useGeneratedKeys="true"
+		keyProperty="id"
+		parameterType="cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreDO">
+		insert into t_sn_notstore
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="sn != null">
+				sn,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="sn != null">
+				#{sn, jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime, jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateSnNotStore"
+		parameterType="cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreDO">
+		update t_sn_notstore 
+		<set>  
+			<if test="sn != null">
+				sn = #{sn,jdbcType=VARCHAR },
+			</if>
+		</set> 
+		<!-- <if test="id != null"> -->
+		where
+			id = #{id}
+		<!-- </if> -->
+	</update>
+
+	<delete id="deleteSnNotStoreById" parameterType="integer">
+		delete from
+		t_sn_notstore
+		where
+			id = #{id}
+	</delete>
+	
+	<delete id="deleteSnNotStore" parameterType="cn.yunovo.iov.factory.biz.device.sn.model.SnNotStoreDO">
+	    <if test="item != null">
+		delete from
+		t_sn_notstore
+		<where>
+			<if test="item.sn != null">
+				and sn = #{item.sn,jdbcType=VARCHAR }
+			</if>
+			<if test="item.createTime != null">
+				and create_time = #{item.createTime,jdbcType=TIMESTAMP }
+			</if>
+		</where>
+		</if>
+	</delete>
+	
+</mapper>
