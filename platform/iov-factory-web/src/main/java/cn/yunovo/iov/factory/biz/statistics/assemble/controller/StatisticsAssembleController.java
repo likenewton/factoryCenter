@@ -187,8 +187,9 @@ class StatisticsAssembleController {
 				List<StatisticsAssembleVO> newList = listMap.values().stream().collect(Collectors.toList());
 				
 				for(StatisticsAssembleVO shipping:newList) {
-					String factoryName = shipping.getFactoryName();
+					String factoryName = vo.getFactoryName();
 					if(!listMap.containsKey(factoryName)) {
+						vo.setBrandName(null);
 						sList.add(vo);
 					}else {
 						Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
