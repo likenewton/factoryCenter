@@ -47,6 +47,12 @@ public class StatisticsShippingManager {
 		List<StatisticsShippingDO> list = statisticsShippingMapper.selectStatisticsShipping(statisticsShippingQuery, conditionMap);
 		return BeanMapper.mapList(list, StatisticsShippingDTO.class);
 	}
+	
+	public List<StatisticsShippingDTO> selectStatisticsByArea(StatisticsShippingQuery statisticsShippingQuery){
+		List<StatisticsShippingDO> list = statisticsShippingMapper.selectStatisticsByArea(statisticsShippingQuery);
+		return BeanMapper.mapList(list, StatisticsShippingDTO.class);
+	}
+	
 	public Integer insertStatisticsShipping(StatisticsShippingDO statisticsShippingDO) {
 		statisticsShippingDO.setCreateTime(new Date());
 		statisticsShippingDO.setUpdateTime(new Date());

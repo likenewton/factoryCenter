@@ -1,7 +1,11 @@
 package cn.yunovo.iov.factory.biz.statistics.shipping.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.validation.annotation.Validated;
@@ -22,11 +26,13 @@ import cn.yunovo.iov.boot.autoconfigure.request.select.Limit;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Offset;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Order;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Pages;
+import cn.yunovo.iov.factory.biz.statistics.area.model.StatisticsAreaQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingDTO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingQuery;
 import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
+import cn.yunovo.iov.factory.framework.YunovoCodeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ExtensionProperty;
@@ -145,6 +151,69 @@ class StatisticsShippingController {
 		log.info("updateStatisticsShipping StatisticsShippingController update result[{}]", statisticsShippingVO);
 		return statisticsShippingVO ;
 	}	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/areaSale", method = RequestMethod.GET)
+	public ResultEntity<List<Map<String, Object>>> areaSale(StatisticsShippingQuery statisticsShippingQuery) {
+
+
+		ResultEntity<List<Map<String, Object>>> result = new ResultEntity<List<Map<String, Object>>>();
+		Object obj = statisticsShippingService.selectStatisticsByArea(statisticsShippingQuery);
+		List<StatisticsShippingDTO> list = (List<StatisticsShippingDTO>) obj;
+		Map<String, List<StatisticsShippingDTO>> map = new HashMap<String, List<StatisticsShippingDTO>>();
+		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+
+		for (StatisticsShippingDTO vo : list) {
+			String area = YunovoCodeUtil.getArea(vo.getArea());
+			if (!map.containsKey(area)) {
+				List<StatisticsShippingDTO> timeList = new ArrayList<StatisticsShippingDTO>();
+				timeList.add(vo);
+				map.put(area, timeList);
+			} else {
+				List<StatisticsShippingDTO> timeList = map.get(area);
+				timeList.add(vo);
+			}
+		}
+
+		List<Object> re = map.keySet().stream().collect(Collectors.toList());
+		Map<String, String> provinceMap = new HashMap<String, String>();
+		for (Object o : re) {
+			Map<String, Object> reMap = new HashMap<String, Object>();
+			String key = o.toString();
+			List<StatisticsShippingDTO> li = map.get(key);
+			Map<String, StatisticsShippingDTO> filterMap = new HashMap<String, StatisticsShippingDTO>();
+			for (StatisticsShippingDTO vo : li) {
+				if (!filterMap.containsKey(vo.getBrandName())) {
+					vo.setFactoryName(null);
+					filterMap.put(vo.getBrandName(), vo);
+				} else {
+					StatisticsShippingDTO ar = filterMap.get(vo.getBrandName());
+					Integer deviceNumber = 0;
+					deviceNumber = ar.getDeviceNumber() + vo.getDeviceNumber();
+					ar.setDeviceNumber(deviceNumber);
+				}
+			}
+			List<Entry<String, StatisticsShippingDTO>> ll = filterMap.entrySet().stream().collect(Collectors.toList());
+			List<StatisticsShippingDTO> sList = new ArrayList<StatisticsShippingDTO>();
+			for (Entry<String, StatisticsShippingDTO> s : ll) {
+				sList.add(s.getValue());
+			}
+			reMap.put("province", key);
+			reMap.put("list", sList);
+			provinceMap.put(key, key);
+			resultList.add(reMap);
+		}
+		result.setData(resultList);
+		return result;
+	}
+	
+	@RequestMapping(value = "/areas", method = RequestMethod.GET)
+	public ResultEntity<Object> area(StatisticsShippingQuery statisticsShippingQuery) {
+		ResultEntity<Object> result = new ResultEntity<Object>();
+		Object obj = statisticsShippingService.selectStatisticsByArea(statisticsShippingQuery);
+		result.setData(obj);
+		return result;
+	}
 
 
 }

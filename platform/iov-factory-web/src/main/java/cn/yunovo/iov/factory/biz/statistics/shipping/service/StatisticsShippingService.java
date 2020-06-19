@@ -1,5 +1,6 @@
 package cn.yunovo.iov.factory.biz.statistics.shipping.service;
 
+import java.util.List;
 import java.util.Map;
 
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
@@ -31,4 +32,6 @@ public interface StatisticsShippingService {
 	StatisticsShippingDTO statisticsShipping(StatisticsShippingQuery statisticsShippingQuery);
 
 	Integer statisticsCurrentDay(StatisticsShippingQuery statisticsShippingQuery);
+	
+    List<StatisticsShippingDTO> selectStatisticsByArea(StatisticsShippingQuery statisticsShippingQuery);
 }

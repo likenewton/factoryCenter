@@ -50,8 +50,8 @@ class AXIOS {
       getAres: '/shipping/ares', // 获取地区
       yunovoDic: '/other/dictionarys', // 云智码检索表
       // 统计报表
-      getAreasEchart: '/statistics/areas', // 地区销售分布
-      getSellEchart: '/statistics/areas/state', // 地区销售分布
+      getAreasEchart: '/statistics/shippings/areas', // 地区销售分布
+      getSellEchart: '/statistics/shippings/areaSale', // 地区销售分布
     }
   }
 

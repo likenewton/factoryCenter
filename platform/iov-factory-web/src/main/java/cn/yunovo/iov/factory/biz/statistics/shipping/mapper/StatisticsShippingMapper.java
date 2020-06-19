@@ -39,4 +39,5 @@ public interface StatisticsShippingMapper extends GeneralMapper<StatisticsShippi
 	
 	Integer statisticsCurrentDay(StatisticsShippingQuery statisticsShippingQuery);
 	
+	List<StatisticsShippingDO> selectStatisticsByArea(StatisticsShippingQuery statisticsShippingQuery);
 }
