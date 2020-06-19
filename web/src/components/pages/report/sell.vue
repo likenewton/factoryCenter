@@ -12,7 +12,7 @@
           <el-button type="warning" @click="resetData">重置</el-button>
         </el-form-item>
       </el-form>
-      <div id="echart_1"></div>
+      <div id="echart_1" v-loading="loadData"></div>
     </el-card>
   </div>
 </template>
@@ -26,15 +26,34 @@ export default {
     }
   },
   mounted() {
-    this.getData()
+    this.getBaseInfo(() => {
+      this.getData()
+    })
   },
   methods: {
+    getBaseInfo(cb) {
+      let b = new Promise((resolve) => {
+        _axios.send({
+          method: 'get',
+          url: _axios.ajaxAd.getBrandList,
+          done: (res) => {
+            this.orgs = res.data || []
+            resolve()
+          }
+        })
+      })
+      Promise.all([b]).then(() => {
+        cb && cb()
+      })
+    },
     getData() {
+      this.loadData = true
       _axios.send({
         method: 'get',
         url: _axios.ajaxAd.getSellEchart,
         params: this.formInline,
         done: (res) => {
+          this.loadData = false
           this.showEchart_1(res.data || [])
         }
       })
@@ -42,6 +61,7 @@ export default {
     showEchart_1(data) {
       this.myChart_1 = this.$echarts.init(document.getElementById('echart_1'))
       const echartData = this.formatEchartData(data)
+      console.log(echartData)
 
       let xList = [] // 横轴
       let yList = [] // 纵轴
