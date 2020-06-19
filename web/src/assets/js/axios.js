@@ -26,7 +26,7 @@ class AXIOS {
       getHomeTotals: '/statistics/sum/totals', // 统计选择
       getPastersEchart: '/statistics/pasters/state', // 贴片图表
       getAssemblesEchart: '/statistics/assembles/state', // 组装图表
-      getShippingEchart: '/shipping/lists/state', // 发货图表
+      getShippingEchart: '/statistics/shipping/lists/state', // 发货图表
       // 上报数据管理
       threeYardsList: '/report/device/cards', // 三码关系列表
       reportedDataList: '/report/device/reports', // 上报数据列表
@@ -50,8 +50,8 @@ class AXIOS {
       getAres: '/shipping/ares', // 获取地区
       yunovoDic: '/other/dictionarys', // 云智码检索表
       // 统计报表
-      getAreasEchart: '/statistics/shippings/areas', // 地区销售分布
-      getSellEchart: '/statistics/shippings/areaSale', // 地区销售分布
+      getAreasEchart: '/statistics/areas', // 地区销售分布
+      getSellEchart: '/statistics/areas/state', // 地区销售分布
     }
   }
 
@@ -62,7 +62,7 @@ class AXIOS {
 
     axios({
       method: data.method,
-      url: 'http://127.0.0.1:9036'+`${this.env === 'development' ? '/factoryCenter/api' : '/factoryCenter/api'}${data.url}`,
+      url: `${this.env === 'development' ? '/factoryCenter/api' : '/factoryCenter/api'}${data.url}`,
       data: data.data,
       params: data.params,
       timeout: data.timeout,
