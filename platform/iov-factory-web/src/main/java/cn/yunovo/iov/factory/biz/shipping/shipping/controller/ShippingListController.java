@@ -497,7 +497,6 @@ class ShippingListController {
 				}
 				
 				List<ShippingListVO> newList = listMap.values().stream().collect(Collectors.toList());
-				
 				for(ShippingListVO shipping:newList) {
 					String factoryName = vo.getFactoryName();
 					if(!listMap.containsKey(factoryName)) {

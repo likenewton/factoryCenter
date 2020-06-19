@@ -173,10 +173,6 @@ class StatisticsAssembleController {
 				map.put(vo.getReportTime(), timeList);
 
 			} else {
-				List<StatisticsAssembleVO> timeList = map.get(vo.getReportTime());
-				timeList.add(vo);
-				
-
 				List<StatisticsAssembleVO> sList = map.get(vo.getReportTime());
 				Map<String, StatisticsAssembleVO> listMap = new HashMap<String, StatisticsAssembleVO>();
 				for(StatisticsAssembleVO shipping:sList) {
@@ -185,7 +181,6 @@ class StatisticsAssembleController {
 				}
 				
 				List<StatisticsAssembleVO> newList = listMap.values().stream().collect(Collectors.toList());
-				
 				for(StatisticsAssembleVO shipping:newList) {
 					String factoryName = vo.getFactoryName();
 					if(!listMap.containsKey(factoryName)) {

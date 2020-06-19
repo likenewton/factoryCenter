@@ -198,7 +198,6 @@ class StatisticsPasterController {
 				}
 				
 				List<StatisticsPasterVO> newList = listMap.values().stream().collect(Collectors.toList());
-				
 				for(StatisticsPasterVO shipping:newList) {
 					String factoryName = vo.getFactoryName();
 					if(!listMap.containsKey(factoryName)) {
