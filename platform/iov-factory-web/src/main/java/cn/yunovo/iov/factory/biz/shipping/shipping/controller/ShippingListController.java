@@ -484,10 +484,8 @@ class ShippingListController {
 			String importTime= vo.getImportTime().substring(0,10);
 			if(!map.containsKey(importTime)) {
 				List<ShippingListVO> timeList = new ArrayList<ShippingListVO>();
-				vo.setBrandName(null);
 				timeList.add(vo);
 				map.put(importTime, timeList);
-				
 			}else {
 				List<ShippingListVO> sList = map.get(importTime);
 				Map<String, ShippingListVO> listMap = new HashMap<String, ShippingListVO>();
