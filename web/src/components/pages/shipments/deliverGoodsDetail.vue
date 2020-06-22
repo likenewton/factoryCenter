@@ -97,6 +97,7 @@ export default {
         currentPage: 1,
         total: 0,
       },
+      channelId: '',
       brandName: '',
       factoryName: '',
       area: '',
@@ -134,7 +135,8 @@ export default {
           this.brandName = data.brandName
           this.factoryName = data.factoryName
           this.area = data.area,
-            cb && cb()
+          this.channelId = data.channelId,
+          cb && cb()
         }
       })
     },
@@ -145,6 +147,7 @@ export default {
         url: _axios.ajaxAd.getDeliverGoods,
         data: {
           id: this.id,
+          channelId: this.channelId,
           brandName: this.brandName,
           factoryName: this.factoryName,
           area: this.area,
