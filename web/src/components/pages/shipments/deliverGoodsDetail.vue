@@ -144,6 +144,7 @@ export default {
         vue: this,
         url: _axios.ajaxAd.getDeliverGoods,
         data: {
+          id: this.id,
           brandName: this.brandName,
           factoryName: this.factoryName,
           area: this.area,
