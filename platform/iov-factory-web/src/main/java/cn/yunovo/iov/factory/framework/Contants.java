@@ -43,9 +43,7 @@ public class Contants extends ResultMessage {
 	public static final String TABLE_STATISTICS_PASTER = "t_statistics_paster";
 	public static final String TABLE_STATISTICS_ASSEMBLE = "t_statistics_assemble";
 	public static final String TABLE_STATISTICS_SHIPPING = "t_statistics_shipping";
-	public static final String TABLE_STATISTICS_SHIPPINGLIST = "t_statistics_shippinglist";
 	public static final String TABLE_CHANNEL_INFO = "t_channel_info";
 	public static final String TABLE_SHIPPING_LIST = "t_shipping_list";
-	public static final String TABLE_STATISTICS_AREA = "t_statistics_area";
 
 }

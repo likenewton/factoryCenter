@@ -51,6 +51,9 @@ public class DacHelper {
 
 	}
 
+	/**
+	 * @return true 跳过数据权限，false 执行数据权限
+	 */
 	public boolean isIntercept() {
 
 		// 系统运行定时查询的情况
@@ -60,6 +63,9 @@ public class DacHelper {
 		
 		// 平台用户不拦截
 		if (0 == LoginInfoUtil.LOGINUSER_LOCAL.get().getUserType()) {
+			if (null != IS_SKIP_LOCAL.get() && !IS_SKIP_LOCAL.get()) {
+				return false;
+			}
 			return true;
 		}
 
@@ -165,5 +171,12 @@ public class DacHelper {
 
 	public static void skip() {
 		IS_SKIP_LOCAL.set(true);
+	}
+	
+	/**
+	 * @param isSkip true 跳过数据权限，false 执行数据权限
+	 */
+	public static void skip(Boolean isSkip) {
+		IS_SKIP_LOCAL.set(isSkip);
 	}
 }

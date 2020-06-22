@@ -38,6 +38,21 @@ import cn.yunovo.iov.boot.autoconfigure.request.select.Offset;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Order;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Pages;
 import cn.yunovo.iov.cas.client.authentication.H5ClientAuthenticationFilter;
+import cn.yunovo.iov.factory.biz.dac.brand.model.BrandResourceDTO;
+import cn.yunovo.iov.factory.biz.dac.brand.model.BrandResourceQuery;
+import cn.yunovo.iov.factory.biz.dac.brand.service.BrandResourceService;
+import cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDTO;
+import cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceQuery;
+import cn.yunovo.iov.factory.biz.dac.channel.service.ChannelResourceService;
+import cn.yunovo.iov.factory.biz.dac.factory.model.FactoryResourceDTO;
+import cn.yunovo.iov.factory.biz.dac.factory.model.FactoryResourceQuery;
+import cn.yunovo.iov.factory.biz.dac.factory.service.FactoryResourceService;
+import cn.yunovo.iov.factory.biz.dac.flogistics.model.FlogisticsResourceDTO;
+import cn.yunovo.iov.factory.biz.dac.flogistics.model.FlogisticsResourceQuery;
+import cn.yunovo.iov.factory.biz.dac.flogistics.service.FlogisticsResourceService;
+import cn.yunovo.iov.factory.biz.dac.resource.model.DataResourceDTO;
+import cn.yunovo.iov.factory.biz.dac.resource.model.DataResourceQuery;
+import cn.yunovo.iov.factory.biz.dac.resource.service.DataResourceService;
 import cn.yunovo.iov.factory.biz.dac.user.model.DacUserDTO;
 import cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery;
 import cn.yunovo.iov.factory.biz.dac.user.service.DacUserService;
@@ -97,6 +112,21 @@ class ShippingListController {
 
 	@Autowired
 	private StatisticsShippingService statisticsShippingService;
+	
+	@Autowired
+	private BrandResourceService brandResourceService;
+	
+	@Autowired
+	private ChannelResourceService channelResourceService;
+	
+	@Autowired
+	private FactoryResourceService factoryResourceService;
+	
+	@Autowired
+	private FlogisticsResourceService flogisticsResourceService;
+	
+	@Autowired
+	private DataResourceService dataResourceService;
 
 	
 	@Autowired
@@ -117,30 +147,38 @@ class ShippingListController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void statistics(ShippingListVO shippingListVO, String opt, HttpServletRequest request, ChannelDTO channelDTO) {
-
+	private void statistics(ShippingListVO shippingListVO, String opt, HttpServletRequest request, ChannelDTO channelDTO, String typeId) {
+		getDac(request,typeId);
+		
 		// 统计发货数据
 		StatisticsShippingQuery statisticsShippingQuery = new StatisticsShippingQuery();
 		statisticsShippingQuery.setArea(shippingListVO.getArea());
 		statisticsShippingQuery.setBrandName(shippingListVO.getBrandName());
 		statisticsShippingQuery.setFactoryName(shippingListVO.getFactoryName());
 		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
+		
+		// 查询是否存在统计数据
+		DacHelper.skip(false);
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
-		// DacHelper.skip();
+		
+		// 统计所有设备数量
+		DacHelper.skip(false);
 		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
 		StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
 
 		if (null != list && 0 < list.size()) {
 			StatisticsShippingVO statisticsShippingVO = list.get(0);
+			Integer id = statisticsShippingVO.getId();
+			
 			// 如何发货设备数量为0时，删除统计数据
 			if (null == statisticsShippingDTO && "del".equals(opt)) {
-				statisticsShippingService.deleteStatisticsShippingById(statisticsShippingVO.getId());
+				statisticsShippingService.deleteStatisticsShippingById(id);
 			} else {
 				statisticsShippingDO.setUpdateTime(new Date());
 				if (null == opt && !"del".equals(opt)) {
 					statisticsShippingDO.setLastImporttime(new Date());
 				}
-				statisticsShippingDO.setId(statisticsShippingVO.getId());
+				statisticsShippingDO.setId(id);
 				statisticsShippingService.updateStatisticsShipping(statisticsShippingDO);
 			}
 		} else {
@@ -174,6 +212,112 @@ class ShippingListController {
 		return null;
 	}
 
+	private void getDac(HttpServletRequest request, String typeId) {
+		if (0 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
+			String idSring = request.getParameter("id");
+			if(null == idSring) {
+				idSring = typeId;
+			}
+			if(StringUtils.isNotBlank(idSring)) {
+				Integer id = Integer.valueOf(idSring);
+				DataResourceQuery dataResourceQuery = new DataResourceQuery();
+				dataResourceQuery.setDataProvider(Contants.TABLE_STATISTICS_SHIPPING);
+				dataResourceQuery.setDataId(id);
+				
+				// 查询平台用户权限
+				DataResourceDTO dataResourceDTO = dataResourceService.queryDataResource(dataResourceQuery);
+				if (null != dataResourceDTO) {
+					if (null != dataResourceDTO.getSourceCreatorId()) {
+						dataResourceDTO = null;
+					} else {
+						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						loginUser.loginName(dataResourceDTO.getCreatorId());
+					}
+				}
+				
+				// 查询品牌数据权限
+				BrandResourceDTO brandResourceDTO = null;
+				if(null == dataResourceDTO) {
+					BrandResourceQuery brandResourceQuery = new BrandResourceQuery();
+					brandResourceQuery.setDataProvider(Contants.TABLE_STATISTICS_SHIPPING);
+					brandResourceQuery.setDataId(id);
+					brandResourceDTO = brandResourceService.queryBrandResource(brandResourceQuery);
+					if (null != brandResourceDTO) {
+						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						loginUser.userType(1);
+						if(null != brandResourceDTO.getSourceCreatorId()) {
+							brandResourceDTO = null;
+						}else {
+							loginUser.loginName(brandResourceDTO.getCreatorId());
+							return;
+						}
+					}
+					
+				}
+				
+				// 查询工厂数据权限
+				FactoryResourceDTO factoryResourceDTO = null;
+				if(null == brandResourceDTO) {
+					FactoryResourceQuery factoryResourceQuery = new FactoryResourceQuery();
+					factoryResourceQuery.setDataProvider(Contants.TABLE_STATISTICS_SHIPPING);
+					factoryResourceQuery.setDataId(id);
+					factoryResourceDTO = factoryResourceService.queryFactoryResource(factoryResourceQuery);
+					if (null != factoryResourceDTO) {
+						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						loginUser.userType(2);
+						if(null != factoryResourceDTO.getSourceCreatorId()) {
+							factoryResourceDTO = null;
+						}else {
+							loginUser.loginName(factoryResourceDTO.getCreatorId());
+							return;
+						}
+					}
+				}
+				
+				// 查询渠道数据权限
+				ChannelResourceDTO channelResourceDTO = null;
+				if(null == factoryResourceDTO) {
+					ChannelResourceQuery channelResourceQuery = new ChannelResourceQuery();
+					channelResourceQuery.setDataProvider(Contants.TABLE_STATISTICS_SHIPPING);
+					channelResourceQuery.setDataId(id);
+					channelResourceDTO = channelResourceService.queryChannelResource(channelResourceQuery);
+					if (null != channelResourceDTO) {
+						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						loginUser.userType(3);
+						if(null != channelResourceDTO.getSourceCreatorId()) {
+							channelResourceDTO = null;
+						}else {
+							loginUser.loginName(channelResourceDTO.getCreatorId());
+							return;
+						}
+					}
+					
+				}
+				
+				// 查询物流数据权限
+				FlogisticsResourceDTO flogisticsResourceDTO = null;
+				if(null == channelResourceDTO) {
+					FlogisticsResourceQuery flogisticsResourceQuery = new FlogisticsResourceQuery();
+					flogisticsResourceQuery.setDataProvider(Contants.TABLE_STATISTICS_SHIPPING);
+					flogisticsResourceQuery.setDataId(id);
+					flogisticsResourceDTO = flogisticsResourceService.queryFlogisticsResource(flogisticsResourceQuery);
+					if (null != flogisticsResourceDTO) {
+						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						loginUser.userType(4);
+						if(null != flogisticsResourceDTO.getSourceCreatorId()) {
+							flogisticsResourceDTO = null;
+						}else {
+							loginUser.loginName(flogisticsResourceDTO.getCreatorId());
+							return;
+						}
+					}
+				}
+			}
+			}
+			
+			
+	}
+
 	/*
 	 * 分页查询访问方式：GET http://ip:port/shipping/lists?page=1&page_size=2 排除查询访问方式：GET http://ip:port/shipping/lists?name=黄&age=18 条件查询访问方式：GET http://ip:port/shipping/lists?sort=age,desc(按年龄倒叙) 条件查询访问方式：GET http://ip:port/shipping/lists?descs/ascs=age(按年龄倒叙)
 	 * 指定返回记录的数量：GET http://ip:port/shipping/lists?limit=20
@@ -188,6 +332,10 @@ class ShippingListController {
 		conditionMap.put(Condition.ORDER, order);
 		conditionMap.put(Condition.OFFSET, offset);
 		conditionMap.put(Condition.GROUP, group);
+		
+		// 平台用户的时候
+		getDac(request,null);
+		DacHelper.skip(false);
 		result.setData(shippingListService.selectShippingList(shippingListQuery, conditionMap));
 		return result;
 	}
@@ -216,7 +364,7 @@ class ShippingListController {
 		shippingListVO.setBrandName(shippingListDTO.getBrandName());
 		shippingListVO.setFactoryName(shippingListDTO.getFactoryName());
 		shippingListVO.setChannelId(shippingListDTO.getChannelId());
-		statistics(shippingListVO, "del", request, null);
+		statistics(shippingListVO, "del", request, null,request.getParameter("statisticsId"));
 
 		log.info("delete ShippingListController delete result[{}]", del);
 		return result;
@@ -427,7 +575,7 @@ class ShippingListController {
 		shippingListVO = BeanMapper.map(shippingListDTO, ShippingListVO.class);
 
 		// 统计数据
-		statistics(shippingListVO, null, request, channelDTO);
+		statistics(shippingListVO, null, request, channelDTO,null);
 		result.setData(listDevice.size());
 
 		// 插入数据权限
