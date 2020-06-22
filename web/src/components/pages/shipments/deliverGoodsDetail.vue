@@ -196,7 +196,7 @@ export default {
         cb: () => {
           _axios.send({
             method: 'delete',
-            url: `${_axios.ajaxAd.getDeliverGoods}/${row.id}`,
+            url: `${_axios.ajaxAd.getDeliverGoods}/${row.id}?id=${this.id}`,
             done: (res) => {
               this.searchData()
               setTimeout(() => {
