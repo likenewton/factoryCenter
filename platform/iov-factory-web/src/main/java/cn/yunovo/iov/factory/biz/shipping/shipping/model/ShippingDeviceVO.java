@@ -19,7 +19,7 @@ import lombok.ToString;
 @Data
 @ToString
 @ApiModel(value="发货设备IMEI清单", description="发货设备IMEI清单查询对象")
-public class ShippingDeviceVO extends ShippingListVO {
+public class ShippingDeviceVO {
 	
 	
 	/**
