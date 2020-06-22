@@ -181,12 +181,12 @@ class StatisticsAssembleController {
 				
 				List<StatisticsAssembleVO> newList = listMap.values().stream().collect(Collectors.toList());
 				for(StatisticsAssembleVO shipping:newList) {
-					String key = shipping.getFactoryName() + shipping.getBrandName();
+					String key = vo.getFactoryName() + vo.getBrandName();
 					if(!listMap.containsKey(key)) {
 						sList.add(vo);
 						break;
 					}else {
-						String key1 = vo.getFactoryName() + vo.getBrandName();
+						String key1 = shipping.getFactoryName() + shipping.getBrandName();
 						if(key1.equals(key)) {
 							Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
 							shipping.setDeviceNumber(deviceNumber);

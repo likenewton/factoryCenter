@@ -38,6 +38,9 @@ import cn.yunovo.iov.boot.autoconfigure.request.select.Offset;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Order;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Pages;
 import cn.yunovo.iov.cas.client.authentication.H5ClientAuthenticationFilter;
+import cn.yunovo.iov.factory.biz.dac.user.model.DacUserDTO;
+import cn.yunovo.iov.factory.biz.dac.user.model.DacUserQuery;
+import cn.yunovo.iov.factory.biz.dac.user.service.DacUserService;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryDTO;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryQuery;
 import cn.yunovo.iov.factory.biz.other.data.model.DictionaryVO;
@@ -102,6 +105,9 @@ class ShippingListController {
 	private static Map<String, String> dictYearMap;
 
 	private static Map<String, String> dictMonthMap;
+	
+	@Autowired
+	private DacUserService dacUserService;
 
 	private static Map<String, String> suffixFile = new HashMap<String, String>();
 
@@ -234,6 +240,7 @@ class ShippingListController {
 			}
 		}
 		
+		
 		//判断是否够3为云智码
 		if (StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 2 >= shippingListVO.getYunovoCode().length()) {
 			result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20013));
@@ -288,6 +295,18 @@ class ShippingListController {
 			return result;
 		}
 
+		// 如何是工厂账号登录，只能看到自己的工厂
+		if (2 == LoginInfoUtil.getLoginBaseInfo(request).getUserType()) {
+			DacUserQuery dacUserQuery = new DacUserQuery();
+			dacUserQuery.setUserId(LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+			DacUserDTO dacUserDTO = dacUserService.queryDacUser(dacUserQuery);
+			if (null != dacUserDTO && !factoryName.equals(dacUserDTO.getUserMapper())) {
+				result.setCode(ResultMessageUtils.splitCode(Contants.BIZ_20014));
+				result.setMsg(ResultMessageUtils.splitMsg(Contants.BIZ_20014));
+				return result;
+			}
+		}
+				
 		// 获取云智码解析组装厂
 		String productDate = null;
 		if ((StringUtils.isBlank(shippingListVO.getProductDate()) || "null".equals(shippingListVO.getProductDate())) && StringUtils.isNoneBlank(shippingListVO.getYunovoCode()) && 16 <= shippingListVO.getYunovoCode().length()) {
@@ -496,12 +515,12 @@ class ShippingListController {
 				
 				List<ShippingListVO> newList = listMap.values().stream().collect(Collectors.toList());
 				for(ShippingListVO shipping:newList) {
-					String key = shipping.getFactoryName() + shipping.getBrandName();
+					String key = vo.getFactoryName() + vo.getBrandName();
 					if(!listMap.containsKey(key)) {
 						sList.add(vo);
 						break;
 					}else {
-						String key1 = vo.getFactoryName() + vo.getBrandName();
+						String key1 = shipping.getFactoryName() + shipping.getBrandName();
 						if(key1.equals(key)) {
 							Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
 							shipping.setDeviceNumber(deviceNumber);

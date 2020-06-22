@@ -31,6 +31,8 @@ public class Contants extends ResultMessage {
 	public static final String BIZ_20012 = "20012^填写的组装厂不存在!";
 	
 	public static final String BIZ_20013 = "20013^请填写组装厂!";
+	
+	public static final String BIZ_20014 = "20014^请输入正确的云智码!";
 
 	public static final String TABLE_DAC_BRAND = "t_dac_brand";
 	public static final String TABLE_DAC_CHANNEL = "t_dac_channel";

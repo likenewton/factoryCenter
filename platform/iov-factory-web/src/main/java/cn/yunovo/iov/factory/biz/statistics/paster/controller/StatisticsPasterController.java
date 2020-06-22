@@ -199,13 +199,16 @@ class StatisticsPasterController {
 				
 				List<StatisticsPasterVO> newList = listMap.values().stream().collect(Collectors.toList());
 				for(StatisticsPasterVO shipping:newList) {
-					String factoryName = vo.getFactoryName();
-					if(!listMap.containsKey(factoryName)) {
+					String key = vo.getFactoryName();
+					//String key = vo.getFactoryName() + vo.getBrandName();
+					if(!listMap.containsKey(key)) {
 						vo.setBrandName(null);
 						sList.add(vo);
 						break;
 					}else {
-						if(vo.getFactoryName().equals(shipping.getFactoryName())) {
+						String key1 = shipping.getFactoryName();
+						//String key1 = shipping.getFactoryName() + shipping.getBrandName();
+						if(key1.equals(key)) {
 							Integer pasterNumber = vo.getPasterNumber() + shipping.getPasterNumber();
 							shipping.setPasterNumber(pasterNumber);
 							break;
