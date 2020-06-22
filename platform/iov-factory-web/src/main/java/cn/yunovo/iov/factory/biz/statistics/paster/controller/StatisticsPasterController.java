@@ -205,9 +205,11 @@ class StatisticsPasterController {
 						sList.add(vo);
 						break;
 					}else {
-						Integer pasterNumber = vo.getPasterNumber() + shipping.getPasterNumber();
-						shipping.setPasterNumber(pasterNumber);
-						break;
+						if(vo.getFactoryName().equals(shipping.getFactoryName())) {
+							Integer pasterNumber = vo.getPasterNumber() + shipping.getPasterNumber();
+							shipping.setPasterNumber(pasterNumber);
+							break;
+						}
 					}
 				}
 			}

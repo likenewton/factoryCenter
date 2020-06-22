@@ -118,8 +118,19 @@ class ShippingDeviceController {
 				ShippingDeviceQuery query = new ShippingDeviceQuery();
 				query.setShippingId(vo.getId());
 				Object imeiObj = shippingDeviceService.selectShippingDevice(query, null);
-				List<ShippingDeviceVO> imes = (List<ShippingDeviceVO>) imeiObj;
-				data.addAll(imes);
+				List<ShippingDeviceVO> imeis = (List<ShippingDeviceVO>) imeiObj;
+				/*
+				for(ShippingDeviceVO imei:imeis) {
+					imei.setBrandName(vo.getBrandName());
+					imei.setFactoryName(vo.getFactoryName());
+					imei.setArea(vo.getArea());
+					imei.setChannelId(vo.getChannelId());
+					imei.setYunovoCode(vo.getYunovoCode());
+					imei.setScreenSize(vo.getScreenSize());
+					imei.setImportTime(vo.getImportTime());
+				}
+				*/
+				data.addAll(imeis);
 			}
 			export(request, response, (List<ShippingDeviceVO>) data);
 			return null;

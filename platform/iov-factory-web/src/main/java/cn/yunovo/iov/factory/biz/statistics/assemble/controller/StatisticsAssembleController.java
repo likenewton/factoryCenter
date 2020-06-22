@@ -188,9 +188,11 @@ class StatisticsAssembleController {
 						sList.add(vo);
 						break;
 					}else {
-						Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
-						shipping.setDeviceNumber(deviceNumber);
-						break;
+						if(vo.getFactoryName().equals(shipping.getFactoryName())) {
+							Integer deviceNumber = vo.getDeviceNumber() + shipping.getDeviceNumber();
+							shipping.setDeviceNumber(deviceNumber);
+							break;
+						}
 					}
 				}
 			}
