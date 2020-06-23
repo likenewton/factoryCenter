@@ -229,7 +229,7 @@ class ShippingListController {
 				DataResourceDTO dataResourceDTO = dataResourceService.queryDataResource(dataResourceQuery);
 				if (null != dataResourceDTO) {
 					LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
-					loginUser.userType(1);
+					loginUser.userType(0);
 					if(null != dataResourceDTO.getSourceCreatorId()) {
 						dataResourceDTO = null;
 					}else {
