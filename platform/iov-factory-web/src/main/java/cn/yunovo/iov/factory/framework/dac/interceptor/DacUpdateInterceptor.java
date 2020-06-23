@@ -102,7 +102,7 @@ public class DacUpdateInterceptor implements Interceptor {
 							for (String table : tables) {
 								if (!dacHelper.containsProvider(dacProperties, dataProviderMap, tables)) {
 									String deleteTable = table;
-									dacHelper.delete(deleteTable, Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+									dacHelper.delete(deleteTable, Integer.valueOf(dataId.toString()));
 								}
 							}
 							

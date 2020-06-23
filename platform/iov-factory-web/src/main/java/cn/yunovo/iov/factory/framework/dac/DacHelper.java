@@ -103,8 +103,7 @@ public class DacHelper {
 
 	}
 
-	public boolean delete(String tableName, Integer dataId, Integer userType) {
-		LoginUser user = USER_LOCAL.get();
+	public boolean delete(String tableName, Integer dataId) {
 		DacResourceHelper.deleteBrandResource(dataId, tableName, null);
 		DacResourceHelper.deleteFactoryResource(dataId, tableName, null);
 		DacResourceHelper.deleteChannelResource(dataId, tableName, null);
