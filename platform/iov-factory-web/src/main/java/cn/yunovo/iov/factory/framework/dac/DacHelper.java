@@ -60,7 +60,7 @@ public class DacHelper {
 		if (null == LoginInfoUtil.LOGINUSER_LOCAL.get()) {
 			return true;
 		}
-		
+
 		// 平台用户不拦截
 		if (0 == LoginInfoUtil.LOGINUSER_LOCAL.get().getUserType()) {
 			if (null != IS_SKIP_LOCAL.get() && !IS_SKIP_LOCAL.get()) {
@@ -172,11 +172,20 @@ public class DacHelper {
 	public static void skip() {
 		IS_SKIP_LOCAL.set(true);
 	}
-	
+
 	/**
 	 * @param isSkip true 跳过数据权限，false 执行数据权限
 	 */
 	public static void skip(Boolean isSkip) {
 		IS_SKIP_LOCAL.set(isSkip);
+	}
+
+	/**
+	 * 提供清除权限数据
+	 */
+	public static void clear() {
+		PROVIDER_LOCAL.remove();
+		IS_SKIP_LOCAL.remove();
+		USER_LOCAL.remove();
 	}
 }

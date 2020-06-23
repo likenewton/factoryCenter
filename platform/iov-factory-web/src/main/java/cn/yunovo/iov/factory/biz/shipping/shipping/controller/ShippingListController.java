@@ -165,7 +165,8 @@ class ShippingListController {
 		DacHelper.skip(false);
 		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
 		StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
-
+		DacHelper.clear();
+		
 		if (null != list && 0 < list.size()) {
 			StatisticsShippingVO statisticsShippingVO = list.get(0);
 			Integer id = statisticsShippingVO.getId();
@@ -337,6 +338,7 @@ class ShippingListController {
 		getDac(request,null);
 		DacHelper.skip(false);
 		result.setData(shippingListService.selectShippingList(shippingListQuery, conditionMap));
+		DacHelper.clear();
 		return result;
 	}
 

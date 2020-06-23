@@ -103,9 +103,7 @@ public class DacQueryInterceptor implements Interceptor {
 
 			// 和 PageHelper分页有冲突
 			if (null == PageHelper.getLocalPage()) {
-				dacHelper.clearProvider();
-				dacHelper.clearUser();
-				dacHelper.clearSkip();
+				DacHelper.clear();
 			} else {
 				// System.out.println(PageHelper.getLocalPage());
 			}
