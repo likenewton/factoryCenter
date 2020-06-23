@@ -26,7 +26,7 @@ public class DacHelper {
 	 */
 	private static ThreadLocal<LoginUser> USER_LOCAL = new ThreadLocal<LoginUser>();
 
-	private void setDataAuthorityControl(String master, Integer userType, String tableName) {
+	private void setDataAuthorityControl(Integer userType, String tableName) {
 		LoginUser user = USER_LOCAL.get();
 		DataResource dataResource = null;
 
@@ -92,7 +92,7 @@ public class DacHelper {
 			if (dataProviderMap.containsKey(table)) {
 				if (null != LoginInfoUtil.LOGINUSER_LOCAL.get()) {
 					USER_LOCAL.set(LoginInfoUtil.LOGINUSER_LOCAL.get());
-					setDataAuthorityControl(dacProperties.getMaster(), dacProperties.getUserType(), table);
+					setDataAuthorityControl(dacProperties.getUserType(), table);
 					return false;
 				}
 
@@ -103,39 +103,20 @@ public class DacHelper {
 
 	}
 
-	public boolean delete(String tableName, String master, Integer dataId, Integer userType) {
+	public boolean delete(String tableName, Integer dataId, Integer userType) {
 		LoginUser user = USER_LOCAL.get();
-		if (null != user && (master.equals(user.getLoginName()) || user.getUserType() == userType)) {
-			return true;
-		}
-
-		if (1 == user.getUserType()) {
-			// 机构品牌用户
-			DacResourceHelper.deleteBrandResource(dataId, tableName, user.getLoginName());
-		} else if (2 == user.getUserType()) {
-			// 工厂用户
-			DacResourceHelper.deleteFactoryResource(dataId, tableName, user.getLoginName());
-		} else if (3 == user.getUserType()) {
-			// 渠道用户
-			DacResourceHelper.deleteChannelResource(dataId, tableName, user.getLoginName());
-		} else if (4 == user.getUserType()) {
-			// 物流用户
-			DacResourceHelper.deleteFlogisticsResource(dataId, tableName, user.getLoginName());
-		} else {
-			// 平台用户
-			DacResourceHelper.deleteDataResource(dataId, tableName, user.getLoginName());
-		}
+		DacResourceHelper.deleteBrandResource(dataId, tableName, null);
+		DacResourceHelper.deleteFactoryResource(dataId, tableName, null);
+		DacResourceHelper.deleteChannelResource(dataId, tableName, null);
+		DacResourceHelper.deleteFlogisticsResource(dataId, tableName, null);
+		DacResourceHelper.deleteDataResource(dataId, tableName, null);
 		clearUser();
 		return false;
 
 	}
 
-	public boolean insert(String tableName, String master, Integer dataId, Integer userType) {
+	public boolean insert(String tableName, Integer dataId, Integer userType) {
 		LoginUser user = USER_LOCAL.get();
-		if (null != user && (master.equals(user.getLoginName()) || user.getUserType() == userType)) {
-			return true;
-		}
-
 		if (1 == user.getUserType()) {
 			// 机构品牌用户
 			DacResourceHelper.insertBrandResource(tableName, dataId, user.getLoginName(), null);

@@ -228,12 +228,7 @@ class ShippingListController {
 				// 查询平台用户权限
 				DataResourceDTO dataResourceDTO = dataResourceService.queryDataResource(dataResourceQuery);
 				if (null != dataResourceDTO) {
-					if (null != dataResourceDTO.getSourceCreatorId()) {
-						dataResourceDTO = null;
-					} else {
-						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
-						loginUser.loginName(dataResourceDTO.getCreatorId());
-					}
+					return;
 				}
 				
 				// 查询品牌数据权限

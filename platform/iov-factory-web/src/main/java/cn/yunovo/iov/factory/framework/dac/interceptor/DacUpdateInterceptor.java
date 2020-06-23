@@ -50,11 +50,6 @@ public class DacUpdateInterceptor implements Interceptor {
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 
-		// 判断是否设置了跳过
-		if (dacHelper.isIntercept()) {
-			return invocation.proceed();
-		}
-
 		try {
 			return invocation.proceed();
 		} finally {
@@ -83,7 +78,7 @@ public class DacUpdateInterceptor implements Interceptor {
 						for (String table : tables) {
 							if (!dacHelper.containsProvider(dacProperties, dataProviderMap, tables)) {
 								String insertTable = table;
-								dacHelper.insert(insertTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+								dacHelper.insert(insertTable, Integer.valueOf(dataId.toString()), dacProperties.getUserType());
 							}
 						}
 					}
@@ -107,7 +102,7 @@ public class DacUpdateInterceptor implements Interceptor {
 							for (String table : tables) {
 								if (!dacHelper.containsProvider(dacProperties, dataProviderMap, tables)) {
 									String deleteTable = table;
-									dacHelper.delete(deleteTable, dacProperties.getMaster(), Integer.valueOf(dataId.toString()), dacProperties.getUserType());
+									dacHelper.delete(deleteTable, Integer.valueOf(dataId.toString()), dacProperties.getUserType());
 								}
 							}
 							
