@@ -158,7 +158,7 @@ class ShippingListController {
 		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
 
 		// 查询是否存在统计数据
-		DacHelper.skip(true);
+		DacHelper.skip(false);
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
 		DacHelper.clearProvider();
 		DacHelper.clearSkip();
