@@ -32,7 +32,7 @@
           <el-table-column prop="contacts" label="联系人" width="140">
             <template slot-scope="scope">{{scope.row.node.contacts}}</template>
           </el-table-column>
-          <el-table-column prop="phone" label="手机" width="140">
+          <el-table-column prop="phone" label="电话" width="140">
             <template slot-scope="scope">{{scope.row.node.phone}}</template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="160">
@@ -62,7 +62,7 @@
             <el-form-item label="联系人">
               <el-input v-model="formInline.contacts" placeholder="请输入"></el-input>
             </el-form-item>
-            <el-form-item label="手机">
+            <el-form-item label="电话">
               <el-input v-model="formInline.phone" placeholder="请输入"></el-input>
             </el-form-item>
             <el-form-item label="创建时间">
@@ -92,7 +92,7 @@
           <el-form-item prop="contacts" label="联系人：">
             <el-input v-model="uploadForm.contacts" placeholder="请输入" style="width: 215px" :disabled="isDisabed"></el-input>
           </el-form-item>
-          <el-form-item prop="phone" label="手机：">
+          <el-form-item prop="phone" label="电话：">
             <el-input v-model="uploadForm.phone" placeholder="请输入" style="width: 215px" :disabled="isDisabed"></el-input>
           </el-form-item>
           <el-form-item prop="province" label="区域：">
@@ -205,10 +205,7 @@ export default {
         }],
         phone: [{
           required: true,
-          message: '请输入手机',
-          trigger: 'blur'
-        }, {
-          validator: this.validatorPhoneNumber,
+          message: '请输入电话号码',
           trigger: 'blur'
         }],
         province: [{
