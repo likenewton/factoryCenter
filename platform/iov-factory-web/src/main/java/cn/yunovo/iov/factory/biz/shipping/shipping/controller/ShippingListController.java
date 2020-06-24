@@ -162,7 +162,7 @@ class ShippingListController {
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
 
 		// 新增发货分组
-		if (null == list) {
+		if (null != list && 0 == list.size()) {
 			Date day = new Date();
 			StatisticsShippingDO statisticsShippingDO = new StatisticsShippingDO();
 			statisticsShippingDO.setArea(shippingListVO.getArea());
@@ -187,12 +187,20 @@ class ShippingListController {
 				DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 			}
 		} else {
+			
+			//设置发货组ID值	
 			Integer groupId = null;
 			if (null != typeId) {
 				groupId = Integer.valueOf(typeId);
 			} else {
 				groupId = list.get(0).getId();
 			}
+			
+			// 先更新再统计
+			shippingListVO.setGroupId(groupId);
+			ShippingListDO shippingListDO = BeanMapper.map(shippingListVO, ShippingListDO.class);
+			shippingListService.updateShippingList(shippingListDO);
+			
 			// 统计所有设备数量
 			DacHelper.skip(true);
 			statisticsShippingQuery.setId(groupId);
