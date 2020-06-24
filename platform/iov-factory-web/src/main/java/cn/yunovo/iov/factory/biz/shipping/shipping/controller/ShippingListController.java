@@ -164,7 +164,7 @@ class ShippingListController {
 		DacHelper.clearSkip();
 		
 		// 新增发货分组
-		if (null != list && 0 == list.size()) {
+		if (null != list && 0 == list.size() && !"del".equals(opt)) {
 			Date day = new Date();
 			StatisticsShippingDO statisticsShippingDO = new StatisticsShippingDO();
 			statisticsShippingDO.setArea(shippingListVO.getArea());
