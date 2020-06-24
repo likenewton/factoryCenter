@@ -148,7 +148,7 @@ class ShippingListController {
 
 	@SuppressWarnings("unchecked")
 	private void statistics(ShippingListVO shippingListVO, String opt, HttpServletRequest request, ChannelDTO channelDTO, String typeId) {
-		getDac(request, typeId);
+		//getDac(request, typeId);
 
 		// 统计发货数据
 		StatisticsShippingQuery statisticsShippingQuery = new StatisticsShippingQuery();
@@ -158,9 +158,11 @@ class ShippingListController {
 		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
 
 		// 查询是否存在统计数据
-		DacHelper.skip(false);
+		DacHelper.skip(true);
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
-
+		DacHelper.clearProvider();
+		DacHelper.clearSkip();
+		
 		// 新增发货分组
 		if (null != list && 0 == list.size()) {
 			Date day = new Date();
