@@ -5,6 +5,7 @@
 	<resultMap id="BaseResultMap" type="cn.yunovo.iov.factory.biz.shipping.shipping.model.ShippingListDO">
 			<id property="id" column="id" jdbcType="INTEGER"/>
 			<result property="channelId" column="channel_id" jdbcType="INTEGER"/>
+			<result property="groupId" column="group_id" jdbcType="INTEGER"/>
 			<result property="area" column="area" jdbcType="VARCHAR"/>
 			<result property="brandName" column="brand_name" jdbcType="VARCHAR"/>
 			<result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
@@ -22,7 +23,7 @@
 	</resultMap>
 
 	<sql id="Base_Column_List">
-		id,channel_id,area,brand_name,factory_name,yunovo_code,device_number,model_number,work_orderno,remark,operator,import_time,product_date,screen_size,create_time,update_time
+		id,channel_id,group_id,area,brand_name,factory_name,yunovo_code,device_number,model_number,work_orderno,remark,operator,import_time,product_date,screen_size,create_time,update_time
 	</sql>
 	
 	<select id="getShippingListById" parameterType="integer"
@@ -44,6 +45,9 @@
 		<where>
 			<if test="query.channelId != null">
 			  and channel_id = #{ query.channelId, jdbcType=INTEGER }
+			</if>
+			<if test="query.groupId != null">
+			  and group_id = #{ query.groupId, jdbcType=INTEGER }
 			</if>
 			<if test="query.area != null and query.area != ''">
 			  and area = #{ query.area, jdbcType=VARCHAR }
@@ -116,6 +120,9 @@
 			<if test="channelId != null">
 				channel_id,
 			</if>
+			<if test="groupId != null">
+				group_id,
+			</if>
 			<if test="area != null">
 				area,
 			</if>
@@ -162,6 +169,9 @@
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="channelId != null">
 				#{channelId, jdbcType=INTEGER},
+			</if>
+			<if test="groupId != null">
+				#{groupId, jdbcType=INTEGER},
 			</if>
 			<if test="area != null">
 				#{area, jdbcType=VARCHAR},
@@ -214,6 +224,9 @@
 		<set>  
 			<if test="channelId != null">
 				channel_id = #{channelId,jdbcType=INTEGER },
+			</if>
+			<if test="groupId != null">
+				group_id = #{groupId,jdbcType=INTEGER },
 			</if>
 			<if test="area != null">
 				area = #{area,jdbcType=VARCHAR },

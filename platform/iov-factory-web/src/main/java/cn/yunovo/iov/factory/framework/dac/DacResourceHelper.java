@@ -1,7 +1,12 @@
 package cn.yunovo.iov.factory.framework.dac;
 
+import org.springframework.stereotype.Component;
+
 import com.github.ore.boot.context.SpringContext;
 
+import cn.yunovo.iov.boot.autoconfigure.dac.DacHelper;
+import cn.yunovo.iov.boot.autoconfigure.dac.bean.DataResource;
+import cn.yunovo.iov.boot.autoconfigure.dac.bean.UserInfo;
 import cn.yunovo.iov.factory.biz.dac.brand.model.BrandResourceDO;
 import cn.yunovo.iov.factory.biz.dac.brand.service.BrandResourceService;
 import cn.yunovo.iov.factory.biz.dac.channel.model.ChannelResourceDO;
@@ -12,8 +17,10 @@ import cn.yunovo.iov.factory.biz.dac.flogistics.model.FlogisticsResourceDO;
 import cn.yunovo.iov.factory.biz.dac.flogistics.service.FlogisticsResourceService;
 import cn.yunovo.iov.factory.biz.dac.resource.model.DataResourceDO;
 import cn.yunovo.iov.factory.biz.dac.resource.service.DataResourceService;
+import cn.yunovo.iov.factory.framework.Contants;
 
-public class DacResourceHelper {
+@Component
+public class DacResourceHelper extends DacHelper {
 
 	public static void insertFlogisticsResource(String tableName, Integer dataId, String userId, String sourceCreatorId) {
 		FlogisticsResourceService flogisticsResourceService = SpringContext.getBean(FlogisticsResourceService.class);
@@ -66,8 +73,7 @@ public class DacResourceHelper {
 		dataResourceService.insertDataResource(dataResourceDO);
 	}
 
-	
-	public static void deleteFlogisticsResource(Integer dataId, String provider, String userId) {
+	private void deleteFlogisticsResource(Integer dataId, String provider, String userId) {
 		FlogisticsResourceService flogisticsResourceService = SpringContext.getBean(FlogisticsResourceService.class);
 		FlogisticsResourceDO flogisticsResourceDO = new FlogisticsResourceDO();
 		flogisticsResourceDO.setDataId(dataId);
@@ -76,7 +82,7 @@ public class DacResourceHelper {
 		flogisticsResourceService.deleteFlogisticsResource(flogisticsResourceDO);
 	}
 
-	public static void deleteChannelResource(Integer dataId, String provider, String userId) {
+	private void deleteChannelResource(Integer dataId, String provider, String userId) {
 		ChannelResourceService channelResourceService = SpringContext.getBean(ChannelResourceService.class);
 		ChannelResourceDO channelResourceDO = new ChannelResourceDO();
 		channelResourceDO.setDataId(dataId);
@@ -85,7 +91,7 @@ public class DacResourceHelper {
 		channelResourceService.deleteChannelResource(channelResourceDO);
 	}
 
-	public static void deleteFactoryResource(Integer dataId, String provider, String userId) {
+	private void deleteFactoryResource(Integer dataId, String provider, String userId) {
 		FactoryResourceService factoryResourceService = SpringContext.getBean(FactoryResourceService.class);
 		FactoryResourceDO factoryResourceDO = new FactoryResourceDO();
 		factoryResourceDO.setDataId(dataId);
@@ -94,8 +100,8 @@ public class DacResourceHelper {
 		factoryResourceService.deleteFactoryResource(factoryResourceDO);
 
 	}
-	
-	public static boolean deleteDataResource(Integer dataId, String provider, String userId) {
+
+	private boolean deleteDataResource(Integer dataId, String provider, String userId) {
 		DataResourceService dataResourceService = SpringContext.getBean(DataResourceService.class);
 		DataResourceDO dataResourceDO = new DataResourceDO();
 		dataResourceDO.setDataId(dataId);
@@ -105,13 +111,76 @@ public class DacResourceHelper {
 		return false;
 	}
 
-	public static boolean deleteBrandResource(Integer dataId, String provider, String userId) {
+	private boolean deleteBrandResource(Integer dataId, String provider, String userId) {
 		BrandResourceService brandResourceService = SpringContext.getBean(BrandResourceService.class);
 		BrandResourceDO brandResourceDO = new BrandResourceDO();
 		brandResourceDO.setDataId(dataId);
 		brandResourceDO.setDataProvider(provider);
 		brandResourceDO.setCreatorId(userId);
 		brandResourceService.deleteBrandResource(brandResourceDO);
+		return false;
+	}
+
+	@Override
+	public void deleteDataAuthorityControl(String tableName, Integer dataId) {
+		deleteBrandResource(dataId, tableName, null);
+		deleteFactoryResource(dataId, tableName, null);
+		deleteChannelResource(dataId, tableName, null);
+		deleteFlogisticsResource(dataId, tableName, null);
+		deleteDataResource(dataId, tableName, null);
+	}
+
+	@Override
+	public void insertDataAuthorityControl(String tableName, Integer dataId) {
+		UserInfo user = DacHelper.getUser();
+		if (1 == user.getUserType()) {
+			// 机构品牌用户
+			insertBrandResource(tableName, dataId, user.getLoginName(), null);
+		} else if (2 == user.getUserType()) {
+			// 工厂用户
+			insertFactoryResource(tableName, dataId, user.getLoginName(), null);
+		} else if (3 == user.getUserType()) {
+			// 渠道用户
+			insertChannelResource(tableName, dataId, user.getLoginName(), null);
+		} else if (4 == user.getUserType()) {
+			// 物流用户
+			insertFlogisticsResource(tableName, dataId, user.getLoginName(), null);
+		} else {
+			// 平台用户
+			insertDataResource(tableName, dataId, user.getLoginName(), null);
+		}
+
+	}
+
+	@Override
+	public DataResource setDataAuthorityMapper(String tableName) {
+		UserInfo user = DacHelper.getUser();
+		DataResource dataResource = null;
+		if (1 == user.getUserType()) {
+			// 机构用户
+			dataResource = DataResource.create().mapperBy(Contants.TABLE_DAC_BRAND).providerBy(tableName).userId(user.getLoginName());
+		} else if (2 == user.getUserType()) {
+			// 工厂用户
+			dataResource = DataResource.create().mapperBy(Contants.TABLE_DAC_FACTORY).providerBy(tableName).userId(user.getLoginName());
+		} else if (3 == user.getUserType()) {
+			// 渠道用户
+			dataResource = DataResource.create().mapperBy(Contants.TABLE_DAC_CHANNEL).providerBy(tableName).userId(user.getLoginName());
+		} else if (4 == user.getUserType()) {
+			// 物流用户
+			dataResource = DataResource.create().mapperBy(Contants.TABLE_DAC_FLOGISTICS).providerBy(tableName).userId(user.getLoginName());
+		} else {
+			// 平台用户
+			dataResource = DataResource.create().mapperBy(Contants.TABLE_DAC_RESOURCE).providerBy(tableName).userId(user.getLoginName());
+		}
+		return dataResource;
+	}
+
+	@Override
+	public boolean isNotIntercept() {
+		UserInfo user = DacHelper.getUser();
+		if (0 == user.getUserType()) {
+			return true;
+		}
 		return false;
 	}
 }

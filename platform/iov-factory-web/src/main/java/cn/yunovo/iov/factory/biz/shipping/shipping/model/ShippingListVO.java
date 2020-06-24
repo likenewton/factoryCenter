@@ -33,6 +33,12 @@ public class ShippingListVO {
 	private Integer channelId;
 	
 	/**
+	 * 发货分组ID
+	 */
+	@ApiModelProperty(value = "发货分组ID", name="groupId")
+	private Integer groupId;
+	
+	/**
 	 * 渠道区域
 	 */
 	@ApiModelProperty(value = "渠道区域", name="area")
@@ -250,6 +256,14 @@ public class ShippingListVO {
 
 	public void setScreenSize(String screenSize) {
 		this.screenSize = screenSize;
+	}
+
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
 	}
 	
 	

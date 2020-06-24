@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.Page;
 
+import cn.yunovo.iov.boot.autoconfigure.dac.DacHelper;
 import cn.yunovo.iov.boot.autoconfigure.request.SearchCondition;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.factory.biz.statistics.paster.manager.StatisticsPasterManager;
@@ -16,7 +17,6 @@ import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterDTO;
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterQuery;
 import cn.yunovo.iov.factory.biz.statistics.paster.model.StatisticsPasterVO;
 import cn.yunovo.iov.factory.biz.statistics.paster.service.StatisticsPasterService;
-import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 

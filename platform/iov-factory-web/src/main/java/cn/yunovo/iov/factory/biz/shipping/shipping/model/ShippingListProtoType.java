@@ -32,6 +32,12 @@ public class ShippingListProtoType{
 	private Integer channelId;
 	
 	/**
+	 * 发货分组ID
+	 */
+	@ColumnType(jdbcType=JdbcType.INTEGER)
+	private Integer groupId;
+	
+	/**
 	 * 渠道区域
 	 */
 	@ColumnType(jdbcType=JdbcType.VARCHAR)

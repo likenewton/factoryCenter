@@ -10,6 +10,7 @@ import com.github.pagehelper.Page;
 
 import cn.yunovo.iov.boot.autoconfigure.auditlog.annotation.OpLog;
 import cn.yunovo.iov.boot.autoconfigure.auditlog.enums.OpTypeEnum;
+import cn.yunovo.iov.boot.autoconfigure.dac.DacHelper;
 import cn.yunovo.iov.boot.autoconfigure.request.SearchCondition;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.factory.biz.shipping.channel.manager.ChannelManager;
@@ -18,7 +19,6 @@ import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelDTO;
 import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelQuery;
 import cn.yunovo.iov.factory.biz.shipping.channel.model.ChannelVO;
 import cn.yunovo.iov.factory.biz.shipping.channel.service.ChannelService;
-import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.web.PageInfo;
 

@@ -264,11 +264,7 @@
 		resultMap="BaseResultMap">
 		select brand_name,factory_name,area,channel_id,sum(device_number) device_number
 		from
-		t_shipping_list where brand_name=#{ brandName, jdbcType=VARCHAR
-		} and factory_name =#{ factoryName, jdbcType=VARCHAR
-		} and area=#{ area, jdbcType=VARCHAR }
-		group by
-		brand_name,factory_name,area,channel_id
+		t_shipping_list where group_id = #{ id, jdbcType=INTEGER }
 	</select>
 	
 	<select id="statisticsCurrentDay"

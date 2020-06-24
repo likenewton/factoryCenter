@@ -26,6 +26,11 @@ public class ShippingListDTO {
 	private Integer channelId;
 	
 	/**
+	 * 发货分组ID
+	 */
+	private Integer groupId;
+	
+	/**
 	 * 渠道区域
 	 */
 	private String area;

@@ -31,6 +31,8 @@ import com.github.ore.framework.web.api.ResultEntity;
 import com.github.ore.framework.web.utils.ResultMessageUtils;
 
 import cn.yunovo.iov.boot.autoconfigure.cas.h5.bean.LoginInfo;
+import cn.yunovo.iov.boot.autoconfigure.dac.DacHelper;
+import cn.yunovo.iov.boot.autoconfigure.dac.bean.UserInfo;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Group;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Limit;
@@ -76,9 +78,7 @@ import cn.yunovo.iov.factory.biz.statistics.shipping.model.StatisticsShippingVO;
 import cn.yunovo.iov.factory.biz.statistics.shipping.service.StatisticsShippingService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
-import cn.yunovo.iov.factory.framework.dac.DacHelper;
 import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.framework.commons.beanutils.bean.BeanMapper;
 import cn.yunovo.iov.framework.commons.lang.date.DateFormatConstants;
 import cn.yunovo.iov.framework.commons.lang.date.DateGeneralUtils;
@@ -148,53 +148,64 @@ class ShippingListController {
 
 	@SuppressWarnings("unchecked")
 	private void statistics(ShippingListVO shippingListVO, String opt, HttpServletRequest request, ChannelDTO channelDTO, String typeId) {
-		getDac(request,typeId);
-		
+		getDac(request, typeId);
+
 		// 统计发货数据
 		StatisticsShippingQuery statisticsShippingQuery = new StatisticsShippingQuery();
 		statisticsShippingQuery.setArea(shippingListVO.getArea());
 		statisticsShippingQuery.setBrandName(shippingListVO.getBrandName());
 		statisticsShippingQuery.setFactoryName(shippingListVO.getFactoryName());
 		statisticsShippingQuery.setChannelId(shippingListVO.getChannelId());
-		
+
 		// 查询是否存在统计数据
 		DacHelper.skip(false);
 		List<StatisticsShippingVO> list = (List<StatisticsShippingVO>) statisticsShippingService.selectStatisticsShipping(statisticsShippingQuery, null);
-		
-		// 统计所有设备数量
-		DacHelper.skip(false);
-		StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
-		StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
-		DacHelper.clear();
-		
-		if (null != list && 0 < list.size()) {
-			StatisticsShippingVO statisticsShippingVO = list.get(0);
-			Integer id = statisticsShippingVO.getId();
-			
-			// 如何发货设备数量为0时，删除统计数据
-			if (null == statisticsShippingDTO && "del".equals(opt)) {
-				statisticsShippingService.deleteStatisticsShippingById(id);
-			} else {
-				statisticsShippingDO.setUpdateTime(new Date());
-				if (null == opt && !"del".equals(opt)) {
-					statisticsShippingDO.setLastImporttime(new Date());
-				}
-				statisticsShippingDO.setId(id);
-				statisticsShippingService.updateStatisticsShipping(statisticsShippingDO);
-			}
-		} else {
-			statisticsShippingDO.setUpdateTime(new Date());
-			statisticsShippingDO.setLastImporttime(new Date());
+
+		// 新增发货分组
+		if (null == list) {
+			Date day = new Date();
+			StatisticsShippingDO statisticsShippingDO = new StatisticsShippingDO();
+			statisticsShippingDO.setArea(shippingListVO.getArea());
+			statisticsShippingDO.setBrandName(shippingListVO.getBrandName());
+			statisticsShippingDO.setFactoryName(shippingListVO.getFactoryName());
 			statisticsShippingDO.setChannelId(shippingListVO.getChannelId());
+			statisticsShippingDO.setUpdateTime(day);
+			statisticsShippingDO.setLastImporttime(day);
+			statisticsShippingDO.setChannelId(shippingListVO.getChannelId());
+			statisticsShippingDO.setDeviceNumber(shippingListVO.getDeviceNumber());
 			statisticsShippingService.insertStatisticsShipping(statisticsShippingDO);
+			shippingListVO.setGroupId(statisticsShippingDO.getId());
+			ShippingListDO shippingListDO = BeanMapper.map(shippingListVO, ShippingListDO.class);
+			shippingListService.updateShippingList(shippingListDO);
 
 			// 插入数据权限
-			LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+			UserInfo loginUser = DacHelper.getUser();
 			if (3 != loginUser.getUserType()) {
 				DacResourceHelper.insertChannelResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 			}
 			if (1 != loginUser.getUserType()) {
 				DacResourceHelper.insertBrandResource(Contants.TABLE_STATISTICS_SHIPPING, statisticsShippingDO.getId(), channelDTO.getBrandName(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
+			}
+		} else {
+			Integer groupId = null;
+			if (null != typeId) {
+				groupId = Integer.valueOf(typeId);
+			} else {
+				groupId = list.get(0).getId();
+			}
+			// 统计所有设备数量
+			DacHelper.skip(true);
+			statisticsShippingQuery.setId(groupId);
+			StatisticsShippingDTO statisticsShippingDTO = statisticsShippingService.statisticsShipping(statisticsShippingQuery);
+			DacHelper.clearProvider();
+			DacHelper.clearSkip();
+
+			if ("del".equals(opt) && null == statisticsShippingDTO) {
+				statisticsShippingService.deleteStatisticsShippingById(groupId);
+			} else {
+				StatisticsShippingDO statisticsShippingDO = BeanMapper.map(statisticsShippingDTO, StatisticsShippingDO.class);
+				statisticsShippingDO.setId(groupId);
+				statisticsShippingService.updateStatisticsShipping(statisticsShippingDO);
 			}
 		}
 	}
@@ -228,7 +239,7 @@ class ShippingListController {
 				// 查询平台用户权限
 				DataResourceDTO dataResourceDTO = dataResourceService.queryDataResource(dataResourceQuery);
 				if (null != dataResourceDTO) {
-					LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+					UserInfo loginUser = DacHelper.getUser();
 					loginUser.userType(0);
 					if(null != dataResourceDTO.getSourceCreatorId()) {
 						dataResourceDTO = null;
@@ -246,7 +257,7 @@ class ShippingListController {
 					brandResourceQuery.setDataId(id);
 					brandResourceDTO = brandResourceService.queryBrandResource(brandResourceQuery);
 					if (null != brandResourceDTO) {
-						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						UserInfo loginUser = DacHelper.getUser();
 						loginUser.userType(1);
 						if(null != brandResourceDTO.getSourceCreatorId()) {
 							brandResourceDTO = null;
@@ -266,7 +277,7 @@ class ShippingListController {
 					factoryResourceQuery.setDataId(id);
 					factoryResourceDTO = factoryResourceService.queryFactoryResource(factoryResourceQuery);
 					if (null != factoryResourceDTO) {
-						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						UserInfo loginUser = DacHelper.getUser();
 						loginUser.userType(2);
 						if(null != factoryResourceDTO.getSourceCreatorId()) {
 							factoryResourceDTO = null;
@@ -285,7 +296,7 @@ class ShippingListController {
 					channelResourceQuery.setDataId(id);
 					channelResourceDTO = channelResourceService.queryChannelResource(channelResourceQuery);
 					if (null != channelResourceDTO) {
-						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						UserInfo loginUser = DacHelper.getUser();
 						loginUser.userType(3);
 						if(null != channelResourceDTO.getSourceCreatorId()) {
 							channelResourceDTO = null;
@@ -305,7 +316,7 @@ class ShippingListController {
 					flogisticsResourceQuery.setDataId(id);
 					flogisticsResourceDTO = flogisticsResourceService.queryFlogisticsResource(flogisticsResourceQuery);
 					if (null != flogisticsResourceDTO) {
-						LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+						UserInfo loginUser = DacHelper.getUser();
 						loginUser.userType(4);
 						if(null != flogisticsResourceDTO.getSourceCreatorId()) {
 							flogisticsResourceDTO = null;
@@ -335,12 +346,15 @@ class ShippingListController {
 		conditionMap.put(Condition.ORDER, order);
 		conditionMap.put(Condition.OFFSET, offset);
 		conditionMap.put(Condition.GROUP, group);
-		
-		// 平台用户的时候
-		getDac(request,null);
-		DacHelper.skip(false);
+		String idSring = request.getParameter("id");
+		if(StringUtils.isNotBlank(idSring)) {
+			Integer groupId = Integer.valueOf(idSring);
+			shippingListQuery.setGroupId(groupId);
+		}
+		DacHelper.skip();
 		result.setData(shippingListService.selectShippingList(shippingListQuery, conditionMap));
-		DacHelper.clear();
+		DacHelper.clearProvider();
+		DacHelper.clearSkip();
 		return result;
 	}
 
@@ -579,11 +593,11 @@ class ShippingListController {
 		shippingListVO = BeanMapper.map(shippingListDTO, ShippingListVO.class);
 
 		// 统计数据
-		statistics(shippingListVO, null, request, channelDTO,null);
+		statistics(shippingListVO, "insert", request, channelDTO,null);
 		result.setData(listDevice.size());
 
 		// 插入数据权限
-		LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+		UserInfo loginUser = DacHelper.getUser();
 		if(3 != loginUser.getUserType()) {
 			DacResourceHelper.insertChannelResource(Contants.TABLE_SHIPPING_LIST, shippingListDO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 		}

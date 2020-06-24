@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.ore.framework.web.api.ResultEntity;
 import com.github.ore.framework.web.utils.ResultMessageUtils;
 
+import cn.yunovo.iov.boot.autoconfigure.dac.DacHelper;
+import cn.yunovo.iov.boot.autoconfigure.dac.bean.UserInfo;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Condition;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Group;
 import cn.yunovo.iov.boot.autoconfigure.request.select.Limit;
@@ -36,7 +38,6 @@ import cn.yunovo.iov.factory.biz.shipping.shipping.service.ShippingListService;
 import cn.yunovo.iov.factory.framework.Contants;
 import cn.yunovo.iov.factory.framework.LoginInfoUtil;
 import cn.yunovo.iov.factory.framework.dac.DacResourceHelper;
-import cn.yunovo.iov.factory.framework.dac.bean.LoginUser;
 import cn.yunovo.iov.factory.framework.tree.CFNode;
 import cn.yunovo.iov.factory.framework.tree.CFTree;
 import cn.yunovo.iov.factory.framework.tree.Tree;
@@ -157,7 +158,7 @@ class ChannelController {
 		channelVO = BeanMapper.map(channelDTO, ChannelVO.class);
 		
 		// 插入数据权限
-		LoginUser loginUser = LoginInfoUtil.LOGINUSER_LOCAL.get();
+		UserInfo loginUser = DacHelper.getUser();
 		if(3 != loginUser.getUserType()) {
 			DacResourceHelper.insertChannelResource(Contants.TABLE_CHANNEL_INFO, channelDTO.getId(), channelDTO.getPhone(), LoginInfoUtil.getLoginBaseInfo(request).getLoginName());
 		}

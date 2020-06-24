@@ -26,6 +26,12 @@ public class ShippingListQuery {
 	private Integer channelId;
 	
 	/**
+	 * 发货分组ID
+	 */
+	@ApiModelProperty(value = "发货分组ID", name="groupId")
+	private Integer groupId;
+	
+	/**
 	 * 渠道区域
 	 */
 	@ApiModelProperty(value = "渠道区域", name="area")
