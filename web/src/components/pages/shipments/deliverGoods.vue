@@ -90,10 +90,12 @@
             <el-autocomplete v-model="uploadForm.yunovoCode" :fetch-suggestions="getSuggestions('deliverGoods_yunovoCode')" placeholder="请输入" @input="yunovoCodeChange" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="modelNumber" label="型号：">
-            <el-input v-model="uploadForm.modelNumber" placeholder="请输入" style="width: 215px"></el-input>
+            <!-- <el-input v-model="uploadForm.modelNumber" placeholder="请输入" style="width: 215px"></el-input> -->
+            <el-autocomplete v-model="uploadForm.modelNumber" :fetch-suggestions="getSuggestions('deliverGoods_modelNumber')" placeholder="请输入" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="workOrderno" label="工单号：">
-            <el-input v-model="uploadForm.workOrderno" placeholder="请输入" style="width: 215px"></el-input>
+            <!-- <el-input v-model="uploadForm.workOrderno" placeholder="请输入" style="width: 215px"></el-input> -->
+            <el-autocomplete v-model="uploadForm.workOrderno" :fetch-suggestions="getSuggestions('deliverGoods_workOrderno')" placeholder="请输入" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="productDate" label="生产月份：">
             <el-date-picker v-model="uploadForm.productDate" type="month" value-format="yyyy-MM" placeholder="生产月份" style="width: 215px"></el-date-picker>
@@ -420,6 +422,8 @@ export default {
               this.imeiClose()
               this.searchData()
               this.setSuggestions('deliverGoods_yunovoCode', formData.get('yunovoCode'))
+              this.setSuggestions('deliverGoods_modelNumber', formData.get('modelNumber'))
+              this.setSuggestions('deliverGoods_workOrderno', formData.get('workOrderno'))
               setTimeout(() => {
                 this.showMsgBox({
                   type: 'success',
