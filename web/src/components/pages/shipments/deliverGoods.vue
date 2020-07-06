@@ -71,7 +71,7 @@
     <!-- imei导入 -->
     <el-dialog class="imei_export_dialog" title="发货导入" @close="imeiClose" :visible.sync="importVisible" width="700px" :close-on-click-modal="false">
       <div slot>
-        <el-form ref="uploadForm" :model="uploadForm" :rules="rules" :inline="false" size="small" label-width="110px">
+        <el-form ref="uploadForm" :model="uploadForm" :rules="rules" :inline="false" size="small" label-width="110px" onsubmit="return false;">
           <el-form-item prop="brandName" label="品牌商：">
             <el-select filterable placeholder="请选择" v-model="uploadForm.brandName" @change="brandNameChange">
               <el-option v-for="(item, index) in orgs" :key="index" :label="item.cooOrganName" :value="item.code"></el-option>
@@ -86,7 +86,8 @@
             </el-cascader>
           </el-form-item>
           <el-form-item prop="yunovoCode" label="云智码：">
-            <el-input v-model="uploadForm.yunovoCode" placeholder="请输入" style="width: 215px" @change="yunovoCodeChange"></el-input>
+            <!-- <el-input v-model="uploadForm.yunovoCode" placeholder="请输入" style="width: 215px" @change="yunovoCodeChange"></el-input> -->
+            <el-autocomplete v-model="uploadForm.yunovoCode" :fetch-suggestions="getSuggestions('deliverGoods_yunovoCode')" placeholder="请输入" @input="yunovoCodeChange" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="modelNumber" label="型号：">
             <el-input v-model="uploadForm.modelNumber" placeholder="请输入" style="width: 215px"></el-input>
@@ -154,7 +155,7 @@ export default {
         yunovoCode: [{
           required: true,
           message: '请输入云智码',
-          trigger: 'blur'
+          trigger: ['blur', 'change']
         }, {
           validator: this.validatorYunovoCode,
           trigger: 'blur'
@@ -396,6 +397,8 @@ export default {
           formData.append('channelId', this.uploadForm.channel)
           formData.append('productDate', this.uploadForm.productDate)
           formData.append('screenSize', this.uploadForm.screenSize)
+          formData.append('modelNumber', this.uploadForm.modelNumber)
+          formData.append('workOrderno', this.uploadForm.workOrderno)
           this.uploadForm.remark && formData.append('remark', this.uploadForm.remark)
           if (this.uploadForm.type === 0) {
             formData.append('imeis', this.uploadForm.qrcode)
@@ -416,6 +419,7 @@ export default {
               this.addBtnDisabled = false
               this.imeiClose()
               this.searchData()
+              this.setSuggestions('deliverGoods_yunovoCode', formData.get('yunovoCode'))
               setTimeout(() => {
                 this.showMsgBox({
                   type: 'success',
