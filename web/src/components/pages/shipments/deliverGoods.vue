@@ -159,6 +159,10 @@ export default {
           message: '请输入云智码',
           trigger: ['blur', 'change']
         }, {
+          min: 17,
+          message: '云智码不能少于17位',
+          trigger: ['blur']
+        }, {
           validator: this.validatorYunovoCode,
           trigger: 'blur'
         }],
