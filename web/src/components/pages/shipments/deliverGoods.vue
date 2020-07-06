@@ -87,18 +87,18 @@
           </el-form-item>
           <el-form-item prop="yunovoCode" label="云智码：">
             <!-- <el-input v-model="uploadForm.yunovoCode" placeholder="请输入" style="width: 215px" @change="yunovoCodeChange"></el-input> -->
-            <el-autocomplete v-model="uploadForm.yunovoCode" :fetch-suggestions="getSuggestions('deliverGoods_yunovoCode')" placeholder="请输入" @input="yunovoCodeChange" style="width: 215px"></el-autocomplete>
+            <el-autocomplete v-model="uploadForm.yunovoCode" ref="0" @keyup.enter.native="nextFocus('1', $event)" :fetch-suggestions="getSuggestions('deliverGoods_yunovoCode')" placeholder="请输入" @input="yunovoCodeChange" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="modelNumber" label="型号：">
             <!-- <el-input v-model="uploadForm.modelNumber" placeholder="请输入" style="width: 215px"></el-input> -->
-            <el-autocomplete v-model="uploadForm.modelNumber" :fetch-suggestions="getSuggestions('deliverGoods_modelNumber')" placeholder="请输入" style="width: 215px"></el-autocomplete>
+            <el-autocomplete v-model="uploadForm.modelNumber" ref="1" @keyup.enter.native="nextFocus('2', $event)" :fetch-suggestions="getSuggestions('deliverGoods_modelNumber')" placeholder="请输入" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="workOrderno" label="工单号：">
             <!-- <el-input v-model="uploadForm.workOrderno" placeholder="请输入" style="width: 215px"></el-input> -->
-            <el-autocomplete v-model="uploadForm.workOrderno" :fetch-suggestions="getSuggestions('deliverGoods_workOrderno')" placeholder="请输入" style="width: 215px"></el-autocomplete>
+            <el-autocomplete v-model="uploadForm.workOrderno" ref="2" @keyup.enter.native="nextFocus('3', $event)" :fetch-suggestions="getSuggestions('deliverGoods_workOrderno')" placeholder="请输入" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="productDate" label="生产月份：">
-            <el-date-picker v-model="uploadForm.productDate" type="month" value-format="yyyy-MM" placeholder="生产月份" style="width: 215px"></el-date-picker>
+            <el-date-picker v-model="uploadForm.productDate" ref="3" type="month" value-format="yyyy-MM" placeholder="生产月份" style="width: 215px"></el-date-picker>
           </el-form-item>
           <el-form-item prop="screenSize" label="屏幕尺寸：">
             <el-radio-group v-model="uploadForm.screenSize">
@@ -269,6 +269,7 @@ export default {
       }
     },
     yunovoCodeChange(value) {
+      console.log(value)
       const code = value.trim()
       const y = Api.UNITS.valueToLabel(code.substr(14, 1), this.yunovoDic.filter((v) => v.wordType === 7), 'wordValue', 'wordKey')
       const m = Api.UNITS.valueToLabel(code.substr(15, 1), this.yunovoDic.filter((v) => v.wordType === 8), 'wordValue', 'wordKey')
@@ -440,6 +441,11 @@ export default {
           return false
         }
       })
+    },
+    nextFocus(refIndex, e) {
+      e.target.blur()
+      $('.el-autocomplete-suggestion').hide()
+      this.$refs[refIndex].focus()
     },
   },
   computed: {
