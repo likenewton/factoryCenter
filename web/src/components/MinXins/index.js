@@ -73,6 +73,36 @@ export default {
       this.formInline = {}
       if (type != 'add') this.getData()
     },
+    // 用于el-autocomplete 输入自动过滤
+    getSuggestions(sourceName) {
+      return (queryString, cb) => {
+        const createFilter = (queryString) => {
+          return (v) => {
+            if (v.value) {
+              return (v.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1)
+            } else {
+              return false
+            }
+          }
+        }
+        let source = JSON.parse(localStorage.getItem(sourceName) || '[]')
+        let results = queryString ? source.filter(createFilter(queryString)) : source
+        // 调用 callback 返回建议列表的数据
+        cb(results)
+      }
+    },
+    setSuggestions(sourceName, value = '') {
+      let source = JSON.parse(localStorage.getItem(sourceName) || '[]')
+      const r = source.filter((v) => {
+        return v.value && v.value === value
+      })
+      if (r.length === 0 && value.trim()) {
+        source.unshift({
+          value: value
+        })
+      }
+      localStorage.setItem(sourceName, JSON.stringify(source))
+    },
     showMsgBox: Api.UNITS.showMsgBox,
     showCfmBox: Api.UNITS.showCfmBox,
     formatDate: Api.UNITS.formatDate,

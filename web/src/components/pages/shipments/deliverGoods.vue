@@ -71,7 +71,7 @@
     <!-- imei导入 -->
     <el-dialog class="imei_export_dialog" title="发货导入" @close="imeiClose" :visible.sync="importVisible" width="700px" :close-on-click-modal="false">
       <div slot>
-        <el-form ref="uploadForm" :model="uploadForm" :rules="rules" :inline="false" size="small" label-width="110px">
+        <el-form ref="uploadForm" :model="uploadForm" :rules="rules" :inline="false" size="small" label-width="110px" onsubmit="return false;">
           <el-form-item prop="brandName" label="品牌商：">
             <el-select filterable placeholder="请选择" v-model="uploadForm.brandName" @change="brandNameChange">
               <el-option v-for="(item, index) in orgs" :key="index" :label="item.cooOrganName" :value="item.code"></el-option>
@@ -86,16 +86,19 @@
             </el-cascader>
           </el-form-item>
           <el-form-item prop="yunovoCode" label="云智码：">
-            <el-input v-model="uploadForm.yunovoCode" placeholder="请输入" style="width: 215px" @change="yunovoCodeChange"></el-input>
+            <!-- <el-input v-model="uploadForm.yunovoCode" placeholder="请输入" style="width: 215px" @change="yunovoCodeChange"></el-input> -->
+            <el-autocomplete v-model="uploadForm.yunovoCode" ref="0" @keyup.enter.native="nextFocus('1', $event)" :fetch-suggestions="getSuggestions('deliverGoods_yunovoCode')" placeholder="请输入" @input="yunovoCodeChange" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="modelNumber" label="型号：">
-            <el-input v-model="uploadForm.modelNumber" placeholder="请输入" style="width: 215px"></el-input>
+            <!-- <el-input v-model="uploadForm.modelNumber" placeholder="请输入" style="width: 215px"></el-input> -->
+            <el-autocomplete v-model="uploadForm.modelNumber" ref="1" @keyup.enter.native="nextFocus('2', $event)" :fetch-suggestions="getSuggestions('deliverGoods_modelNumber')" placeholder="请输入" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="workOrderno" label="工单号：">
-            <el-input v-model="uploadForm.workOrderno" placeholder="请输入" style="width: 215px"></el-input>
+            <!-- <el-input v-model="uploadForm.workOrderno" placeholder="请输入" style="width: 215px"></el-input> -->
+            <el-autocomplete v-model="uploadForm.workOrderno" ref="2" @keyup.enter.native="nextFocus('3', $event)" :fetch-suggestions="getSuggestions('deliverGoods_workOrderno')" placeholder="请输入" style="width: 215px"></el-autocomplete>
           </el-form-item>
           <el-form-item prop="productDate" label="生产月份：">
-            <el-date-picker v-model="uploadForm.productDate" type="month" value-format="yyyy-MM" placeholder="生产月份" style="width: 215px"></el-date-picker>
+            <el-date-picker v-model="uploadForm.productDate" ref="3" type="month" value-format="yyyy-MM" placeholder="生产月份" style="width: 215px"></el-date-picker>
           </el-form-item>
           <el-form-item prop="screenSize" label="屏幕尺寸：">
             <el-radio-group v-model="uploadForm.screenSize">
@@ -154,7 +157,11 @@ export default {
         yunovoCode: [{
           required: true,
           message: '请输入云智码',
-          trigger: 'blur'
+          trigger: ['blur', 'change']
+        }, {
+          min: 17,
+          message: '云智码不能少于17位',
+          trigger: ['blur']
         }, {
           validator: this.validatorYunovoCode,
           trigger: 'blur'
@@ -266,6 +273,7 @@ export default {
       }
     },
     yunovoCodeChange(value) {
+      console.log(value)
       const code = value.trim()
       const y = Api.UNITS.valueToLabel(code.substr(14, 1), this.yunovoDic.filter((v) => v.wordType === 7), 'wordValue', 'wordKey')
       const m = Api.UNITS.valueToLabel(code.substr(15, 1), this.yunovoDic.filter((v) => v.wordType === 8), 'wordValue', 'wordKey')
@@ -396,6 +404,8 @@ export default {
           formData.append('channelId', this.uploadForm.channel)
           formData.append('productDate', this.uploadForm.productDate)
           formData.append('screenSize', this.uploadForm.screenSize)
+          formData.append('modelNumber', this.uploadForm.modelNumber)
+          formData.append('workOrderno', this.uploadForm.workOrderno)
           this.uploadForm.remark && formData.append('remark', this.uploadForm.remark)
           if (this.uploadForm.type === 0) {
             formData.append('imeis', this.uploadForm.qrcode)
@@ -416,6 +426,9 @@ export default {
               this.addBtnDisabled = false
               this.imeiClose()
               this.searchData()
+              this.setSuggestions('deliverGoods_yunovoCode', formData.get('yunovoCode'))
+              this.setSuggestions('deliverGoods_modelNumber', formData.get('modelNumber'))
+              this.setSuggestions('deliverGoods_workOrderno', formData.get('workOrderno'))
               setTimeout(() => {
                 this.showMsgBox({
                   type: 'success',
@@ -432,6 +445,11 @@ export default {
           return false
         }
       })
+    },
+    nextFocus(refIndex, e) {
+      e.target.blur()
+      $('.el-autocomplete-suggestion').hide()
+      this.$refs[refIndex].focus()
     },
   },
   computed: {
